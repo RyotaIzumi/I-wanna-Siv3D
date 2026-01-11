@@ -1,0 +1,119 @@
+﻿#include "Player.h"
+
+namespace Iwanna{
+	Player::Player() {
+		frozen = false; //操作を受け付けるかどうか
+		frozen2 = false; //↑の予備
+		jump = 8.5; //１段目ジャンプ力
+		jump2 = 7; //２段目ジャンプ力
+		djump = true; //２段ジャンプできるかどうか
+		maxSpeed = 3; //横方向速度の最大値
+		gravity = 0.4; //重力の値
+		maxVspeed = 9; //縦方向速度(主に落下速度)の最大値
+		image_speed = 0.2; //アニメーション再生速度
+		muteki = false; //無敵状態かどうか
+		roomOutTrue = false;//kid君をroom外にいけるようにする
+
+		hitBox = std::make_shared<RectHitBox>(Vec2(0, 0), SizeF{ 11, 21 });
+
+		inputLeft = KeyLeft;
+		inputRight = KeyRight;
+		inputJump = KeyShift;
+		inputShoot = KeyZ;
+
+		hspeed = 0.0;
+		vspeed = 0.0;
+
+		//player初期座標
+		pos = Vec2(100, 100);
+	}
+
+	void Player::update() {
+		const auto& dt = Scene::DeltaTime();
+
+		hspeed = 0.0;
+		if (KeyLeft.pressed())  hspeed = -maxSpeed;
+		if (KeyRight.pressed()) hspeed = maxSpeed;
+
+		if (!frozen) {
+			if (inputShoot.down()) playerShoot();
+			if (inputJump.down()) playerJump();
+			if (inputJump.up()) playerVJump();
+		}
+
+		// 重力
+		vspeed += gravity;
+
+		isOnGround = false;
+	}
+
+	void Player::updateLate() {
+		// 移動
+		pos.x += hspeed;
+		pos.y += vspeed;
+
+		hitBox->setPos(pos);
+	}
+
+	void Player::draw() const {
+		hitBox->draw(Palette::Red);
+	}
+
+	void Player::playerJump() {
+		if (isOnGround) {
+			vspeed = -jump;
+			djump = true;
+			isOnGround = false;
+		}
+		else if (djump) {
+			vspeed = -jump2;
+			djump = false;
+		}
+	}
+
+	void Player::playerVJump() {
+		if (vspeed < 0) {
+			vspeed *= 0.45;
+		}
+	}
+
+	void Player::playerShoot() {
+	}
+
+	void Player::checkCollisionBlocks(std::shared_ptr<HitBox>& block)
+	{
+
+		// --- 横方向 予測衝突 ---
+		if (hspeed != 0)
+		{
+			RectF nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x + hspeed, hitBox->getCenterPos().y), 11, 5);
+
+			if (nextHitBox.intersects(*block->getRect()))
+			{
+				hspeed = 0; // 移動キャンセル
+			}
+		}
+
+		// --- 縦方向 予測衝突 ---
+		if (vspeed != 0)
+		{
+			RectF nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x, hitBox->getCenterPos().y + vspeed), 11, 21);
+
+			if (nextHitBox.intersects(*block->getRect()))
+			{
+				if (vspeed > 0) {
+					pos.y = block->top().y - 10;
+					isOnGround = true;
+				}
+				vspeed = 0;
+			}
+		}
+
+		Print << hspeed;
+	}
+
+
+	bool Player::getOnGround() const {
+		return isOnGround;
+	}
+}
