@@ -16,15 +16,14 @@ namespace Iwanna {
 	class Loading : public App::Scene {
 	private:
 		//Profiler profiler;
-		//AsyncTask<void> loadingTask;
+		AsyncTask<void> loadingTask;
 
 	public:
-		/*
+		
 		Loading(const InitData& init);
 		void load();
 		void update() override;
 		void draw() const override;
-		*/
 	};
 
 	class Title : public App::Scene {

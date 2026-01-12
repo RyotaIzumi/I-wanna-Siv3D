@@ -21,6 +21,9 @@ namespace Iwanna {
 		double hspeed;
 		double vspeed;
 
+		//player当たり判定サイズ
+		SizeF hitBoxSize{11,21};
+
 		//当たり判定用HitBox
 		std::shared_ptr<HitBox> hitBox;
 

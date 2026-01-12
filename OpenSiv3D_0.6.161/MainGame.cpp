@@ -7,6 +7,7 @@ namespace Iwanna {
 		blocks << std::make_shared<RectHitBox>(Vec2(160, 512), SizeF{ 32, 32 });
 		blocks << std::make_shared<RectHitBox>(Vec2(160, 480), SizeF{ 32, 32 });
 		blocks << std::make_shared<RectHitBox>(Vec2(160, 448), SizeF{ 32, 32 });
+		blocks << std::make_shared<RectHitBox>(Vec2(320	, 448), SizeF{ 32, 32 });
 		for(int i = 0;i < 25;i++){
 			blocks << std::make_shared<RectHitBox>(Vec2(i * 32, 576), SizeF{ 32, 32 });
 		}

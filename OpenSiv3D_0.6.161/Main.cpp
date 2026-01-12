@@ -1,5 +1,5 @@
 ﻿#include <Siv3D.hpp> // Siv3D v0.6.16
-//#include "Asset.h"
+#include "SpriteAsset.h"
 //#include "AudioAsset.h"
 #include "Scene/Scene.h"
 
@@ -18,19 +18,19 @@ void Main()
 	FontAsset::Register(U"Font", 60, Typeface::Regular);
 	FontAsset::Register(U"Button", FontMethod::MSDF, 20, Typeface::Medium);
 
-	/*
-	Minge::registerTextures();
-	Minge::Sound::registerAudios();
-	Minge::Sound::registerSEs();
-	*/
+	
+	Iwanna::registerTextures();
+	//Minge::Sound::registerAudios();
+	//Minge::Sound::registerSEs();
+	
 
 	App app;
 	//app.get()->game.commonData = app.get().get();
 	//app.get()->sceneManager = &app;
-	//app.add<Iwanna::Loading>(Iwanna::SceneType::LOADING);
+	app.add<Iwanna::Loading>(Iwanna::SceneType::LOADING);
 	//app.add<Iwanna::Title>(Iwanna::SceneType::TITLE);
 	app.add<Iwanna::InGame>(Iwanna::SceneType::IN_GAME);
-	app.init(Iwanna::SceneType::IN_GAME, 0s);
+	app.init(Iwanna::SceneType::LOADING, 0s);
 
 	while (System::Update()) {
 		Cursor::RequestStyle(U"normal");

@@ -1,4 +1,5 @@
 ﻿#include "Player.h"
+#include "SpriteAsset.h"
 
 namespace Iwanna{
 	Player::Player() {
@@ -14,7 +15,7 @@ namespace Iwanna{
 		muteki = false; //無敵状態かどうか
 		roomOutTrue = false;//kid君をroom外にいけるようにする
 
-		hitBox = std::make_shared<RectHitBox>(Vec2(0, 0), SizeF{ 11, 21 });
+		hitBox = std::make_shared<RectHitBox>(Vec2(0, 0), hitBoxSize);
 
 		inputLeft = KeyLeft;
 		inputRight = KeyRight;
@@ -57,6 +58,7 @@ namespace Iwanna{
 
 	void Player::draw() const {
 		hitBox->draw(Palette::Red);
+		TextureAsset(U"sprPlayerIdle")(0,0,32,32).drawAt(pos);
 	}
 
 	void Player::playerJump() {
@@ -86,7 +88,7 @@ namespace Iwanna{
 		// --- 横方向 予測衝突 ---
 		if (hspeed != 0)
 		{
-			RectF nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x + hspeed, hitBox->getCenterPos().y), 11, 5);
+			RectF nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x + hspeed, hitBox->getCenterPos().y), hitBoxSize.x, hitBoxSize.y / 4);
 
 			if (nextHitBox.intersects(*block->getRect()))
 			{
@@ -97,7 +99,7 @@ namespace Iwanna{
 		// --- 縦方向 予測衝突 ---
 		if (vspeed != 0)
 		{
-			RectF nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x, hitBox->getCenterPos().y + vspeed), 11, 21);
+			RectF nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x, hitBox->getCenterPos().y + vspeed), hitBoxSize);
 
 			if (nextHitBox.intersects(*block->getRect()))
 			{
@@ -108,8 +110,6 @@ namespace Iwanna{
 				vspeed = 0;
 			}
 		}
-
-		Print << hspeed;
 	}
 
 
