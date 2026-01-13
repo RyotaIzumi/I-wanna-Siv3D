@@ -1,5 +1,5 @@
 ﻿#include "Scene.h"
-#include "../SpriteAsset.h"
+#include "../Sprite/SpriteAsset.h"
 //#include "../AudioAsset.h"
 
 namespace Iwanna {

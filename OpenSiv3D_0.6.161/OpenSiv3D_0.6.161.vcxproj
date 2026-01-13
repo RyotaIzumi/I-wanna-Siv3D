@@ -121,8 +121,8 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene\InGame.cpp" />
     <ClCompile Include="Scene\Loading.cpp" />
-    <ClCompile Include="SpriteAsset.cpp" />
-    <ClCompile Include="SpriteSystem.cpp" />
+    <ClCompile Include="Sprite\SpriteAsset.cpp" />
+    <ClCompile Include="Sprite\SpriteSystem.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -337,8 +337,9 @@
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="HitBox.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="SpriteAsset.h" />
-    <ClInclude Include="SpriteSystem.h" />
+    <ClInclude Include="Sprite\SpriteAsset.h" />
+    <ClInclude Include="Sprite\SpriteEnum.h" />
+    <ClInclude Include="Sprite\SpriteSystem.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

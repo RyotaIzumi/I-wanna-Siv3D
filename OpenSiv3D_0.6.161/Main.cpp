@@ -1,5 +1,5 @@
 ﻿#include <Siv3D.hpp> // Siv3D v0.6.16
-#include "SpriteAsset.h"
+#include "Sprite/SpriteAsset.h"
 //#include "AudioAsset.h"
 #include "Scene/Scene.h"
 

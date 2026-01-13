@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include <Siv3D.hpp>
 #include "HitBox.h"
+#include "Sprite/SpriteSystem.h"
+#include "Global.h"
 
 namespace Iwanna {
 	class Player {
@@ -26,6 +28,11 @@ namespace Iwanna {
 
 		//当たり判定用HitBox
 		std::shared_ptr<HitBox> hitBox;
+
+		//アニメーション管理用変数
+		SpriteSystem spriteSystem;
+		//向き管理用変数
+		Global::Direction direction;
 
 		//操作入力用変数
 		Input inputLeft;

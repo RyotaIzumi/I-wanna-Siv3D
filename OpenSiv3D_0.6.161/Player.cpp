@@ -1,5 +1,5 @@
 ﻿#include "Player.h"
-#include "SpriteAsset.h"
+#include "Sprite/SpriteAsset.h"
 
 namespace Iwanna{
 	Player::Player() {
@@ -17,6 +17,14 @@ namespace Iwanna{
 
 		hitBox = std::make_shared<RectHitBox>(Vec2(0, 0), hitBoxSize);
 
+		//アニメーションデータの登録
+		//(アクション名,フレーム数,各フレーム再生時間,ループするかどうか(省略可), 左右差分があるか(省略可))
+		spriteSystem = SpriteSystem(32, 32);
+		spriteSystem.addAnimation(AnimationAction::PLAYER_WAIT, SpriteData(U"sprPlayerIdle", 4, 0.2,true,false));
+
+		//初期の向き
+		direction = Global::Direction::RIGHT;
+
 		inputLeft = KeyLeft;
 		inputRight = KeyRight;
 		inputJump = KeyShift;
@@ -30,7 +38,6 @@ namespace Iwanna{
 	}
 
 	void Player::update() {
-		const auto& dt = Scene::DeltaTime();
 
 		hspeed = 0.0;
 		if (KeyLeft.pressed())  hspeed = -maxSpeed;
@@ -58,7 +65,9 @@ namespace Iwanna{
 
 	void Player::draw() const {
 		hitBox->draw(Palette::Red);
-		TextureAsset(U"sprPlayerIdle")(0,0,32,32).drawAt(pos);
+		//TextureAsset(U"sprPlayerIdle")(0,0,32,32).drawAt(pos);
+		TextureRegion texture = spriteSystem.getTextureRegion(direction);
+		texture.drawAt(pos);
 	}
 
 	void Player::playerJump() {
