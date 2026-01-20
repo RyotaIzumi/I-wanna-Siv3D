@@ -13,7 +13,7 @@ namespace Iwanna {
 	}
 
 	void InGame::debug() const {
-
+		
 	}
 
 	void InGame::draw() const {

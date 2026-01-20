@@ -56,6 +56,8 @@ namespace Iwanna{
 	}
 
 	void Player::updateLate() {
+		//auto dt = Scene::DeltaTime();
+		//Print << dt;
 		// 移動
 		pos.x += hspeed;
 		pos.y += vspeed;

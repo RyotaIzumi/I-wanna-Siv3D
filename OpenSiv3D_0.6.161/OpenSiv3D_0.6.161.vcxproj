@@ -332,7 +332,9 @@
     <Xml Include="App\example\xml\test.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="60FPSwithAutoFrameSkip.h" />
     <ClInclude Include="CommonData.h" />
+    <ClInclude Include="Global.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="HitBox.h" />

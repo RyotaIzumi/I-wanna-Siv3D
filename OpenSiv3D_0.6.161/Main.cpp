@@ -2,11 +2,14 @@
 #include "Sprite/SpriteAsset.h"
 //#include "AudioAsset.h"
 #include "Scene/Scene.h"
+#include "60FPSwithAutoFrameSkip.h"
 
 using App = SceneManager<Iwanna::SceneType, Iwanna::CommonData>;
 
 void Main()
 {
+	System60::SetDisplaySize(DisplayResolution::SVGA_800x600);
+
 	Window::SetTitle(U"I wanna Siv3D");
 	Scene::SetResizeMode(ResizeMode::Keep);
 	bool isFullScreen = true;
@@ -32,12 +35,12 @@ void Main()
 	app.add<Iwanna::InGame>(Iwanna::SceneType::IN_GAME);
 	app.init(Iwanna::SceneType::LOADING, 0s);
 
-	while (System::Update()) {
+	while (System60::Update()) {
 		Cursor::RequestStyle(U"normal");
 
 		//スクリーン設定
-		if (KeyF4.down())isFullScreen = !isFullScreen;
-		Window::SetFullscreen(isFullScreen);
+		//if (KeyF4.down())isFullScreen = !isFullScreen;
+		//Window::SetFullscreen(isFullScreen);
 
 		if (not app.update()) {
 			break;
