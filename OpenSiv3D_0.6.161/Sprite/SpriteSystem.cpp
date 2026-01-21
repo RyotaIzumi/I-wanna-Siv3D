@@ -17,6 +17,10 @@ namespace Iwanna {
 		}
 	}
 
+	AnimationAction SpriteSystem::getCurrentAction() const {
+		return currentAction;
+	}
+
 	void SpriteSystem::reset() {
 		stopwatch.restart();
 	}

@@ -22,6 +22,7 @@ namespace Iwanna {
 	}
 
 	void MainGame::drawGame() {
+		Rect(0, 0, 800, 600).draw(ColorF(0.8,1.0));
 		player->draw();
 		for (auto b : blocks) {
 			b->draw(Palette::Gray);

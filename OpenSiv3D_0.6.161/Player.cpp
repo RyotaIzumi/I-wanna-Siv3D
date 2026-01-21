@@ -20,7 +20,10 @@ namespace Iwanna{
 		//アニメーションデータの登録
 		//(アクション名,フレーム数,各フレーム再生時間,ループするかどうか(省略可), 左右差分があるか(省略可))
 		spriteSystem = SpriteSystem(32, 32);
-		spriteSystem.addAnimation(AnimationAction::PLAYER_WAIT, SpriteData(U"sprPlayerIdle", 4, 0.2,true,false));
+		spriteSystem.addAnimation(AnimationAction::PLAYER_WAIT, SpriteData(U"sprPlayerIdle", 4, 0.15,true,false));
+		spriteSystem.addAnimation(AnimationAction::PLAYER_RUN, SpriteData(U"sprPlayerRunning", 4, 0.1,true,false));
+		spriteSystem.addAnimation(AnimationAction::PLAYER_JUMP, SpriteData(U"sprPlayerJump", 2, 0.1,true,false));
+		spriteSystem.addAnimation(AnimationAction::PLAYER_FALL, SpriteData(U"sprPlayerFall", 2, 0.1,true,false));
 
 		//初期の向き
 		direction = Global::Direction::RIGHT;
@@ -40,8 +43,11 @@ namespace Iwanna{
 	void Player::update() {
 
 		hspeed = 0.0;
-		if (KeyLeft.pressed())  hspeed = -maxSpeed;
-		if (KeyRight.pressed()) hspeed = maxSpeed;
+		isChanedActionWait = false;
+
+		if (KeyLeft.pressed()) playerMoveLeft();
+		if (KeyRight.pressed()) playerMoveRight();
+		
 
 		if (!frozen) {
 			if (inputShoot.down()) playerShoot();
@@ -49,15 +55,28 @@ namespace Iwanna{
 			if (inputJump.up()) playerVJump();
 		}
 
-		// 重力
+		// 重力反映
 		vspeed += gravity;
+
+		// ジャンプ時アニメーション反映
+		if (!isOnGround) {
+			if (vspeed < -0.05) {
+				spriteSystem.setAction(AnimationAction::PLAYER_JUMP);
+				isChanedActionWait = true;
+			}
+			if (vspeed > 0.05) {
+				spriteSystem.setAction(AnimationAction::PLAYER_FALL);
+				isChanedActionWait = true;
+			}
+		}
+
+		if(!isChanedActionWait)
+			spriteSystem.setAction(AnimationAction::PLAYER_WAIT);
 
 		isOnGround = false;
 	}
 
 	void Player::updateLate() {
-		//auto dt = Scene::DeltaTime();
-		//Print << dt;
 		// 移動
 		pos.x += hspeed;
 		pos.y += vspeed;
@@ -67,9 +86,23 @@ namespace Iwanna{
 
 	void Player::draw() const {
 		hitBox->draw(Palette::Red);
-		//TextureAsset(U"sprPlayerIdle")(0,0,32,32).drawAt(pos);
+		
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
-		texture.drawAt(pos);
+		texture.drawAt(pos.x,pos.y - 6);
+	}
+
+	void Player::playerMoveLeft() {
+		hspeed = -maxSpeed;
+		direction = Global::Direction::LEFT;
+		spriteSystem.setAction(AnimationAction::PLAYER_RUN);
+		isChanedActionWait = true;
+	}
+
+	void Player::playerMoveRight() {
+		hspeed = maxSpeed;
+		direction = Global::Direction::RIGHT;
+		spriteSystem.setAction(AnimationAction::PLAYER_RUN);
+		isChanedActionWait = true;
 	}
 
 	void Player::playerJump() {

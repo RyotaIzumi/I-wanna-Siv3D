@@ -37,6 +37,7 @@ namespace Iwanna {
 
 		void addAnimation(AnimationAction action, const SpriteData& data);
 		void setAction(AnimationAction action);
+		AnimationAction getCurrentAction() const;
 		void changeWidthHeight(int frameW, int frameH) {
 			frameWidth = frameW;
 			frameHeight = frameH;

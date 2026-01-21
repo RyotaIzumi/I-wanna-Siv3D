@@ -47,6 +47,9 @@ namespace Iwanna {
 
 		//地面に接地しているかどうか
 		bool isOnGround = false;
+		//待機状態以外のアニメーション設定がなされたかどうか
+		bool isChanedActionWait = false;
+
 	public:
 		Player();
 
@@ -54,6 +57,8 @@ namespace Iwanna {
 		void updateLate();
 		void draw() const;
 
+		void playerMoveLeft();
+		void playerMoveRight();
 		void playerJump();
 		void playerVJump();
 		void playerShoot();
