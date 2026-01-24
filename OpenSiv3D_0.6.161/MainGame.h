@@ -12,6 +12,7 @@ namespace Iwanna {
 		MainGame();
 
 		void updateGame();
+		void debugGame();
 		void drawGame();
 	};
 }

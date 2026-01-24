@@ -3,6 +3,8 @@
 namespace Iwanna {
 	MainGame::MainGame() {
 		player = std::make_shared<Player>();
+
+		//仮ブロック配置
 		blocks << std::make_shared<RectHitBox>(Vec2(160, 544), SizeF{ 32, 32 });
 		blocks << std::make_shared<RectHitBox>(Vec2(160, 512), SizeF{ 32, 32 });
 		blocks << std::make_shared<RectHitBox>(Vec2(160, 480), SizeF{ 32, 32 });
@@ -19,6 +21,10 @@ namespace Iwanna {
 			player->checkCollisionBlocks(b);
 		}
 		player->updateLate();
+	}
+
+	void MainGame::debugGame() {
+
 	}
 
 	void MainGame::drawGame() {
