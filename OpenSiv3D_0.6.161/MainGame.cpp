@@ -4,22 +4,22 @@ namespace Iwanna {
 	MainGame::MainGame() {
 		player = std::make_shared<Player>();
 
-		SizeF blockSize{ 32,32 };
 		//仮ブロック配置
-		blocks << std::make_shared<RectHitBox>(Vec2(160, 544), SizeF{ 32, 32 });
-		blocks << std::make_shared<RectHitBox>(Vec2(160, 512), SizeF{ 32, 32 });
-		blocks << std::make_shared<RectHitBox>(Vec2(160, 480), SizeF{ 32, 32 });
-		blocks << std::make_shared<RectHitBox>(Vec2(160, 448), SizeF{ 32, 32 });
-		blocks << std::make_shared<RectHitBox>(Vec2(320	, 448), SizeF{ 32, 32 });
+		blocks << std::make_shared<Block>(Vec2(160, 544));
+		blocks << std::make_shared<Block>(Vec2(160, 512));
+		blocks << std::make_shared<Block>(Vec2(160, 480));
+		blocks << std::make_shared<Block>(Vec2(160, 448));
+		blocks << std::make_shared<Block>(Vec2(320, 448));
 		for(int i = 0;i < 25;i++){
-			blocks << std::make_shared<RectHitBox>(Vec2(i * 32, 576), SizeF{ 32, 32 });
+			blocks << std::make_shared<Block>(Vec2(i * 32, 576));
 		}
 	}
 
 	void MainGame::updateGame() {
 		player->update();
 		for (auto b : blocks) {
-			player->checkCollisionBlocks(b);
+			player->onCollision(*b);
+			b->update();
 		}
 		player->updateLate();
 	}
@@ -35,7 +35,8 @@ namespace Iwanna {
 		player->draw();
 		//ブロック描画
 		for (auto b : blocks) {
-			b->draw(Palette::Gray);
+			player->onCollision(*b);
+			b->draw();
 		}
 	}
 }

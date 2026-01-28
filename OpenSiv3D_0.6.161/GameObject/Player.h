@@ -3,9 +3,10 @@
 #include "HitBox.h"
 #include "../Sprite/SpriteSystem.h"
 #include "../Global.h"
+#include "GameObject.h"
 
 namespace Iwanna {
-	class Player {
+	class Player : public GameObject{
 	private://以下値は元のI wanna の値と同じ
 		bool frozen = false; //操作を受け付けるかどうか
 		bool frozen2 = false; //↑の予備
@@ -26,16 +27,10 @@ namespace Iwanna {
 		//player当たり判定サイズ
 		SizeF hitBoxSize{11,21};
 
-		//当たり判定用HitBox
-		std::shared_ptr<HitBox> hitBox;
-
 		//アニメーション管理用変数
 		SpriteSystem spriteSystem;
 		//向き管理用変数
 		Global::Direction direction;
-
-		//現在座標
-		Vec2 pos;
 
 		//地面に接地しているかどうか
 		bool isOnGround = false;
@@ -45,9 +40,9 @@ namespace Iwanna {
 	public:
 		Player();
 
-		void update();
+		void update() override;
 		void updateLate();
-		void draw() const;
+		void draw() const override;
 
 		void playerMoveLeft();
 		void playerMoveRight();
@@ -55,7 +50,7 @@ namespace Iwanna {
 		void playerVJump();
 		void playerShoot();
 
-		void checkCollisionBlocks(std::shared_ptr<HitBox>& blocks);
+		void onCollision(GameObject& other) override;
 		bool getOnGround() const;
 	};
 }
