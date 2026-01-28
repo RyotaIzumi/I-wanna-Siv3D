@@ -11,17 +11,14 @@ namespace Global {
 	};
 
 	// ======================
-	// Struct 定義
-   // ======================
-	struct InputState {
-		bool left;
-		bool right;
-		bool jump;
-	};
-
-	// ======================
 	// 共有変数宣言
 	// ======================
+
+	//操作入力用変数
+	inline Input inputLeft = KeyLeft;
+	inline Input inputRight = KeyRight;
+	inline Input inputJump = KeyShift;
+	inline Input inputShoot = KeyZ;
 
 	 // ======================
 	// 定数

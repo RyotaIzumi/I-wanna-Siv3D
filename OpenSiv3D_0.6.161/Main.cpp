@@ -1,6 +1,6 @@
 ﻿#include <Siv3D.hpp> // Siv3D v0.6.16
 #include "Sprite/SpriteAsset.h"
-//#include "AudioAsset.h"
+#include "Audio/AudioAsset.h"
 #include "Scene/Scene.h"
 #include "60FPSwithAutoFrameSkip.h"
 
@@ -11,11 +11,6 @@ void Main()
 	System60::SetDisplaySize(DisplayResolution::SVGA_800x600);
 
 	Window::SetTitle(U"I wanna Siv3D");
-	Scene::SetResizeMode(ResizeMode::Keep);
-	bool isFullScreen = true;
-
-	//Escで終了しないように
-	//System::SetTerminationTriggers(UserAction::CloseButtonClicked);
 
 	//フォントはここで宣言
 	FontAsset::Register(U"Font", 60, Typeface::Regular);
@@ -23,25 +18,19 @@ void Main()
 
 	
 	Iwanna::registerTextures();
-	//Minge::Sound::registerAudios();
-	//Minge::Sound::registerSEs();
-	
+	Iwanna::registerTexturesSync();
+	Iwanna::loadTexturesSync();
+
+	Iwanna::Sound::registerBGMs();
+	Iwanna::Sound::registerSEs();
+	Iwanna::Sound::registerAudiosSync();
+	Iwanna::Sound::loadAudiosSync();
 
 	App app;
-	//app.get()->game.commonData = app.get().get();
-	//app.get()->sceneManager = &app;
-	app.add<Iwanna::Loading>(Iwanna::SceneType::LOADING);
-	//app.add<Iwanna::Title>(Iwanna::SceneType::TITLE);
 	app.add<Iwanna::InGame>(Iwanna::SceneType::IN_GAME);
-	app.init(Iwanna::SceneType::LOADING, 0s);
+	app.init(Iwanna::SceneType::IN_GAME, 0s);
 
 	while (System60::Update()) {
-		Cursor::RequestStyle(U"normal");
-
-		//スクリーン設定
-		//if (KeyF4.down())isFullScreen = !isFullScreen;
-		//Window::SetFullscreen(isFullScreen);
-
 		if (not app.update()) {
 			break;
 		}

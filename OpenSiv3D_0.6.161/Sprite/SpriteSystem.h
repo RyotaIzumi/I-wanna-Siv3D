@@ -13,9 +13,7 @@ namespace Iwanna {
 		bool loop = true;            // ループ再生するか
 		bool haveLR = false;         //左右差分を持つか
 
-		// 等間隔アニメーション用コンストラクタ
 		SpriteData() = default;
-
 		SpriteData(const String& name, int count, double speed, bool loop = true, bool lr = true) : spriteName(name), frameCount(count), image_speed(speed), loop(loop), haveLR(lr) {
 			totalDuration = image_speed * frameCount;
 		}
@@ -23,8 +21,8 @@ namespace Iwanna {
 
 	class SpriteSystem {
 	private:
-		HashTable<AnimationAction, SpriteData> animations; // 登録済みアニメーション
-		AnimationAction currentAction = AnimationAction::PLAYER_WAIT; // 現在のアクション
+		HashTable<SpriteAction, SpriteData> sprites; // 登録済みスプライトデータ
+		SpriteAction currentSprite = SpriteAction::PLAYER_WAIT;
 		Stopwatch stopwatch; // 経過時間計測用
 		int frameWidth = 64;
 		int frameHeight = 64;
@@ -35,9 +33,8 @@ namespace Iwanna {
 		SpriteSystem() = default;
 		SpriteSystem(int frameW, int frameH);
 
-		void addAnimation(AnimationAction action, const SpriteData& data);
-		void setAction(AnimationAction action);
-		AnimationAction getCurrentAction() const;
+		void addSprite(SpriteAction sprite, const SpriteData& data);
+		void setSprite(SpriteAction sprite);
 		void changeWidthHeight(int frameW, int frameH) {
 			frameWidth = frameW;
 			frameHeight = frameH;

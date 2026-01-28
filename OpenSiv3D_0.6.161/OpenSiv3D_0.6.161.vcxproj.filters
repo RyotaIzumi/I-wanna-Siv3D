@@ -144,10 +144,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
+    <ClCompile Include="GameObject\Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HitBox.cpp">
+    <ClCompile Include="GameObject\HitBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Scene\InGame.cpp">
@@ -163,6 +163,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sprite\SpriteSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\AudioAsset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -797,6 +800,18 @@
     <Media Include="App\example\shot.mp3">
       <Filter>Resource Files\example</Filter>
     </Media>
+    <Media Include="App\Sound\Se\sndDeath.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="App\Sound\Se\sndDJump.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="App\Sound\Se\sndJump.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="App\Sound\Se\sndShoot.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
   <ItemGroup>
     <Font Include="App\example\font\DotGothic16\DotGothic16-Regular.ttf">
@@ -830,10 +845,10 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
+    <ClInclude Include="GameObject\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HitBox.h">
+    <ClInclude Include="GameObject\HitBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scene\Scene.h">
@@ -858,6 +873,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="60FPSwithAutoFrameSkip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\AudioAsset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

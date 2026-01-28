@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 namespace Iwanna {
-	enum class AnimationAction {
+	enum class SpriteAction {
 		PLAYER_WAIT,
 		PLAYER_RUN,
 		PLAYER_JUMP,

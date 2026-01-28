@@ -6,32 +6,31 @@ namespace Iwanna {
 		stopwatch.start();
 	}
 
-	void SpriteSystem::addAnimation(AnimationAction action, const SpriteData& data) {
-		animations[action] = data;
+	//スプライトを追加する
+	void SpriteSystem::addSprite(SpriteAction sprite, const SpriteData& data) {
+		sprites[sprite] = data;
 	}
 
-	void SpriteSystem::setAction(AnimationAction action) {
-		if (currentAction != action) {
-			currentAction = action;
+	//スプライトを変更する
+	void SpriteSystem::setSprite(SpriteAction sprite) {
+		if (currentSprite != sprite) {
+			currentSprite = sprite;
 			stopwatch.restart();
 		}
 	}
 
-	AnimationAction SpriteSystem::getCurrentAction() const {
-		return currentAction;
-	}
-
+	//アニメーションを最初からやり直す
 	void SpriteSystem::reset() {
 		stopwatch.restart();
 	}
 
 	// 現在のアニメーションフレームから TextureRegion を返す
 	TextureRegion SpriteSystem::getTextureRegion(Global::Direction direction) const {
-		if (!animations.contains(currentAction)) {
+		if (!sprites.contains(currentSprite)) {
 			return TextureRegion{}; // 登録がない場合は空
 		}
 
-		const auto& data = animations.at(currentAction);
+		const auto& data = sprites.at(currentSprite);
 		double t = stopwatch.sF();
 
 		// 経過時間をループまたは上限で制限

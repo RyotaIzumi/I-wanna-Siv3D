@@ -9,14 +9,13 @@ namespace Iwanna {
 
 	void registerTextures() {
 
-		//Player
+		//kid君のテクスチャ登録
 		static const FilePath PlayerPath = U"Texture/Player/";
 		registerTexture(U"sprPlayerIdle", PlayerPath + U"sprPlayerIdle.png");
 		registerTexture(U"sprPlayerFall", PlayerPath + U"sprPlayerFall.png");
 		registerTexture(U"sprPlayerJump", PlayerPath + U"sprPlayerJump.png");
 		registerTexture(U"sprPlayerRunning", PlayerPath + U"sprPlayerRunning.png");
 	}
-
 
 	void registerTexturesSync() {
 		for (auto& p : registry) {
@@ -29,5 +28,4 @@ namespace Iwanna {
 			TextureAsset::Load(p.first);
 		}
 	}
-
 }

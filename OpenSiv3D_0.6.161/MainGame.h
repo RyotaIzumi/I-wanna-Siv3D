@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <Siv3D.hpp>
-#include "Player.h"
-#include "HitBox.h"
+#include "GameObject/Player.h"
+#include "GameObject/HitBox.h"
 
 namespace Iwanna {
 	class MainGame {

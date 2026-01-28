@@ -4,6 +4,7 @@ namespace Iwanna {
 	MainGame::MainGame() {
 		player = std::make_shared<Player>();
 
+		SizeF blockSize{ 32,32 };
 		//仮ブロック配置
 		blocks << std::make_shared<RectHitBox>(Vec2(160, 544), SizeF{ 32, 32 });
 		blocks << std::make_shared<RectHitBox>(Vec2(160, 512), SizeF{ 32, 32 });
@@ -28,8 +29,11 @@ namespace Iwanna {
 	}
 
 	void MainGame::drawGame() {
-		Rect(0, 0, 800, 600).draw(ColorF(0.8,1.0));
+		//背景描画
+		Rect(0, 0, 800, 600).draw(ColorF(0.8, 1.0));
+		//kid君描画
 		player->draw();
+		//ブロック描画
 		for (auto b : blocks) {
 			b->draw(Palette::Gray);
 		}
