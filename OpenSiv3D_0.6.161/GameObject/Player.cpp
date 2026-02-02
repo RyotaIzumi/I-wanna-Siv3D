@@ -129,29 +129,38 @@ namespace Iwanna{
 
 	void Player::onCollision(GameObject& other)
 	{
-		// --- 横方向 予測衝突 ---
-		if (hspeed != 0)
+		// ブロック衝突
+		if (other.type == ObjectType::Block)
 		{
-			RectF nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x + hspeed, hitBox->getCenterPos().y), hitBoxSize.x, hitBoxSize.y / 4);
-
-			if (nextHitBox.intersects(*other.hitBox->getRect()))
+			// --- 横方向 予測衝突 ---
+			if (hspeed != 0)
 			{
-				hspeed = 0; // 移動キャンセル
-			}
-		}
+				RectF nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x + hspeed, hitBox->getCenterPos().y), hitBoxSize.x, hitBoxSize.y - 4);
 
-		// --- 縦方向 予測衝突 ---
-		if (vspeed != 0)
-		{
-			RectF nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x, hitBox->getCenterPos().y + vspeed), hitBoxSize);
-
-			if (nextHitBox.intersects(*other.hitBox->getRect()))
-			{
-				if (vspeed > 0) {
-					pos.y = other.hitBox->top().y - 10;
-					isOnGround = true;
+				if (nextHitBox.intersects(*other.hitBox->getRect()))
+				{
+					hspeed = 0; // 移動キャンセル
 				}
-				vspeed = 0;
+			}
+
+			// --- 縦方向 予測衝突 ---
+			if (vspeed != 0)
+			{
+				//方向によって当たり判定の位置、大きさを変える
+				RectF nextHitBox;
+				if(vspeed > 0) nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x, hitBox->getCenterPos().y + vspeed + hitBoxSize.y / 2), hitBoxSize.x - 3, 1);
+				if(vspeed < 0) nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x, hitBox->getCenterPos().y + vspeed - hitBoxSize.y / 2 + 2), hitBoxSize.x - 3, 1);
+
+				nextHitBox.draw();
+
+				if (nextHitBox.intersects(*other.hitBox->getRect()))
+				{
+					if (vspeed > 0) {
+						pos.y = other.hitBox->top().y - 10;
+						isOnGround = true;
+					}
+					vspeed = 0;
+				}
 			}
 		}
 	}

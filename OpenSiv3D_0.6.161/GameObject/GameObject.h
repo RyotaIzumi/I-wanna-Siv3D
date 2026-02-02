@@ -22,6 +22,12 @@ namespace Iwanna {
 		virtual void update() = 0;
 		virtual void draw() const = 0;
 
+		RectF getBroadRect() const {
+			if (auto r = hitBox->getRect()) return *r;
+			if (auto c = hitBox->getCircle()) return c->boundingRect();
+			return RectF{};
+		}
+
 		bool intersects(const GameObject& other) const {
 			return hitBox->intersects(*other.hitBox);
 		}
