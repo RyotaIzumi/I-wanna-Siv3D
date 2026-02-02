@@ -20,23 +20,26 @@ namespace Iwanna {
 		player->update();
 
 		//毎フレームGameObjectをspatialGridに登録
-		spatialGrid.clear();
-		spatialGrid.add(player.get());
-		for (auto& b : blocks) spatialGrid.add(b.get());
+		stockNearGameObjects.clear();
+		stockNearGameObjects.add(player.get());
+		for (auto& b : blocks) stockNearGameObjects.add(b.get());
 
 		//playerの近くのオブジェクトのみを取得して当たり判定確認
-		auto near = spatialGrid.query(player->getBroadRect());
+		auto near = stockNearGameObjects.query(player->getBroadRect());
 
 		for (auto* obj : near) {
 			if (obj == player.get()) continue;
 			player->onCollision(*obj);
 		}
 
+		ClearPrint();
+		Print << U"付近のGameObject数 : " << near.size();
+
 		player->updateLate();
 	}
 
 	void MainGame::debugGame() {
-
+		
 	}
 
 	void MainGame::drawGame() {
@@ -44,7 +47,6 @@ namespace Iwanna {
 		Rect(0, 0, 800, 600).draw(ColorF(0.8, 1.0));
 		//ブロック描画
 		for (auto b : blocks) {
-			player->onCollision(*b);
 			b->draw();
 		}
 		//kid君描画

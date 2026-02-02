@@ -4,7 +4,7 @@
 
 namespace Iwanna {
 
-    class SpatialGrid {
+    class StockNearGameObjects {
     public:
         int cellSize = 64;
         HashTable<Point, Array<GameObject*>> cells;

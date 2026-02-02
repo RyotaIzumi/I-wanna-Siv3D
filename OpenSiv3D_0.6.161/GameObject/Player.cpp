@@ -33,8 +33,6 @@ namespace Iwanna{
 
 		hspeed = 0.0;
 		vspeed = 0.0;
-
-		
 	}
 
 	void Player::update() {
@@ -151,12 +149,11 @@ namespace Iwanna{
 				if(vspeed > 0) nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x, hitBox->getCenterPos().y + vspeed + hitBoxSize.y / 2), hitBoxSize.x - 3, 1);
 				if(vspeed < 0) nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x, hitBox->getCenterPos().y + vspeed - hitBoxSize.y / 2 + 2), hitBoxSize.x - 3, 1);
 
-				nextHitBox.draw();
-
 				if (nextHitBox.intersects(*other.hitBox->getRect()))
 				{
 					if (vspeed > 0) {
 						pos.y = other.hitBox->top().y - 10;
+						djump = true;
 						isOnGround = true;
 					}
 					vspeed = 0;

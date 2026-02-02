@@ -345,7 +345,7 @@
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="GameObject\Block.h" />
     <ClInclude Include="GameObject\GameObject.h" />
-    <ClInclude Include="GameObject\SpatialGrid.h" />
+    <ClInclude Include="GameObject\StockNearGameObjects.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Scene\Scene.h" />
