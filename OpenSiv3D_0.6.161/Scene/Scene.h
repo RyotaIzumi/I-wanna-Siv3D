@@ -1,13 +1,14 @@
 ﻿#pragma once
 #include <Siv3D.hpp>
 #include "../CommonData.h"
+#include "../Global.h"
 
 namespace Iwanna {
 	static const Duration TRANSITION_DURATION = 0.50s;
 
 	enum class SceneType {
 		LOADING,
-		TITLE,
+		START_MENU,
 		IN_GAME
 	};
 
@@ -35,6 +36,15 @@ namespace Iwanna {
 		void update() override;
 		void draw() const override;
 		*/
+	};
+
+	class StartMenu : public App::Scene {
+	private:
+	public:
+		StartMenu(const InitData& data);
+
+		void update() override;
+		void draw() const override;
 	};
 
 	class InGame : public App::Scene {

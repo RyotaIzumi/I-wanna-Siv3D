@@ -9,6 +9,11 @@ namespace Iwanna {
 		auto& data = getData().game;
 
 		data.updateGame();
+
+		if (Global::inputRestart.down()) {
+			changeScene(SceneType::START_MENU, 0.0s);
+		}
+
 		debug();
 	}
 

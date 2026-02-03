@@ -2,18 +2,23 @@
 
 namespace Iwanna {
 	MainGame::MainGame() {
+	}
+
+	void MainGame::startGame() {
 		player = std::make_shared<Player>();
 
+		cherries.clear();
 		cherries << std::make_shared<Cherry>();
 
 		//仮ブロック配置
+		blocks.clear();
 		blocks << std::make_shared<Block>(Vec2(160, 544));
 		blocks << std::make_shared<Block>(Vec2(160, 512));
 		blocks << std::make_shared<Block>(Vec2(160, 480));
 		blocks << std::make_shared<Block>(Vec2(160, 448));
 		blocks << std::make_shared<Block>(Vec2(320, 448));
 		blocks << std::make_shared<Block>(Vec2(320, 544));
-		for(int i = 0;i < 25;i++){
+		for (int i = 0; i < 25; i++) {
 			blocks << std::make_shared<Block>(Vec2(i * 32, 576));
 		}
 	}

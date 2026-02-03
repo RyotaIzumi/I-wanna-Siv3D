@@ -18,7 +18,7 @@ namespace Iwanna {
 
 	void Cherry::draw() const {
 		TextureAsset(U"sprCherry").drawAt(pos.x,pos.y-1);
-		hitBox->draw(Palette::Blue);
+		//hitBox->draw(Palette::Blue);//判定の可視化
 	}
 
 	void Cherry::onCollision(GameObject& other) {
