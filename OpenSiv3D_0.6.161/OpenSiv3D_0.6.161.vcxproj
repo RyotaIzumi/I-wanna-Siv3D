@@ -118,6 +118,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Audio\AudioAsset.cpp" />
+    <ClCompile Include="GameObject\Block.cpp" />
+    <ClCompile Include="GameObject\Cherry.cpp" />
     <ClCompile Include="GameObject\HitBox.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainGame.cpp" />
@@ -156,6 +158,10 @@
     <Image Include="App\example\texture\wood.jpg" />
     <Image Include="App\example\windmill.png" />
     <Image Include="App\icon.ico" />
+    <Image Include="App\Texture\Cherry\sprCherry.png" />
+    <Image Include="App\Texture\Cherry\sprCherryAllWhite.png" />
+    <Image Include="App\Texture\Cherry\sprCherryFrameWhite.png" />
+    <Image Include="App\Texture\Cherry\sprCherryWhite.png" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="App\Resource.rc" />
@@ -342,6 +348,10 @@
     <ClInclude Include="60FPSwithAutoFrameSkip.h" />
     <ClInclude Include="Audio\AudioAsset.h" />
     <ClInclude Include="CommonData.h" />
+    <ClInclude Include="GameObject\Block.h" />
+    <ClInclude Include="GameObject\Cherry.h" />
+    <ClInclude Include="GameObject\GameObject.h" />
+    <ClInclude Include="GameObject\StockNearGameObjects.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Scene\Scene.h" />

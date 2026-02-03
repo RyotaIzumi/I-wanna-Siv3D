@@ -42,6 +42,9 @@ namespace Iwanna {
 		void reset();
 		TextureRegion getTextureRegion(Global::Direction direction) const;
 
+		void stopAnimation() {
+			stopwatch.pause();
+		}
 		bool getIsFinishedAnimation() const { return isFinishedAnimation; };//非ループ時、animation再生が終わったかどうかを取得
 	};
 }
