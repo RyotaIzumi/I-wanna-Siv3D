@@ -28,6 +28,6 @@ namespace Iwanna {
 		int32 w = Scene::Width();
 		int32 h = Scene::Height();
 		Rect{ 0, 0, w, h }.draw(Palette::Black);
-		FontAsset(U"Font")(U"ロード中").drawAt(w / 2, h / 2 - 200);
+		FontAsset(U"Big")(U"ロード中").drawAt(w / 2, h / 2 - 200);
 	}
 }

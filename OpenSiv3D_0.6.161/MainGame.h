@@ -16,6 +16,7 @@ namespace Iwanna {
 	public:
 		MainGame();
 
+		void startGame();
 		void updateGame();
 		void debugGame();
 		void drawGame();

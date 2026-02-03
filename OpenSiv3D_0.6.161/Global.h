@@ -19,6 +19,8 @@ namespace Global {
 	inline Input inputRight = KeyRight;
 	inline Input inputJump = KeyShift;
 	inline Input inputShoot = KeyZ;
+	inline Input inputStart = KeyShift;
+	inline Input inputRestart = KeyR;
 
 	 // ======================
 	// 定数

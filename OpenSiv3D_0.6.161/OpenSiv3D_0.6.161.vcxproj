@@ -126,6 +126,7 @@
     <ClCompile Include="GameObject\Player.cpp" />
     <ClCompile Include="Scene\InGame.cpp" />
     <ClCompile Include="Scene\Loading.cpp" />
+    <ClCompile Include="Scene\StartMenu.cpp" />
     <ClCompile Include="Sprite\SpriteAsset.cpp" />
     <ClCompile Include="Sprite\SpriteSystem.cpp" />
     <ClCompile Include="stdafx.cpp">

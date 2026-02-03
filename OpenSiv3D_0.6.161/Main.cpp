@@ -13,7 +13,7 @@ void Main()
 	Window::SetTitle(U"I wanna Siv3D");
 
 	//フォントはここで宣言
-	FontAsset::Register(U"Font", 60, Typeface::Regular);
+	FontAsset::Register(U"Big", 60, Typeface::Regular);
 	FontAsset::Register(U"Button", FontMethod::MSDF, 20, Typeface::Medium);
 
 	
@@ -27,8 +27,9 @@ void Main()
 	Iwanna::Sound::loadAudiosSync();
 
 	App app;
+	app.add<Iwanna::StartMenu>(Iwanna::SceneType::START_MENU);
 	app.add<Iwanna::InGame>(Iwanna::SceneType::IN_GAME);
-	app.init(Iwanna::SceneType::IN_GAME, 0s);
+	app.init(Iwanna::SceneType::START_MENU, 0s);
 
 	while (System60::Update()) {
 		if (not app.update()) {
