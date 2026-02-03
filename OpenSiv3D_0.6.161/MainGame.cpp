@@ -4,6 +4,8 @@ namespace Iwanna {
 	MainGame::MainGame() {
 		player = std::make_shared<Player>();
 
+		cherries << std::make_shared<Cherry>();
+
 		//仮ブロック配置
 		blocks << std::make_shared<Block>(Vec2(160, 544));
 		blocks << std::make_shared<Block>(Vec2(160, 512));
@@ -23,6 +25,7 @@ namespace Iwanna {
 		stockNearGameObjects.clear();
 		stockNearGameObjects.add(player.get());
 		for (auto& b : blocks) stockNearGameObjects.add(b.get());
+		for (auto& c : cherries) stockNearGameObjects.add(c.get());
 
 		//playerの近くのオブジェクトのみを取得して当たり判定確認
 		auto near = stockNearGameObjects.query(player->getBroadRect());
@@ -51,5 +54,9 @@ namespace Iwanna {
 		}
 		//kid君描画
 		player->draw();
+		//さくらんぼ描画
+		for (auto c : cherries) {
+			c->draw();
+		}
 	}
 }

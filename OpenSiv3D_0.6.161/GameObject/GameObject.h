@@ -6,7 +6,7 @@ namespace Iwanna {
 
 	enum class ObjectType {
 		Player,
-		Enemy,
+		Cherry,
 		Block,
 		Bullet
 	};

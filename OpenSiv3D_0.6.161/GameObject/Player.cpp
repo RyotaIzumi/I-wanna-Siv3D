@@ -14,6 +14,7 @@ namespace Iwanna{
 		image_speed = 0.2; //アニメーション再生速度
 		muteki = false; //無敵状態かどうか
 		roomOutTrue = false;//kid君をroom外にいけるようにする
+		isDead = false;//死亡状態かどうか
 
 		//GameObject.hの値初期化
 		pos = Vec2(100, 100);
@@ -40,11 +41,11 @@ namespace Iwanna{
 		hspeed = 0.0;
 		isChanedActionWait = false;
 
-		if (Global::inputLeft.pressed()) playerMoveLeft();
-		if (Global::inputRight.pressed()) playerMoveRight();
-		
+		if (isDead) return;
 
 		if (!frozen) {
+			if (Global::inputLeft.pressed()) playerMoveLeft();
+			if (Global::inputRight.pressed()) playerMoveRight();
 			if (Global::inputShoot.down()) playerShoot();
 			if (Global::inputJump.down()) playerJump();
 			if (Global::inputJump.up()) playerVJump();
@@ -83,7 +84,8 @@ namespace Iwanna{
 		hitBox->draw(Palette::Red);
 		
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
-		texture.drawAt(pos.x,pos.y - 6);
+		if(!isDead)texture.drawAt(pos.x,pos.y - 6);
+		else texture.drawAt(pos.x, pos.y - 6, ColorF(0.8,0,0, 0.8));
 	}
 
 	void Player::playerMoveLeft() {
@@ -124,15 +126,19 @@ namespace Iwanna{
 		AudioAsset(Sound::SHOOT).playOneShot();
 	}
 
+	void Player::playerDead() {
+		isDead = true;
+		hspeed = 0;
+		vspeed = 0;
+		spriteSystem.stopAnimation();
+		AudioAsset(Sound::DEATH).playOneShot();
+	}
 
-	void Player::onCollision(GameObject& other)
-	{
+	void Player::onCollision(GameObject& other) {
 		// ブロック衝突
-		if (other.type == ObjectType::Block)
-		{
+		if (other.type == ObjectType::Block) {
 			// --- 横方向 予測衝突 ---
-			if (hspeed != 0)
-			{
+			if (hspeed != 0) {
 				RectF nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x + hspeed, hitBox->getCenterPos().y), hitBoxSize.x, hitBoxSize.y - 4);
 
 				if (nextHitBox.intersects(*other.hitBox->getRect()))
@@ -142,8 +148,7 @@ namespace Iwanna{
 			}
 
 			// --- 縦方向 予測衝突 ---
-			if (vspeed != 0)
-			{
+			if (vspeed != 0) {
 				//方向によって当たり判定の位置、大きさを変える
 				RectF nextHitBox;
 				if(vspeed > 0) nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x, hitBox->getCenterPos().y + vspeed + hitBoxSize.y / 2), hitBoxSize.x - 3, 1);
@@ -158,6 +163,13 @@ namespace Iwanna{
 					}
 					vspeed = 0;
 				}
+			}
+		}
+
+		// さくらんぼ衝突
+		if (other.type == ObjectType::Cherry) {
+			if (hitBox->getRect()->intersects(*other.hitBox->getCircle()) && !isDead) {
+				playerDead();
 			}
 		}
 	}

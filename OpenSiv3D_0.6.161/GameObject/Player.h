@@ -19,6 +19,7 @@ namespace Iwanna {
 		double image_speed = 0.2; //アニメーション再生速度
 		bool muteki = false; //無敵状態かどうか
 		bool roomOutTrue = false;//kid君をroom外にいけるようにする
+		bool isDead = false; //死亡状態かどうか
 
 		//gamemakerで使われる変数
 		double hspeed;
@@ -49,6 +50,7 @@ namespace Iwanna {
 		void playerJump();
 		void playerVJump();
 		void playerShoot();
+		void playerDead();
 
 		void onCollision(GameObject& other) override;
 		bool getOnGround() const;
