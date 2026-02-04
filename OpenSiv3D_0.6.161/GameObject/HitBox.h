@@ -117,4 +117,55 @@ namespace Iwanna {
 			return rect.bottomCenter();
 		}
 	};
+
+	class MikuHitBox : public HitBox {
+	public:
+		Polygon polygon;
+		Vec2 basePos;// 右手当たり
+
+		MikuHitBox(const Vec2& pos) {
+			basePos = { pos.x - 96, pos.y };
+			polygon = Polygon({
+				Vec2{ basePos.x + 56,  basePos.y - 220 },
+				Vec2{ basePos.x + 117, basePos.y - 228 },
+				Vec2{ basePos.x + 250, basePos.y + 31  },
+				Vec2{ basePos.x + 144, basePos.y + 218 },
+				Vec2{ basePos.x + 7,   basePos.y + 218 },
+				Vec2{ basePos.x + 2,   basePos.y + 175 },
+				Vec2{ basePos.x - 47,  basePos.y + 148 },
+				Vec2{ basePos.x - 57,  basePos.y + 75  }
+			});
+		}
+
+		void draw(const ColorF& color = Palette::White) const override {
+			polygon.draw(color);
+		}
+
+		bool intersects(const HitBox& other) const override;
+
+		void setPos(const Vec2& pos) override {
+			basePos = pos;
+		}
+
+		Vec2 getCenterPos() override {
+			return basePos;
+		}
+
+
+		Vec2 left() override {
+			return basePos;
+		}
+
+		Vec2 right() override {
+			return basePos;
+		}
+
+		Vec2 top() override {
+			return basePos;
+		}
+
+		Vec2 bottom() override {
+			return basePos;
+		}
+	};
 }

@@ -7,6 +7,7 @@ namespace Iwanna {
 		pos = {startPos.x * side, startPos.y * side};
 		hitBox = std::make_shared<RectHitBox>(pos, SizeF{ side,side });
 		type = ObjectType::Block;
+		canPlayerKill = false;
 	}
 	void Block::update() {
 	}

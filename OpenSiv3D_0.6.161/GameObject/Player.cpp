@@ -20,6 +20,7 @@ namespace Iwanna{
 		pos = Vec2(200, 500);
 		hitBox = std::make_shared<RectHitBox>(pos, hitBoxSize);
 		type = ObjectType::Player;
+		canPlayerKill = false;
 
 		//アニメーションデータの登録
 		//(アクション名,フレーム数,各フレーム再生時間,ループするかどうか(省略可), 左右差分があるか(省略可))
@@ -170,8 +171,8 @@ namespace Iwanna{
 		}
 
 		// さくらんぼ衝突
-		if (other.type == ObjectType::Cherry) {
-			if (hitBox->getRect()->intersects(*other.hitBox->getCircle()) && !isDead) {
+		if (other.type == ObjectType::Killer) {
+			if (this->intersects(other) && !isDead && other.canPlayerKill) {
 				playerDead();
 			}
 		}

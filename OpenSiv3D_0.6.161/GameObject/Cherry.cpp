@@ -5,9 +5,10 @@ namespace Iwanna {
 	Cherry::Cherry() {
 
 		//GameObject.hの値初期化
-		pos = Vec2(200, 400);
+		pos = Vec2(300, 500);
 		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize);
-		type = ObjectType::Cherry;
+		type = ObjectType::Killer;
+		canPlayerKill = true;
 
 		hspeed = 0.0;
 		vspeed = 0.0;

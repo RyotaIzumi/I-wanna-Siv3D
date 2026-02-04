@@ -3,6 +3,7 @@
 #include "GameObject/Player.h"
 #include "GameObject/Cherry.h"
 #include "GameObject/Block.h"
+#include "GameObject/Miku.h"
 #include "GameObject/StockNearGameObjects.h"
 
 namespace Iwanna {
@@ -11,6 +12,8 @@ namespace Iwanna {
 		std::shared_ptr<Player> player;
 		Array<std::shared_ptr<Cherry>> cherries;
 		Array<std::shared_ptr<Block>> blocks;
+		std::shared_ptr<Miku> miku;
+
 		StockNearGameObjects stockNearGameObjects;
 
 	public:
