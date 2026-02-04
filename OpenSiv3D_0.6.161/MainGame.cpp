@@ -22,6 +22,8 @@ namespace Iwanna {
 		createFloorBlocks({10,7});
 		createFloorBlocks({10,11});
 		createFloorBlocks({10,15});
+
+		miku = std::make_shared<Miku>(Vec2{704,352});
 	}
 
 	void MainGame::updateGame() {
@@ -41,10 +43,14 @@ namespace Iwanna {
 			player->onCollision(*obj);
 		}
 
+		player->onCollision(*miku);
+
 		ClearPrint();
 		Print << U"付近のGameObject数 : " << near.size();
 
 		player->updateLate();
+
+		miku->update();
 	}
 
 	void MainGame::debugGame() {
@@ -54,6 +60,8 @@ namespace Iwanna {
 	void MainGame::drawGame() {
 		//背景描画
 		Rect(0, 0, 800, 600).draw(ColorF(0.8, 1.0));
+		//ミク描画
+		miku->draw();
 		//ブロック描画
 		for (auto b : blocks) {
 			b->draw();

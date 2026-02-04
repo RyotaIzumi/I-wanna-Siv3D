@@ -8,6 +8,9 @@ namespace Iwanna {
 		else if (auto r = dynamic_cast<const RectHitBox*>(&other)) {
 			return circle.intersects(r->rect);
 		}
+		else if (auto m = dynamic_cast<const MikuHitBox*>(&other)) {
+			return circle.intersects(m->polygon);
+		}
 		return false;
 	}
 
@@ -17,6 +20,19 @@ namespace Iwanna {
 		}
 		else if (auto c = dynamic_cast<const CircleHitBox*>(&other)) {
 			return rect.intersects(c->circle);
+		}
+		else if (auto m = dynamic_cast<const MikuHitBox*>(&other)) {
+			return rect.intersects(m->polygon);
+		}
+		return false;
+	}
+
+	bool MikuHitBox::intersects(const HitBox& other) const {
+		if (auto r = dynamic_cast<const RectHitBox*>(&other)) {
+			return polygon.intersects(r->rect);
+		}
+		else if (auto c = dynamic_cast<const CircleHitBox*>(&other)) {
+			return polygon.intersects(c->circle);
 		}
 		return false;
 	}
