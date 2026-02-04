@@ -17,8 +17,8 @@ namespace Iwanna{
 		isDead = false;//死亡状態かどうか
 
 		//GameObject.hの値初期化
-		pos = Vec2(100, 100);
-		hitBox = std::make_shared<RectHitBox>(Vec2(0, 0), hitBoxSize);
+		pos = Vec2(200, 500);
+		hitBox = std::make_shared<RectHitBox>(pos, hitBoxSize);
 		type = ObjectType::Player;
 
 		//アニメーションデータの登録
@@ -53,6 +53,9 @@ namespace Iwanna{
 
 		// 重力反映
 		vspeed += gravity;
+		if (Abs(vspeed) > maxVspeed) {
+			vspeed = (vspeed > 0 ? 1 : -1) * maxVspeed;
+		}
 
 		// ジャンプ時アニメーション反映
 		if (!isOnGround) {

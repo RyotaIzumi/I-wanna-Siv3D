@@ -159,6 +159,9 @@
     <Image Include="App\example\texture\wood.jpg" />
     <Image Include="App\example\windmill.png" />
     <Image Include="App\icon.ico" />
+    <Image Include="App\Texture\Block\sprBlock.png" />
+    <Image Include="App\Texture\Block\sprFloor.png" />
+    <Image Include="App\Texture\Block\sprWall.png" />
     <Image Include="App\Texture\Cherry\sprCherry.png" />
     <Image Include="App\Texture\Cherry\sprCherryAllWhite.png" />
     <Image Include="App\Texture\Cherry\sprCherryFrameWhite.png" />

@@ -20,5 +20,8 @@ namespace Iwanna {
 		void updateGame();
 		void debugGame();
 		void drawGame();
+
+		void createPeripheryBlocks();
+		void createFloorBlocks(Vec2 basePos);
 	};
 }

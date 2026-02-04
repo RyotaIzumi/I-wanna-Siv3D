@@ -7,8 +7,11 @@
 
 namespace Iwanna {
 	class Block : public GameObject {
+	private:
+		int32 side = 32;
+		String textureName = U"sprBlock";
 	public:
-		Block(Vec2 startPos);
+		Block(String name, Vec2 startPos);
 
 		void update() override;
 		void draw() const override;

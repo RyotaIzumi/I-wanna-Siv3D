@@ -78,7 +78,7 @@ public:
 
 	inline static chrono::high_resolution_clock::time_point start; // 計測スタート時刻を保存 //XXXX
 
-	static const int FPS = 60; // 1秒間に1画面を書き換える回数
+	static const int FPS = 50; // 1秒間に1画面を書き換える回数
 	/// @brief フルスクリーンの画素数
 	inline static Size displayResolution = DisplayResolution::HD_1280x720;
 	inline static bool IsFullScreen = false;
