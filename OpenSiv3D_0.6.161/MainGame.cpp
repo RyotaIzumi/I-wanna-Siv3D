@@ -10,17 +10,18 @@ namespace Iwanna {
 		cherries.clear();
 		cherries << std::make_shared<Cherry>();
 
-		//仮ブロック配置
+		//ブロック配置
 		blocks.clear();
-		blocks << std::make_shared<Block>(Vec2(160, 544));
-		blocks << std::make_shared<Block>(Vec2(160, 512));
-		blocks << std::make_shared<Block>(Vec2(160, 480));
-		blocks << std::make_shared<Block>(Vec2(160, 448));
-		blocks << std::make_shared<Block>(Vec2(320, 448));
-		blocks << std::make_shared<Block>(Vec2(320, 544));
-		for (int i = 0; i < 25; i++) {
-			blocks << std::make_shared<Block>(Vec2(i * 32, 576));
-		}
+		createPeripheryBlocks();
+		createFloorBlocks({3,3});
+		createFloorBlocks({3,6});
+		createFloorBlocks({3,9});
+		createFloorBlocks({3,12});
+		createFloorBlocks({3,15});
+		createFloorBlocks({10,3});
+		createFloorBlocks({10,7});
+		createFloorBlocks({10,11});
+		createFloorBlocks({10,15});
 	}
 
 	void MainGame::updateGame() {
@@ -63,5 +64,30 @@ namespace Iwanna {
 		for (auto c : cherries) {
 			c->draw();
 		}
+	}
+
+	//外周のブロック配置
+	void MainGame::createPeripheryBlocks() {
+		blocks << std::make_shared<Block>(U"sprBlock", Vec2(0, 0));
+		blocks << std::make_shared<Block>(U"sprBlock", Vec2(24, 0));
+		blocks << std::make_shared<Block>(U"sprBlock", Vec2(0, 18));
+		blocks << std::make_shared<Block>(U"sprBlock", Vec2(24, 18));
+		for (int i = 1; i < 18; i++) {
+			blocks << std::make_shared<Block>(U"sprWall", Vec2(0, i));
+			blocks << std::make_shared<Block>(U"sprWall", Vec2(24, i));
+		}
+		for (int i = 1; i < 24; i++) {
+			blocks << std::make_shared<Block>(U"sprFloor", Vec2(i, 0));
+			blocks << std::make_shared<Block>(U"sprFloor", Vec2(i, 18));
+		}
+	}
+
+	//5マス分の床ブロックを作成
+	void MainGame::createFloorBlocks(Vec2 basePos) {
+		blocks << std::make_shared<Block>(U"sprBlock", Vec2(basePos.x, basePos.y));
+		for (int i = 1; i <= 3; i++) {
+			blocks << std::make_shared<Block>(U"sprFloor", Vec2(basePos.x + i, basePos.y));
+		}
+		blocks << std::make_shared<Block>(U"sprBlock", Vec2(basePos.x + 4, basePos.y));
 	}
 }
