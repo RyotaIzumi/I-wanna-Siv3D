@@ -118,6 +118,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Audio\AudioAsset.cpp" />
+    <ClCompile Include="AvoidanceManager.cpp" />
     <ClCompile Include="GameObject\Block.cpp" />
     <ClCompile Include="GameObject\Cherry.cpp" />
     <ClCompile Include="GameObject\HitBox.cpp" />
@@ -333,6 +334,7 @@
     <Media Include="App\example\shot.mp3" />
     <Media Include="App\example\test.mp3" />
     <Media Include="App\example\video\river.mp4" />
+    <Media Include="App\Sound\Bgm\sndHibana.mp3" />
     <Media Include="App\Sound\Se\sndDeath.wav" />
     <Media Include="App\Sound\Se\sndDJump.wav" />
     <Media Include="App\Sound\Se\sndJump.wav" />
@@ -353,6 +355,7 @@
   <ItemGroup>
     <ClInclude Include="60FPSwithAutoFrameSkip.h" />
     <ClInclude Include="Audio\AudioAsset.h" />
+    <ClInclude Include="AvoidanceManager.h" />
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="GameObject\Block.h" />
     <ClInclude Include="GameObject\Cherry.h" />

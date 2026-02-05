@@ -5,6 +5,7 @@
 #include "GameObject/Block.h"
 #include "GameObject/Miku.h"
 #include "GameObject/StockNearGameObjects.h"
+#include "AvoidanceManager.h"
 
 namespace Iwanna {
 	class MainGame {
@@ -16,6 +17,11 @@ namespace Iwanna {
 
 		StockNearGameObjects stockNearGameObjects;
 
+		const int32 FPS = 50;
+		Audio audio;
+
+		AvoidanceManager avoidanceManager;
+
 	public:
 		MainGame();
 
@@ -26,5 +32,10 @@ namespace Iwanna {
 
 		void createPeripheryBlocks();
 		void createFloorBlocks(Vec2 basePos);
+
+		void playBgm(int32 chapter);
+		void stopBgm();
+
+		void pauseBgm();
 	};
 }

@@ -11,6 +11,7 @@ namespace Iwanna {
 		data.updateGame();
 
 		if (Global::inputRestart.down()) {
+			data.stopBgm();
 			changeScene(SceneType::START_MENU, 0.0s);
 		}
 
@@ -18,7 +19,8 @@ namespace Iwanna {
 	}
 
 	void InGame::debug() const {
-		
+		auto& data = getData().game;
+		data.debugGame();
 	}
 
 	void InGame::draw() const {

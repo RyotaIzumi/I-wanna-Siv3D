@@ -24,9 +24,16 @@ namespace Iwanna {
 		createFloorBlocks({10,15});
 
 		miku = std::make_shared<Miku>(Vec2{704,352});
+
+		playBgm(1);
 	}
 
 	void MainGame::updateGame() {
+
+		int32 newStep = static_cast<int32>(audio.posSec() * FPS);
+		avoidanceManager.setStep(newStep);
+		avoidanceManager.update();
+
 		player->update();
 
 		//毎フレームGameObjectをspatialGridに登録
@@ -45,8 +52,7 @@ namespace Iwanna {
 
 		player->onCollision(*miku);
 
-		ClearPrint();
-		Print << U"付近のGameObject数 : " << near.size();
+		if (player->getIsDead()) pauseBgm();
 
 		player->updateLate();
 
@@ -54,7 +60,8 @@ namespace Iwanna {
 	}
 
 	void MainGame::debugGame() {
-		
+		if (Key1.down())pauseBgm();
+		if (Key2.down())audio.play();
 	}
 
 	void MainGame::drawGame() {
@@ -97,5 +104,31 @@ namespace Iwanna {
 			blocks << std::make_shared<Block>(U"sprFloor", Vec2(basePos.x + i, basePos.y));
 		}
 		blocks << std::make_shared<Block>(U"sprBlock", Vec2(basePos.x + 4, basePos.y));
+	}
+
+	void MainGame::playBgm(int32 chapter) {
+		stopBgm();
+		audio = AudioAsset{ U"sndHibana"};
+		SecondsF startTime = 0.0s;
+		int32 startStep = 0;
+
+		switch (chapter) {
+		case 1:startStep = 0; break;
+		case 2:startStep = 840; break;
+		case 3:startStep = 1320; break;
+		}
+
+		startTime = SecondsF(static_cast<double>(startStep) / static_cast<double>(FPS));
+
+		audio.seekTime(startTime);
+		audio.play();
+	}
+
+	void MainGame::stopBgm() {
+		audio.stop();
+	}
+
+	void MainGame::pauseBgm() {
+		audio.pause();
 	}
 }

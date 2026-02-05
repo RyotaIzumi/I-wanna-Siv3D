@@ -178,8 +178,13 @@ namespace Iwanna{
 		}
 	}
 
-
+	// 地面に接地しているかどうかを取得
 	bool Player::getOnGround() const {
 		return isOnGround;
+	}
+
+	// 死亡状態かどうかを取得
+	bool Player::getIsDead() const {
+		return isDead;
 	}
 }

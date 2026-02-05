@@ -4,8 +4,8 @@
 namespace Iwanna {
 	namespace Sound {
 
-		//const String FIELD01{ U"field01" };
-		//const FilePath Path_FIELD01{ U"sound/BGM/field_01.mp3" };
+		const String MAIN{ U"sndHibana" };
+		const FilePath Path_MAIN{ U"Sound/Bgm/sndHibana.mp3" };
 
 		//SEの名前とパスの定数
 		static const String SE_PATH = U"Sound/Se/";
