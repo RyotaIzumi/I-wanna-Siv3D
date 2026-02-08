@@ -60,8 +60,8 @@ namespace Iwanna {
 	}
 
 	void MainGame::debugGame() {
-		if (Key1.down())pauseBgm();
-		if (Key2.down())audio.play();
+		if (Global::inputDebugPause.down())pauseBgm();
+		if (Global::inputDebugStart.down())audio.play();
 	}
 
 	void MainGame::drawGame() {
