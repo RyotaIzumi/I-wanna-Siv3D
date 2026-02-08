@@ -6,7 +6,7 @@
 #include "GameObject.h"
 
 namespace Iwanna {
-	class Player : public GameObject{
+	class Player : public GameObject {
 	private://以下値は元のI wanna の値と同じ
 		bool frozen = false; //操作を受け付けるかどうか
 		bool frozen2 = false; //↑の予備
@@ -26,7 +26,7 @@ namespace Iwanna {
 		double vspeed;
 
 		//player当たり判定サイズ
-		SizeF hitBoxSize{11,21};
+		SizeF hitBoxSize{ 11,21 };
 
 		//アニメーション管理用変数
 		SpriteSystem spriteSystem;
@@ -54,5 +54,6 @@ namespace Iwanna {
 
 		void onCollision(GameObject& other) override;
 		bool getOnGround() const;
+		bool getIsDead() const;
 	};
 }

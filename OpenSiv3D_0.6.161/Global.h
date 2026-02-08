@@ -22,6 +22,9 @@ namespace Global {
 	inline Input inputStart = KeyShift;
 	inline Input inputRestart = KeyR;
 
+	inline Input inputDebugPause = Key1;
+	inline Input inputDebugStart = Key2;
+
 	 // ======================
 	// 定数
 	// ======================

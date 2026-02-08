@@ -151,21 +151,20 @@ namespace Iwanna {
 			return basePos;
 		}
 
-
 		Vec2 left() override {
-			return basePos;
+			return { basePos.x - 57, basePos.y };
 		}
 
 		Vec2 right() override {
-			return basePos;
+			return { basePos.x + 250, basePos.y };
 		}
 
 		Vec2 top() override {
-			return basePos;
+			return { basePos.x, basePos.y - 228 };
 		}
 
 		Vec2 bottom() override {
-			return basePos;
+			return { basePos.x, basePos.y + 218 };
 		}
 	};
 }
