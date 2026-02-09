@@ -5,34 +5,18 @@ namespace Iwanna {
 	}
 
 	void MainGame::startGame() {
-		player = std::make_shared<Player>();
-
-		cherries.clear();
-		cherries << std::make_shared<Cherry>();
-
-		//ブロック配置
-		blocks.clear();
-		createPeripheryBlocks();
-		createFloorBlocks({3,3});
-		createFloorBlocks({3,6});
-		createFloorBlocks({3,9});
-		createFloorBlocks({3,12});
-		createFloorBlocks({3,15});
-		createFloorBlocks({10,3});
-		createFloorBlocks({10,7});
-		createFloorBlocks({10,11});
-		createFloorBlocks({10,15});
-
-		miku = std::make_shared<Miku>(Vec2{704,352});
-
-		playBgm(1);
+		playBgm(3);
 	}
 
 	void MainGame::updateGame() {
-
-		int32 newStep = static_cast<int32>(audio.posSec() * FPS);
+		int32 newStep = static_cast<int32>(audio.posSec() * Global::FPS);
 		avoidanceManager.setStep(newStep);
 		avoidanceManager.update();
+
+		auto player = avoidanceManager.getPlayer();
+		auto blocks = avoidanceManager.getBlocks();
+		auto cherries = avoidanceManager.getCherries();
+		auto miku = avoidanceManager.getMiku();
 
 		player->update();
 
@@ -65,6 +49,11 @@ namespace Iwanna {
 	}
 
 	void MainGame::drawGame() {
+		auto player = avoidanceManager.getPlayer();
+		auto blocks = avoidanceManager.getBlocks();
+		auto cherries = avoidanceManager.getCherries();
+		auto miku = avoidanceManager.getMiku();
+
 		//背景描画
 		Rect(0, 0, 800, 600).draw(ColorF(0.8, 1.0));
 		//ミク描画
@@ -81,31 +70,6 @@ namespace Iwanna {
 		}
 	}
 
-	//外周のブロック配置
-	void MainGame::createPeripheryBlocks() {
-		blocks << std::make_shared<Block>(U"sprBlock", Vec2(0, 0));
-		blocks << std::make_shared<Block>(U"sprBlock", Vec2(24, 0));
-		blocks << std::make_shared<Block>(U"sprBlock", Vec2(0, 18));
-		blocks << std::make_shared<Block>(U"sprBlock", Vec2(24, 18));
-		for (int i = 1; i < 18; i++) {
-			blocks << std::make_shared<Block>(U"sprWall", Vec2(0, i));
-			blocks << std::make_shared<Block>(U"sprWall", Vec2(24, i));
-		}
-		for (int i = 1; i < 24; i++) {
-			blocks << std::make_shared<Block>(U"sprFloor", Vec2(i, 0));
-			blocks << std::make_shared<Block>(U"sprFloor", Vec2(i, 18));
-		}
-	}
-
-	//5マス分の床ブロックを作成
-	void MainGame::createFloorBlocks(Vec2 basePos) {
-		blocks << std::make_shared<Block>(U"sprBlock", Vec2(basePos.x, basePos.y));
-		for (int i = 1; i <= 3; i++) {
-			blocks << std::make_shared<Block>(U"sprFloor", Vec2(basePos.x + i, basePos.y));
-		}
-		blocks << std::make_shared<Block>(U"sprBlock", Vec2(basePos.x + 4, basePos.y));
-	}
-
 	void MainGame::playBgm(int32 chapter) {
 		stopBgm();
 		audio = AudioAsset{ U"sndHibana"};
@@ -113,12 +77,12 @@ namespace Iwanna {
 		int32 startStep = 0;
 
 		switch (chapter) {
-		case 1:startStep = 0; break;
-		case 2:startStep = 840; break;
-		case 3:startStep = 1320; break;
+		case 1:startStep = Global::startStep_Chapter1; break;
+		case 2:startStep = Global::startStep_Chapter2; break;
+		case 3:startStep = Global::startStep_Chapter3; break;
 		}
 
-		startTime = SecondsF(static_cast<double>(startStep) / static_cast<double>(FPS));
+		startTime = SecondsF(static_cast<double>(startStep) / static_cast<double>(Global::FPS));
 
 		audio.seekTime(startTime);
 		audio.play();

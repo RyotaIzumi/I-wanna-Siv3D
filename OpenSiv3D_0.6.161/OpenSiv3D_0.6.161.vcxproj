@@ -118,7 +118,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Audio\AudioAsset.cpp" />
-    <ClCompile Include="AvoidanceManager.cpp" />
+    <ClCompile Include="AvoidanceManager\AvoidanceManager.cpp" />
+    <ClCompile Include="AvoidanceManager\Chapter1Manager.cpp" />
+    <ClCompile Include="AvoidanceManager\Chapter2Manager.cpp" />
     <ClCompile Include="GameObject\Block.cpp" />
     <ClCompile Include="GameObject\Cherry.cpp" />
     <ClCompile Include="GameObject\HitBox.cpp" />
@@ -355,7 +357,7 @@
   <ItemGroup>
     <ClInclude Include="60FPSwithAutoFrameSkip.h" />
     <ClInclude Include="Audio\AudioAsset.h" />
-    <ClInclude Include="AvoidanceManager.h" />
+    <ClInclude Include="AvoidanceManager\AvoidanceManager.h" />
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="GameObject\Block.h" />
     <ClInclude Include="GameObject\Cherry.h" />

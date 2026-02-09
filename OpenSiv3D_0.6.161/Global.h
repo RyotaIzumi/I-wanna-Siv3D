@@ -28,4 +28,12 @@ namespace Global {
 	 // ======================
 	// 定数
 	// ======================
+
+	// ゲームのフレームレート
+	constexpr int32 FPS = 50;
+
+	// 各チャプター開始ステップ
+	constexpr int32 startStep_Chapter1 = 0;
+	constexpr int32 startStep_Chapter2 = 840;
+	constexpr int32 startStep_Chapter3 = 1320;
 }
