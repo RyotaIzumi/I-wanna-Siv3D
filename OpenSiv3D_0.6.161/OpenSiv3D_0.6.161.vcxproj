@@ -121,6 +121,7 @@
     <ClCompile Include="AvoidanceManager\AvoidanceManager.cpp" />
     <ClCompile Include="AvoidanceManager\Chapter1Manager.cpp" />
     <ClCompile Include="AvoidanceManager\Chapter2Manager.cpp" />
+    <ClCompile Include="AvoidanceManager\CherryPatternManagers\GeneralPurposePatterns.cpp" />
     <ClCompile Include="GameObject\Block.cpp" />
     <ClCompile Include="GameObject\Cherry.cpp" />
     <ClCompile Include="GameObject\HitBox.cpp" />

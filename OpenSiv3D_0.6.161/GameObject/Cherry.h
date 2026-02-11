@@ -8,20 +8,25 @@
 namespace Iwanna {
 	class Cherry : public GameObject {
 	private:
-		double hspeed;
-		double vspeed;
-
-		//当たり判定サイズ
+		//当たり判定サイズ(半径)
 		int32 hitBoxSize = 10;
 
-		//アニメーション管理用変数
-		SpriteSystem spriteSystem;
-
 	public:
+		double speed = 0;
+		double hspeed = 0;
+		double vspeed = 0;
+		double dir = 0;
+
+		bool isDelete = false;//消去用フラグ
+		bool isOutOfScreen = false;//画面外判定用フラグ
+
 		Cherry();
 
 		void update() override;
 		void draw() const override;
+
+		void calculateSpeed();
+		void checkOutOfScreen();
 
 		void onCollision(GameObject& other) override;
 	};

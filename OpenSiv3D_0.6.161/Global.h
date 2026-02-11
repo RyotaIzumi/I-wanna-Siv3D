@@ -32,6 +32,10 @@ namespace Global {
 	// ゲームのフレームレート
 	constexpr int32 FPS = 50;
 
+	// ゲームウィンドウサイズ
+	constexpr int32 windowWidth = 800;
+	constexpr int32 windowHeight = 600;
+
 	// 各チャプター開始ステップ
 	constexpr int32 startStep_Chapter1 = 0;
 	constexpr int32 startStep_Chapter2 = 840;
