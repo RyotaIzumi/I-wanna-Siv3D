@@ -7,7 +7,7 @@ namespace Iwanna {
 		//GameObject.hの値初期化
 		pos = Vec2(0, 0);
 		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize);
-		type = ObjectType::Killer;
+		type = ObjectType::Cherry;
 		canPlayerKill = true;
 		isDelete = false;
 		isOutOfScreen = false;

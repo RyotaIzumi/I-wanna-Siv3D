@@ -15,6 +15,7 @@ namespace Iwanna {
 		registerTexture(U"sprPlayerFall", PlayerPath + U"sprPlayerFall.png");
 		registerTexture(U"sprPlayerJump", PlayerPath + U"sprPlayerJump.png");
 		registerTexture(U"sprPlayerRunning", PlayerPath + U"sprPlayerRunning.png");
+		registerTexture(U"sprBullet", PlayerPath + U"bullet.png");
 
 		//さくらんぼテクスチャ登録
 		static const FilePath CherryPath = U"Texture/Cherry/";

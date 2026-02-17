@@ -1,7 +1,10 @@
 ﻿#include "AvoidanceManager.h"
+#include "../Audio/AudioAsset.h"
 
 namespace Iwanna {
 	AvoidanceManager::AvoidanceManager() {
+		stockNearGameObjects.cellSize = 64;
+		stockBulletsNearGameObjects.cellSize = 32;
 	}
 
 	void AvoidanceManager::setUpObjects(int32 chapter) {
@@ -32,38 +35,85 @@ namespace Iwanna {
 		else if(step < Global::startStep_Chapter3) chapter2();
 
 		// ----- update関連 -----
+		auto& player = gameObjects.player;
+		auto& bullets = gameObjects.bullets;
+		auto& cherries = gameObjects.cherries;
+		auto& blocks = gameObjects.blocks;
+		auto& miku = gameObjects.miku;
 
-		gameObjects.player->update();
+		player->update();
+
+		// 弾丸の生成
+		if (player->getIsGenerateBullet()) {
+			if (bullets.size() < bulletMaxNum) {
+				bullets << std::make_shared<Bullet>(player->pos, player->getDirection() == Global::Direction::RIGHT ? bulletSpeed : -bulletSpeed);
+				AudioAsset(Sound::SHOOT).playOneShot();
+			}
+			player->setIsGenerateBullet(false);
+		}
 
 		//毎フレームGameObjectをspatialGridに登録
 		stockNearGameObjects.clear();
-		stockNearGameObjects.add(gameObjects.player.get());
-		for (auto& b : gameObjects.blocks) stockNearGameObjects.add(b.get());
-		for (auto& c : gameObjects.cherries) {
+		stockBulletsNearGameObjects.clear();
+
+		stockNearGameObjects.add(player.get());
+		for (auto& b : blocks) {
+			stockNearGameObjects.add(b.get());
+			stockBulletsNearGameObjects.add(b.get());
+		}
+		for (auto& b : bullets) {
+			b->update();
+		}
+		for (auto& c : cherries) {
 			c->update();
 			stockNearGameObjects.add(c.get());
 		}
 
 		//画面外のりんごを削除
-		gameObjects.cherries.remove_if([](auto&& cherry) {
+		cherries.remove_if([](auto&& cherry) {
 			return cherry->isOutOfScreen;
 		});
 
 		//playerの近くのオブジェクトのみを取得して当たり判定確認
-		auto near = stockNearGameObjects.query(gameObjects.player->getBroadRect());
+		auto near = stockNearGameObjects.query(player->getBroadRect());
 		for (auto* obj : near) {
-			if (obj == gameObjects.player.get()) continue;
-			gameObjects.player->onCollision(*obj);
+			if (obj == player.get()) continue;
+			player->onCollision(*obj);
 		}
-		gameObjects.player->onCollision(*gameObjects.miku);
-		gameObjects.player->updateLate();
+		player->onCollision(*miku);
+		player->updateLate();
 
-		gameObjects.miku->update();
+		
+		//各弾丸とブロックとの衝突
+		for (auto& b : bullets) {
+			auto nearObjs = stockBulletsNearGameObjects.query(b->getBroadRect());
+			for (auto* obj : nearObjs) {
+				b->onCollision(*obj);
+			}
+			b->onCollision(*miku);
+		}
+		
+		//弾丸削除
+		bullets.remove_if([](auto&& bullet) {
+			return bullet->isOutOfScreen || bullet->isDelete;
+		});
+
+		miku->update();
+	}
+
+	void AvoidanceManager::debug() {
+		auto& player = gameObjects.player;
+
+		if (Global::inputDebugMuteki.down()) {
+			player->setIsMuteki(!player->getIsMuteki());
+		}
 
 		ClearPrint();
 		Print << U" Avoidance Step : " << step;
 		Print << U" Cherries Num : " << gameObjects.cherries.size();
-		Print << U" 周囲のObject数 : " << near.size();
+		Print << U" Player Pos : " << player->pos;
+		Print << U" Player Muteki : " << player->getIsMuteki();
+		Print << U" Bullets Num : " << gameObjects.bullets.size();
 	}
 
 	void AvoidanceManager::draw() const {
@@ -77,6 +127,10 @@ namespace Iwanna {
 		}
 		//kid君描画
 		gameObjects.player->draw();
+		//弾丸描画
+		for (auto b : gameObjects.bullets) {
+			b->draw();
+		}
 		//りんご描画
 		for (auto c : gameObjects.cherries) {
 			c->draw();

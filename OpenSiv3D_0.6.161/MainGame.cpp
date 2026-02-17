@@ -20,6 +20,7 @@ namespace Iwanna {
 	}
 
 	void MainGame::debugGame() {
+		avoidanceManager.debug();
 		if (Global::inputDebugPause.down())pauseBgm();
 		if (Global::inputDebugStart.down())audio.play();
 	}

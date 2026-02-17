@@ -5,7 +5,7 @@ namespace Iwanna {
 		//GameObject.hの値初期化
 		pos = startPos;
 		hitBox = std::make_shared<MikuHitBox>(pos);
-		type = ObjectType::Killer;
+		type = ObjectType::Miku;
 		canPlayerKill = true;
 	}
 	void Miku::update() {

@@ -6,9 +6,10 @@ namespace Iwanna {
 
 	enum class ObjectType {
 		Player,
-		Killer,
+		Cherry,
 		Block,
-		Bullet
+		Bullet,
+		Miku
 	};
 
 	class GameObject {
@@ -17,6 +18,9 @@ namespace Iwanna {
 		std::shared_ptr<HitBox> hitBox;
 		ObjectType type;
 		bool canPlayerKill = false;
+
+		double hspeed;
+		double vspeed;
 
 		virtual ~GameObject() = default;
 
