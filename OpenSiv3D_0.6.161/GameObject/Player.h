@@ -20,10 +20,7 @@ namespace Iwanna {
 		bool muteki = false; //無敵状態かどうか
 		bool roomOutTrue = false;//kid君をroom外にいけるようにする
 		bool isDead = false; //死亡状態かどうか
-
-		//gamemakerで使われる変数
-		double hspeed;
-		double vspeed;
+		bool isGenerateBullet = false; //弾生成フラグ
 
 		//player当たり判定サイズ
 		SizeF hitBoxSize{ 11,21 };
@@ -52,8 +49,14 @@ namespace Iwanna {
 		void playerShoot();
 		void playerDead();
 
+		Vec2 snappedPos(Vec2 p);
+
 		void onCollision(GameObject& other) override;
 		bool getOnGround() const;
 		bool getIsDead() const;
+
+		void setIsGenerateBullet(bool value);
+		bool getIsGenerateBullet() const;
+		Global::Direction getDirection() const;
 	};
 }

@@ -13,8 +13,6 @@ namespace Iwanna {
 
 	public:
 		double speed = 0;
-		double hspeed = 0;
-		double vspeed = 0;
 		double dir = 0;
 
 		bool isDelete = false;//消去用フラグ

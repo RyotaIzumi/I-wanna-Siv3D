@@ -53,6 +53,7 @@ namespace Iwanna{
 		}
 
 		// 重力反映
+		gravity = 0.4;
 		vspeed += gravity;
 		if (Abs(vspeed) > maxVspeed) {
 			vspeed = (vspeed > 0 ? 1 : -1) * maxVspeed;
@@ -127,7 +128,7 @@ namespace Iwanna{
 	}
 
 	void Player::playerShoot() {
-		AudioAsset(Sound::SHOOT).playOneShot();
+		isGenerateBullet = true;
 	}
 
 	void Player::playerDead() {
@@ -138,16 +139,33 @@ namespace Iwanna{
 		AudioAsset(Sound::DEATH).playOneShot();
 	}
 
+	Vec2 Player::snappedPos(Vec2 p)
+	{
+		return {
+			Math::Floor(p.x),
+			Math::Floor(p.y)
+		};
+	}
+
 	void Player::onCollision(GameObject& other) {
 		// ブロック衝突
 		if (other.type == ObjectType::Block) {
+			Vec2 modifiedPos = snappedPos(pos);
+
 			// --- 横方向 予測衝突 ---
 			if (hspeed != 0) {
-				RectF nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x + hspeed, hitBox->getCenterPos().y), hitBoxSize.x, hitBoxSize.y - 4);
+				RectF nextHitBox = RectF(Arg::center(modifiedPos.x + hspeed, modifiedPos.y), hitBoxSize.x - 2, 1);
 
 				if (nextHitBox.intersects(*other.hitBox->getRect()))
 				{
-					hspeed = 0; // 移動キャンセル
+					if (hspeed > 0) {
+						pos.x = other.hitBox->left().x - 5;
+					}
+					else {
+						pos.x = other.hitBox->right().x + 5;
+					}
+
+					hspeed = 0;
 				}
 			}
 
@@ -155,8 +173,8 @@ namespace Iwanna{
 			if (vspeed != 0) {
 				//方向によって当たり判定の位置、大きさを変える
 				RectF nextHitBox;
-				if(vspeed > 0) nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x, hitBox->getCenterPos().y + vspeed + hitBoxSize.y / 2), hitBoxSize.x - 3, 1);
-				if(vspeed < 0) nextHitBox = RectF(Arg::center(hitBox->getCenterPos().x, hitBox->getCenterPos().y + vspeed - hitBoxSize.y / 2 + 2), hitBoxSize.x - 3, 1);
+				if(vspeed > 0) nextHitBox = RectF(Arg::center(hitBox->bottom().x, hitBox->bottom().y + vspeed), hitBoxSize.x - 6, 1);
+				if(vspeed < 0) nextHitBox = RectF(Arg::center(hitBox->top().x, hitBox->top().y - vspeed - 3), hitBoxSize.x - 6, 1);
 
 				if (nextHitBox.intersects(*other.hitBox->getRect()))
 				{
@@ -165,13 +183,23 @@ namespace Iwanna{
 						djump = true;
 						isOnGround = true;
 					}
+					else {
+						pos.y = other.hitBox->bottom().y + 9;
+					}
+					gravity = 0;
 					vspeed = 0;
 				}
 			}
+
+			RectF nextHitBox = RectF(Arg::center(modifiedPos.x + hspeed, modifiedPos.y + vspeed + 2), hitBoxSize.x - 2, hitBoxSize.y - 9);
+			if (nextHitBox.intersects(*other.hitBox->getRect())) {
+				hspeed = 0;
+			}
+
 		}
 
-		// さくらんぼ衝突
-		if (other.type == ObjectType::Killer) {
+		// さくらんぼ,ミク衝突
+		if (other.type == ObjectType::Cherry || other.type == ObjectType::Miku) {
 			if (this->intersects(other) && !isDead && other.canPlayerKill) {
 				playerDead();
 			}
@@ -186,5 +214,20 @@ namespace Iwanna{
 	// 死亡状態かどうかを取得
 	bool Player::getIsDead() const {
 		return isDead;
+	}
+
+	// 弾生成フラグを設定
+	void Player::setIsGenerateBullet(bool value) {
+		isGenerateBullet = value;
+	}
+
+	// 弾生成フラグを取得
+	bool Player::getIsGenerateBullet() const {
+		return isGenerateBullet;
+	}
+
+	// 向きを取得
+	Global::Direction Player::getDirection() const {
+		return direction;
 	}
 }

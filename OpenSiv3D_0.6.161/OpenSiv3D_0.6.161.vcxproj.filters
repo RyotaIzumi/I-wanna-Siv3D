@@ -168,6 +168,33 @@
     <ClCompile Include="Audio\AudioAsset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AvoidanceManager\AvoidanceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AvoidanceManager\Chapter1Manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AvoidanceManager\Chapter2Manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AvoidanceManager\CherryPatternManagers\GeneralPurposePatterns.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Block.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Cherry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Miku.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\StartMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\Bullet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="App\icon.ico">
@@ -241,6 +268,30 @@
     </Image>
     <Image Include="App\example\obj\siv3d-kun-eye.png">
       <Filter>Resource Files\example\obj</Filter>
+    </Image>
+    <Image Include="App\Texture\Block\sprBlock.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\Texture\Block\sprFloor.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\Texture\Block\sprWall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\Texture\Cherry\sprCherry.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\Texture\Cherry\sprCherryAllWhite.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\Texture\Cherry\sprCherryFrameWhite.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\Texture\Cherry\sprCherryWhite.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="App\Texture\Miku\sprMiku.png">
+      <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
@@ -812,6 +863,7 @@
     <Media Include="App\Sound\Se\sndShoot.wav">
       <Filter>Resource Files</Filter>
     </Media>
+    <Media Include="App\Sound\Bgm\sndHibana.mp3" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="App\example\font\DotGothic16\DotGothic16-Regular.ttf">
@@ -876,6 +928,27 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Audio\AudioAsset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AvoidanceManager\AvoidanceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Block.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Cherry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\GameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Miku.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\StockNearGameObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Bullet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

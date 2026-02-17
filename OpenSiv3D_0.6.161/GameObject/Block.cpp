@@ -12,7 +12,7 @@ namespace Iwanna {
 	void Block::update() {
 	}
 	void Block::draw() const {
-		hitBox->draw(Palette::Gray);
+		//hitBox->draw(Palette::Gray);
 		TextureAsset(textureName).draw(pos);
 	}
 	void Block::onCollision(GameObject& other) {
