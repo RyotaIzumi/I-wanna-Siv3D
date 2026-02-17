@@ -99,19 +99,21 @@ namespace Iwanna {
 		});
 
 		miku->update();
+	}
 
-		
+	void AvoidanceManager::debug() {
+		auto& player = gameObjects.player;
+
+		if (Global::inputDebugMuteki.down()) {
+			player->setIsMuteki(!player->getIsMuteki());
+		}
+
 		ClearPrint();
 		Print << U" Avoidance Step : " << step;
-		Print << U" Cherries Num : " << cherries.size();
-		Print << U" 周囲のObject数 : " << near.size();
+		Print << U" Cherries Num : " << gameObjects.cherries.size();
 		Print << U" Player Pos : " << player->pos;
-		Print << U" Player TopPos : " << player->hitBox->top();
-		Print << U" Player vspeed : " << player->hspeed;
-		Print << U" Bullets Num : " << bullets.size();
-		
-		
-
+		Print << U" Player Muteki : " << player->getIsMuteki();
+		Print << U" Bullets Num : " << gameObjects.bullets.size();
 	}
 
 	void AvoidanceManager::draw() const {

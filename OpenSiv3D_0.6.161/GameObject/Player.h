@@ -17,7 +17,7 @@ namespace Iwanna {
 		double gravity = 0.4; //重力の値
 		double maxVspeed = 9; //縦方向速度(主に落下速度)の最大値
 		double image_speed = 0.2; //アニメーション再生速度
-		bool muteki = false; //無敵状態かどうか
+		bool isMuteki = false; //無敵状態かどうか
 		bool roomOutTrue = false;//kid君をroom外にいけるようにする
 		bool isDead = false; //死亡状態かどうか
 		bool isGenerateBullet = false; //弾生成フラグ
@@ -58,5 +58,7 @@ namespace Iwanna {
 		void setIsGenerateBullet(bool value);
 		bool getIsGenerateBullet() const;
 		Global::Direction getDirection() const;
+		void setIsMuteki(bool value);
+		bool getIsMuteki() const;
 	};
 }

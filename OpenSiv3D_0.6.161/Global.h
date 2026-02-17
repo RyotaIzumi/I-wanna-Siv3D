@@ -24,6 +24,7 @@ namespace Global {
 
 	inline Input inputDebugPause = Key1;
 	inline Input inputDebugStart = Key2;
+	inline Input inputDebugMuteki = KeyControl;
 
 	 // ======================
 	// 定数

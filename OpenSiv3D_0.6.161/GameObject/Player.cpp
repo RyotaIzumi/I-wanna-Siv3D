@@ -12,7 +12,7 @@ namespace Iwanna{
 		gravity = 0.4; //重力の値
 		maxVspeed = 9; //縦方向速度(主に落下速度)の最大値
 		image_speed = 0.2; //アニメーション再生速度
-		muteki = false; //無敵状態かどうか
+		isMuteki = false; //無敵状態かどうか
 		roomOutTrue = false;//kid君をroom外にいけるようにする
 		isDead = false;//死亡状態かどうか
 
@@ -200,7 +200,7 @@ namespace Iwanna{
 
 		// さくらんぼ,ミク衝突
 		if (other.type == ObjectType::Cherry || other.type == ObjectType::Miku) {
-			if (this->intersects(other) && !isDead && other.canPlayerKill) {
+			if (this->intersects(other) && !isDead && other.canPlayerKill && !isMuteki) {
 				playerDead();
 			}
 		}
@@ -229,5 +229,15 @@ namespace Iwanna{
 	// 向きを取得
 	Global::Direction Player::getDirection() const {
 		return direction;
+	}
+
+	// 無敵状態を設定
+	void Player::setIsMuteki(bool value) {
+		isMuteki = value;
+	}
+
+	// 無敵状態かどうかを取得
+	bool Player::getIsMuteki() const {
+		return isMuteki;
 	}
 }

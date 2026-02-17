@@ -34,6 +34,7 @@ namespace Iwanna {
 
 		void setUpObjects(int32 chapter);
 		void update();
+		void debug();
 		void draw() const;
 		void setStep(int32 newStep);
 

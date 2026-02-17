@@ -7,7 +7,7 @@ namespace Iwanna {
 	void MainGame::startGame() {
 		int32 chapter = 1;
 		avoidanceManager.setUpObjects(chapter);
-		//playBgm(chapter);
+		playBgm(chapter);
 	}
 
 	void MainGame::updateGame() {
@@ -20,6 +20,7 @@ namespace Iwanna {
 	}
 
 	void MainGame::debugGame() {
+		avoidanceManager.debug();
 		if (Global::inputDebugPause.down())pauseBgm();
 		if (Global::inputDebugStart.down())audio.play();
 	}
