@@ -6,31 +6,32 @@ namespace Iwanna {
 
 	void MainGame::startGame() {
 		int32 chapter = 1;
-		avoidanceManager.setUpObjects(chapter);
+		stageManager.setUpObjects(chapter);
 		playBgm(chapter);
 	}
 
 	void MainGame::updateGame() {
-		int32 newStep = static_cast<int32>(audio.posSec() * Global::FPS);
-		avoidanceManager.setStep(newStep);
-		avoidanceManager.update();
+		//int32 newStep = static_cast<int32>(audio.posSec() * Global::FPS);
+		//avoidanceManager.setStep(newStep);
+		stageManager.update();
 
 		//playerが死亡していたらBGM一時停止
-		if (avoidanceManager.getPlayer()->getIsDead()) pauseBgm();
+		if (stageManager.getPlayer()->getIsDead()) pauseBgm();
 	}
 
 	void MainGame::debugGame() {
-		avoidanceManager.debug();
+		stageManager.debug();
 		if (Global::inputDebugPause.down())pauseBgm();
 		if (Global::inputDebugStart.down())audio.play();
 	}
 
 	void MainGame::drawGame() {
-		avoidanceManager.draw();
+		stageManager.draw();
 	}
 
 	void MainGame::playBgm(int32 chapter) {
 		stopBgm();
+		/*
 		audio = AudioAsset{ U"sndHibana"};
 		SecondsF startTime = 0.0s;
 		int32 startStep = 0;
@@ -44,6 +45,7 @@ namespace Iwanna {
 		startTime = SecondsF(static_cast<double>(startStep) / static_cast<double>(Global::FPS));
 
 		audio.seekTime(startTime);
+		*/
 		audio.play();
 	}
 

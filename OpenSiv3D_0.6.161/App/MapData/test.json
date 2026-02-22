@@ -1,0 +1,130 @@
+﻿[
+  {
+    "Gimmiks": [
+      {
+        "direction": 90.0,
+        "gimmikName": "罠針_上",
+        "gimmikPos": [
+          224.0,
+          544.0
+        ],
+        "id": 0,
+        "speed": 10.0
+      },
+      {
+        "direction": 180.0,
+        "gimmikName": "罠針_上",
+        "gimmikPos": [
+          448.0,
+          544.0
+        ],
+        "id": 1,
+        "speed": 10.0
+      },
+      {
+        "direction": 270.0,
+        "gimmikName": "罠針_下",
+        "gimmikPos": [
+          448.0,
+          320.0
+        ],
+        "id": 2,
+        "speed": 10.0
+      },
+      {
+        "direction": 180.0,
+        "gimmikName": "罠針_下",
+        "gimmikPos": [
+          672.0,
+          448.0
+        ],
+        "id": 3,
+        "speed": 10.0
+      },
+      {
+        "direction": 270.0,
+        "gimmikName": "罠針_下",
+        "gimmikPos": [
+          576.0,
+          160.0
+        ],
+        "id": 4,
+        "speed": 10.0
+      },
+      {
+        "direction": 270.0,
+        "gimmikName": "罠針_下",
+        "gimmikPos": [
+          352.0,
+          32.0
+        ],
+        "id": 5,
+        "speed": 6.0
+      },
+      {
+        "direction": 0.0,
+        "gimmikName": "罠トリガー",
+        "gimmikPos": [
+          224.0,
+          480.0
+        ],
+        "id": 0,
+        "speed": 0.0
+      },
+      {
+        "direction": 0.0,
+        "gimmikName": "罠トリガー",
+        "gimmikPos": [
+          384.0,
+          544.0
+        ],
+        "id": 1,
+        "speed": 0.0
+      },
+      {
+        "direction": 0.0,
+        "gimmikName": "罠トリガー",
+        "gimmikPos": [
+          448.0,
+          448.0
+        ],
+        "id": 2,
+        "speed": 0.0
+      },
+      {
+        "direction": 0.0,
+        "gimmikName": "罠トリガー",
+        "gimmikPos": [
+          544.0,
+          448.0
+        ],
+        "id": 3,
+        "speed": 0.0
+      },
+      {
+        "direction": 0.0,
+        "gimmikName": "罠トリガー",
+        "gimmikPos": [
+          544.0,
+          256.0
+        ],
+        "id": 4,
+        "speed": 0.0
+      },
+      {
+        "direction": 0.0,
+        "gimmikName": "罠トリガー",
+        "gimmikPos": [
+          352.0,
+          64.0
+        ],
+        "id": 5,
+        "speed": 0.0
+      }
+    ],
+    "startPlayerPos": [
+      80.0,
+      560.0
+    ]
+  }
+]

@@ -2,6 +2,7 @@
 #include <Siv3D.hpp>
 #include "GameObject/StockNearGameObjects.h"
 #include "AvoidanceManager/AvoidanceManager.h"
+#include "StageManager/StageManager.h"	
 
 namespace Iwanna {
 	class MainGame {
@@ -11,6 +12,7 @@ namespace Iwanna {
 		Audio audio;
 
 		AvoidanceManager avoidanceManager;
+		StageManager stageManager;
 
 	public:
 		MainGame();
