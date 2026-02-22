@@ -16,5 +16,4 @@ namespace Iwanna {
 	}
 	void Miku::onCollision(GameObject& other) {
 	}
-
 }

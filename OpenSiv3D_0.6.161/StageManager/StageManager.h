@@ -5,6 +5,7 @@
 #include "../GameObject/Bullet.h"
 #include "../GameObject/Cherry.h"
 #include "../GameObject/Block.h"
+#include "../GameObject/Spike.h"
 #include "../Global.h"
 
 namespace Iwanna {
@@ -14,6 +15,7 @@ namespace Iwanna {
 		Array<std::shared_ptr<Bullet>> bullets;
 		Array<std::shared_ptr<Cherry>> cherries;
 		Array<std::shared_ptr<Block>> blocks;
+		Array<std::shared_ptr<Spike>> spikes;
 	};
 
 	class StageManager {

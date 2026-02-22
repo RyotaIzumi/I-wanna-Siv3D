@@ -15,16 +15,16 @@ namespace Iwanna {
 		//ブロック配置
 		gameObjects.blocks.clear();
 
-		loadGameObjects(U"test.csv");
+		loadGameObjects(U"test");
 	}
 
-	void StageManager::loadGameObjects(String stageDataPath) {
+	void StageManager::loadGameObjects(String fileName) {
 		//ステージデータの読み込みとオブジェクト生成
-		CSV csv{ U"MapData/test.csv" };
+		CSV csv{ U"MapData/" + fileName + U".csv"};
 
 		if (!csv)
 		{
-			throw Error{ U"次のCSVが読み込めません : " + stageDataPath};
+			throw Error{ U"次のCSVが読み込めません : " + fileName + U".csv"};
 		}
 
 		for (size_t y = 0; y < csv.rows(); ++y)
@@ -47,6 +47,10 @@ namespace Iwanna {
 				case 1: gameObjects.blocks << std::make_shared<Block>(U"sprBlock", pos); break;
 				case 6: gameObjects.blocks << std::make_shared<Block>(U"sprFloor", pos); break;
 				case 7: gameObjects.blocks << std::make_shared<Block>(U"sprWall", pos); break;
+				case 21: gameObjects.spikes << std::make_shared<Spike>(pos, 0); break;
+				case 22: gameObjects.spikes << std::make_shared<Spike>(pos, 1); break;
+				case 23: gameObjects.spikes << std::make_shared<Spike>(pos, 2); break;
+				case 24: gameObjects.spikes << std::make_shared<Spike>(pos, 3); break;
 				}
 			}
 		}
@@ -60,6 +64,7 @@ namespace Iwanna {
 		auto& bullets = gameObjects.bullets;
 		auto& cherries = gameObjects.cherries;
 		auto& blocks = gameObjects.blocks;
+		auto& spikes = gameObjects.spikes;
 
 		player->update();
 
@@ -80,6 +85,9 @@ namespace Iwanna {
 		for (auto& b : blocks) {
 			stockNearGameObjects.add(b.get());
 			stockBulletsNearGameObjects.add(b.get());
+		}
+		for (auto& s : spikes) {
+			stockNearGameObjects.add(s.get());
 		}
 		for (auto& b : bullets) {
 			b->update();
@@ -138,6 +146,10 @@ namespace Iwanna {
 		//ブロック描画
 		for (auto b : gameObjects.blocks) {
 			b->draw();
+		}
+		//針描画
+		for (auto s : gameObjects.spikes) {
+			s->draw();
 		}
 		//kid君描画
 		gameObjects.player->draw();

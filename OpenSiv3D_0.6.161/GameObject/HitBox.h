@@ -118,6 +118,76 @@ namespace Iwanna {
 		}
 	};
 
+	class SpikeHitBox : public HitBox {
+	public:
+		Triangle triangle;
+		Vec2 basePos;// 一ブロックの左上
+
+		SpikeHitBox(const Vec2& pos, const int32& dir) {
+			switch (dir) {
+				case 0://上向き
+					triangle = Triangle({
+						Vec2{ pos.x + 16,  pos.y },
+						Vec2{ pos.x + 32, pos.y + 32 },
+						Vec2{ pos.x, pos.y + 32  }
+					});
+					break;
+				case 1://左向き
+					triangle = Triangle({
+						Vec2{ pos.x + 32,  pos.y },
+						Vec2{ pos.x + 32, pos.y + 32 },
+						Vec2{ pos.x, pos.y + 16  }
+					});
+					break;
+				case 2://下向き
+					triangle = Triangle({
+						Vec2{ pos.x,  pos.y },
+						Vec2{ pos.x + 32, pos.y },
+						Vec2{ pos.x + 16, pos.y + 32  }
+					});
+					break;
+				case 3://右向き
+					triangle = Triangle({
+						Vec2{ pos.x,  pos.y },
+						Vec2{ pos.x + 32, pos.y + 16 },
+						Vec2{ pos.x, pos.y + 32}
+					});
+					break;
+			}
+			
+		}
+
+		void draw(const ColorF& color = Palette::White) const override {
+			triangle.draw(color);
+		}
+
+		bool intersects(const HitBox& other) const override;
+
+		void setPos(const Vec2& pos) override {
+			basePos = pos;
+		}
+
+		Vec2 getCenterPos() override {
+			return basePos;
+		}
+
+		Vec2 left() override {
+			return { basePos.x, basePos.y + 16 };
+		}
+
+		Vec2 right() override {
+			return { basePos.x + 32, basePos.y + 16 };
+		}
+
+		Vec2 top() override {
+			return { basePos.x + 16, basePos.y };
+		}
+
+		Vec2 bottom() override {
+			return { basePos.x + 16, basePos.y + 32 };
+		}
+	};
+
 	class MikuHitBox : public HitBox {
 	public:
 		Polygon polygon;

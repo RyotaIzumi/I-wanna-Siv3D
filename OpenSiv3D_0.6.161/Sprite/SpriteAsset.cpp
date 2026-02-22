@@ -33,6 +33,13 @@ namespace Iwanna {
 		//mikuテクスチャ登録
 		static const FilePath MikuPath = U"Texture/Miku/";
 		registerTexture(U"sprMiku", MikuPath + U"sprMiku.png");
+
+		//針テクスチャ登録
+		static const FilePath SpikePath = U"Texture/Spike/";
+		registerTexture(U"sprSpikeUp", SpikePath + U"sprSpikeUp.png");
+		registerTexture(U"sprSpikeLeft", SpikePath + U"sprSpikeLeft.png");
+		registerTexture(U"sprSpikeDown", SpikePath + U"sprSpikeDown.png");
+		registerTexture(U"sprSpikeRight", SpikePath + U"sprSpikeRight.png");
 	}
 
 	void registerTexturesSync() {

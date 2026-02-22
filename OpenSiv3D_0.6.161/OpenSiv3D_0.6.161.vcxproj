@@ -127,6 +127,7 @@
     <ClCompile Include="GameObject\Cherry.cpp" />
     <ClCompile Include="GameObject\HitBox.cpp" />
     <ClCompile Include="GameObject\Miku.cpp" />
+    <ClCompile Include="GameObject\Spike.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="GameObject\Player.cpp" />
@@ -367,6 +368,7 @@
     <ClInclude Include="GameObject\Cherry.h" />
     <ClInclude Include="GameObject\GameObject.h" />
     <ClInclude Include="GameObject\Miku.h" />
+    <ClInclude Include="GameObject\Spike.h" />
     <ClInclude Include="GameObject\StockNearGameObjects.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="MainGame.h" />

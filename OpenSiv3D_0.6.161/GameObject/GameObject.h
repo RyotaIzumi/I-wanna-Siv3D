@@ -9,6 +9,7 @@ namespace Iwanna {
 		Cherry,
 		Block,
 		Bullet,
+		Spike,
 		Miku
 	};
 

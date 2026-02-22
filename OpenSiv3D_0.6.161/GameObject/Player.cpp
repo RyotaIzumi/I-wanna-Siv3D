@@ -198,9 +198,9 @@ namespace Iwanna{
 
 		}
 
-		// さくらんぼ,ミク衝突
-		if (other.type == ObjectType::Cherry || other.type == ObjectType::Miku) {
-			if (this->intersects(other) && !isDead && other.canPlayerKill && !isMuteki) {
+		// PlayerKill属性を持つオブジェクトとの衝突
+		if (other.canPlayerKill) {
+			if (this->intersects(other) && !isDead && !isMuteki) {
 				playerDead();
 			}
 		}
