@@ -1,5 +1,6 @@
 ﻿#include "Player.h"
 #include "../Audio/AudioAsset.h"
+#include "../GameObject/Trigger.h"
 
 namespace Iwanna{
 	Player::Player() {
@@ -202,6 +203,14 @@ namespace Iwanna{
 		if (other.canPlayerKill) {
 			if (this->intersects(other) && !isDead && !isMuteki) {
 				playerDead();
+			}
+		}
+
+		// トリガーとの衝突
+		if (other.type == ObjectType::Trigger) {
+			if (this->intersects(other)) {
+				auto* trigger = dynamic_cast<Trigger*>(&other);
+				trigger->triggerActivate();
 			}
 		}
 	}

@@ -6,6 +6,7 @@
 #include "../GameObject/Cherry.h"
 #include "../GameObject/Block.h"
 #include "../GameObject/Spike.h"
+#include "../GameObject/Trigger.h"
 #include "../Global.h"
 
 namespace Iwanna {
@@ -16,6 +17,8 @@ namespace Iwanna {
 		Array<std::shared_ptr<Cherry>> cherries;
 		Array<std::shared_ptr<Block>> blocks;
 		Array<std::shared_ptr<Spike>> spikes;
+		Array<std::shared_ptr<Trigger>> triggers;
+
 	};
 
 	class StageManager {
@@ -28,12 +31,15 @@ namespace Iwanna {
 		double bulletSpeed = 8;
 		int32 bulletMaxNum = 5;
 
+		int32 oneTileSize = 32;
+
 		int32 step = 0;
 	public:
 		StageManager();
 
 		void setUpObjects(int32 chapter);
 		void loadGameObjects(String);
+		Vec2 parsePos(const JSON& json);
 
 		void update();
 		void debug();

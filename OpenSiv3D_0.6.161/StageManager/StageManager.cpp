@@ -10,10 +10,11 @@ namespace Iwanna {
 	void StageManager::setUpObjects(int32 chapter) {
 		gameObjects.player = std::make_shared<Player>();
 
+		// 既存のオブジェクトを抹消して初期化
 		gameObjects.cherries.clear();
-
-		//ブロック配置
 		gameObjects.blocks.clear();
+		gameObjects.spikes.clear();
+		gameObjects.triggers.clear();
 
 		loadGameObjects(U"test");
 	}
@@ -55,6 +56,53 @@ namespace Iwanna {
 			}
 		}
 
+		// 次に同名のJsonファイルからギミックデータを読み込む
+
+		const String jsonPath = U"MapData/" + fileName + U".json";
+		const auto& jsonArray = JSON::Load(jsonPath);
+
+		// ロードに失敗した場合はエラーを投げる
+		if (not jsonArray) {
+			throw Error{ U"対応するJSONファイルをロードできませんでした : " + jsonPath };
+		}
+
+		// ステージ情報をパース
+		for (const auto& stage : jsonArray.arrayView()) {
+			// プレイヤーの初期位置を取得し反映
+			Vec2 startPlayerPos = parsePos(stage[U"startPlayerPos"]);
+			startPlayerPos *= oneTileSize;
+			gameObjects.player->pos = startPlayerPos;
+
+			String gimmikName;
+			Vec2 gimmikPos;
+			double gimmikValue1;
+			double gimmikValue2;
+			double gimmikValue3;
+
+			if (stage.contains(U"Gimmiks")) {
+				for (const auto& gimmik : stage[U"Gimmiks"].arrayView()) {
+					gimmikName = gimmik[U"gimmikName"].getString();
+					gimmikPos = parsePos(gimmik[U"gimmikPos"]);
+					gimmikValue1 = gimmik[U"id"].get<double>();
+					gimmikValue2 = gimmik[U"direction"].get<double>();
+					gimmikValue3 = gimmik[U"speed"].get<double>();
+
+					if (gimmikName == U"罠針_上") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 0, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠針_左") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 1, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠針_下") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 2, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠針_右") gameObjects.spikes << std::make_shared<SpikeTrap>(gimmikPos, 3, static_cast<int32>(gimmikValue1), gimmikValue2, gimmikValue3);
+					if (gimmikName == U"罠トリガー") gameObjects.triggers << std::make_shared<Trigger>(gimmikPos, static_cast<int32>(gimmikValue1), 1.0, 1.0);
+				}
+			}
+			// 敵の情報がない場合のエラーハンドリング
+			else {
+				throw Error{ U"ギミックの情報がありません" };
+			}
+		}
+	}
+
+	Vec2 StageManager::parsePos(const JSON& json) {
+		return Vec2{ json[0].get<int32>() / oneTileSize, json[1].get<int32>() / oneTileSize };
 	}
 
 	void StageManager::update() {
@@ -65,6 +113,7 @@ namespace Iwanna {
 		auto& cherries = gameObjects.cherries;
 		auto& blocks = gameObjects.blocks;
 		auto& spikes = gameObjects.spikes;
+		auto& triggers = gameObjects.triggers;
 
 		player->update();
 
@@ -86,9 +135,21 @@ namespace Iwanna {
 			stockNearGameObjects.add(b.get());
 			stockBulletsNearGameObjects.add(b.get());
 		}
+
+		// トリガーの更新と、最新の起動トリガーIDの取得
+		int32 latestActivatedTriggerID = -1;
+		for (auto& t : triggers) {
+			if (t->getIsActivated()) {
+				latestActivatedTriggerID = t->getTrapID();
+			}
+			stockNearGameObjects.add(t.get());
+		}
+		// 針の更新と、起動しているトリガーIDの反映
 		for (auto& s : spikes) {
+			s->trapUpdate(latestActivatedTriggerID);
 			stockNearGameObjects.add(s.get());
 		}
+		
 		for (auto& b : bullets) {
 			b->update();
 		}
@@ -150,6 +211,10 @@ namespace Iwanna {
 		//針描画
 		for (auto s : gameObjects.spikes) {
 			s->draw();
+		}
+		//トリガー描画
+		for (auto t : gameObjects.triggers) {
+			t->draw();
 		}
 		//kid君描画
 		gameObjects.player->draw();

@@ -121,40 +121,12 @@ namespace Iwanna {
 	class SpikeHitBox : public HitBox {
 	public:
 		Triangle triangle;
+		int32 spikeDir;
 		Vec2 basePos;// 一ブロックの左上
 
 		SpikeHitBox(const Vec2& pos, const int32& dir) {
-			switch (dir) {
-				case 0://上向き
-					triangle = Triangle({
-						Vec2{ pos.x + 16,  pos.y },
-						Vec2{ pos.x + 32, pos.y + 32 },
-						Vec2{ pos.x, pos.y + 32  }
-					});
-					break;
-				case 1://左向き
-					triangle = Triangle({
-						Vec2{ pos.x + 32,  pos.y },
-						Vec2{ pos.x + 32, pos.y + 32 },
-						Vec2{ pos.x, pos.y + 16  }
-					});
-					break;
-				case 2://下向き
-					triangle = Triangle({
-						Vec2{ pos.x,  pos.y },
-						Vec2{ pos.x + 32, pos.y },
-						Vec2{ pos.x + 16, pos.y + 32  }
-					});
-					break;
-				case 3://右向き
-					triangle = Triangle({
-						Vec2{ pos.x,  pos.y },
-						Vec2{ pos.x + 32, pos.y + 16 },
-						Vec2{ pos.x, pos.y + 32}
-					});
-					break;
-			}
-			
+			spikeDir = dir;
+			setPos(pos);
 		}
 
 		void draw(const ColorF& color = Palette::White) const override {
@@ -164,7 +136,36 @@ namespace Iwanna {
 		bool intersects(const HitBox& other) const override;
 
 		void setPos(const Vec2& pos) override {
-			basePos = pos;
+			switch (spikeDir) {
+			case 0://上向き
+				triangle.set({
+					Vec2{ pos.x + 16,  pos.y },
+					Vec2{ pos.x + 32, pos.y + 32 },
+					Vec2{ pos.x, pos.y + 32  }
+				});
+				break;
+			case 1://左向き
+				triangle.set({
+					Vec2{ pos.x + 32,  pos.y },
+					Vec2{ pos.x + 32, pos.y + 32 },
+					Vec2{ pos.x, pos.y + 16  }
+				});
+				break;
+			case 2://下向き
+				triangle.set({
+					Vec2{ pos.x,  pos.y },
+					Vec2{ pos.x + 32, pos.y },
+					Vec2{ pos.x + 16, pos.y + 32  }
+				});
+				break;
+			case 3://右向き
+				triangle.set({
+					Vec2{ pos.x,  pos.y },
+					Vec2{ pos.x + 32, pos.y + 16 },
+					Vec2{ pos.x, pos.y + 32}
+				});
+				break;
+			}
 		}
 
 		Vec2 getCenterPos() override {
