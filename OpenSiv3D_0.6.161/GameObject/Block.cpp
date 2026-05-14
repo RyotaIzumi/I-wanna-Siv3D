@@ -7,7 +7,9 @@ namespace Iwanna {
 		pos = {startPos.x * side, startPos.y * side};
 		hitBox = std::make_shared<RectHitBox>(pos, SizeF{ side,side });
 		type = ObjectType::Block;
+
 		canPlayerKill = false;
+		hasCollide = true;
 	}
 	void Block::update() {
 	}
@@ -18,4 +20,12 @@ namespace Iwanna {
 	void Block::onCollision(GameObject& other) {
 	}
 
+	//当たり判定の有無を設定
+	void Block::setHasCollide(bool b) {
+		hasCollide = b;
+	}
+	//当たり判定の有無を返す
+	bool Block::getHasCollide() const {
+		return hasCollide;
+	}
 }

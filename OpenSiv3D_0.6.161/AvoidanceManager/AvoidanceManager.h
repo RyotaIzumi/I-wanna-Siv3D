@@ -5,6 +5,7 @@
 #include "../GameObject/Bullet.h"
 #include "../GameObject/Cherry.h"
 #include "../GameObject/Block.h"
+#include "../GameObject/Blood.h"
 #include "../GameObject/Miku.h"
 #include "../Global.h"
 
@@ -15,6 +16,7 @@ namespace Iwanna {
 		Array<std::shared_ptr<Bullet>> bullets;
 		Array<std::shared_ptr<Cherry>> cherries;
 		Array<std::shared_ptr<Block>> blocks;
+		Array<std::shared_ptr<Blood>> bloods;
 		std::shared_ptr<Miku> miku;
 	};
 
@@ -27,6 +29,11 @@ namespace Iwanna {
 		//弾丸関連
 		double bulletSpeed = 8;
 		int32 bulletMaxNum = 5;
+
+		//血しぶき数
+		int32 bloodNum = 80;
+		//血を生成したかどうか
+		bool isGenerateBloods = false;
 
 		int32 step = 0;
 	public:

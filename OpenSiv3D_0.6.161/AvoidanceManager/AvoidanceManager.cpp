@@ -11,6 +11,8 @@ namespace Iwanna {
 		gameObjects.player = std::make_shared<Player>();
 
 		gameObjects.cherries.clear();
+		gameObjects.bullets.clear();
+		gameObjects.bloods.clear();
 
 		//ブロック配置
 		gameObjects.blocks.clear();
@@ -26,6 +28,9 @@ namespace Iwanna {
 		createFloorBlocks({ 10,15 });
 
 		gameObjects.miku = std::make_shared<Miku>(Vec2{ 704,352 });
+
+		// 一部変数の初期化
+		isGenerateBloods = false;
 	}
 
 	void AvoidanceManager::update() {
@@ -39,6 +44,7 @@ namespace Iwanna {
 		auto& bullets = gameObjects.bullets;
 		auto& cherries = gameObjects.cherries;
 		auto& blocks = gameObjects.blocks;
+		auto& bloods = gameObjects.bloods;
 		auto& miku = gameObjects.miku;
 
 		player->update();
@@ -50,6 +56,22 @@ namespace Iwanna {
 				AudioAsset(Sound::SHOOT).playOneShot();
 			}
 			player->setIsGenerateBullet(false);
+		}
+
+		// 血しぶきの生成
+		if (player->getIsDead() && !isGenerateBloods) {
+			double circleNum = 2;
+			double deltaD = 360 / bloodNum;
+			for (int32 count = 0; count < circleNum; count++) {
+				for (int32 i = 0; i < bloodNum / circleNum; i++) {
+					bloods << std::make_shared<Blood>(player->pos, i * deltaD);
+				}
+			}
+			isGenerateBloods = true;
+		}
+		for (auto& bl : bloods) {
+			bl->update();
+			stockNearGameObjects.add(bl.get());
 		}
 
 		//毎フレームGameObjectをspatialGridに登録
@@ -69,11 +91,6 @@ namespace Iwanna {
 			stockNearGameObjects.add(c.get());
 		}
 
-		//画面外のりんごを削除
-		cherries.remove_if([](auto&& cherry) {
-			return cherry->isOutOfScreen;
-		});
-
 		//playerの近くのオブジェクトのみを取得して当たり判定確認
 		auto near = stockNearGameObjects.query(player->getBroadRect());
 		for (auto* obj : near) {
@@ -83,6 +100,15 @@ namespace Iwanna {
 		player->onCollision(*miku);
 		player->updateLate();
 
+		//血のブロックに対する衝突
+		if (!bloods.isEmpty()) {
+			for (auto& b : bloods) {
+				auto nearObjs = stockNearGameObjects.query(b->getBroadRect());
+				for (auto* obj : nearObjs) {
+					b->onCollision(*obj);
+				}
+			}
+		}
 		
 		//各弾丸とブロックとの衝突
 		for (auto& b : bullets) {
@@ -96,6 +122,10 @@ namespace Iwanna {
 		//弾丸削除
 		bullets.remove_if([](auto&& bullet) {
 			return bullet->isOutOfScreen || bullet->isDelete;
+		});
+		//画面外のりんごを削除
+		cherries.remove_if([](auto&& cherry) {
+			return cherry->isOutOfScreen;
 		});
 
 		miku->update();
@@ -127,6 +157,8 @@ namespace Iwanna {
 		}
 		//kid君描画
 		gameObjects.player->draw();
+		//血の描画
+		for (auto b : gameObjects.bloods) b->draw();
 		//弾丸描画
 		for (auto b : gameObjects.bullets) {
 			b->draw();

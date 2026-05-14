@@ -195,6 +195,9 @@
     <ClCompile Include="GameObject\Bullet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject\Blood.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="App\icon.ico">
@@ -949,6 +952,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameObject\Bullet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\Blood.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
