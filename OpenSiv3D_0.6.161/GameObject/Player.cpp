@@ -1,5 +1,6 @@
 ﻿#include "Player.h"
 #include "../Audio/AudioAsset.h"
+#include "Block.h"
 
 namespace Iwanna{
 	Player::Player() {
@@ -114,7 +115,7 @@ namespace Iwanna{
 			AudioAsset(Sound::JUMP).playOneShot();
 			isOnGround = false;
 		}
-		else if (djump) {
+		else if (djump || Global::isInfiniteJumpMode) {
 			vspeed = -jump2;
 			djump = false;
 			AudioAsset(Sound::DJUMP).playOneShot();
@@ -150,6 +151,10 @@ namespace Iwanna{
 	void Player::onCollision(GameObject& other) {
 		// ブロック衝突
 		if (other.type == ObjectType::Block) {
+
+			auto* block = dynamic_cast<Block*>(&other);
+			if (!block->getHasCollide())return;
+
 			Vec2 modifiedPos = snappedPos(pos);
 
 			// --- 横方向 予測衝突 ---

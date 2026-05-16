@@ -14,20 +14,31 @@ namespace Iwanna {
 		gameObjects.bullets.clear();
 		gameObjects.bloods.clear();
 
-		//ブロック配置
-		gameObjects.blocks.clear();
-		createPeripheryBlocks();
-		createFloorBlocks({ 3,3 });
-		createFloorBlocks({ 3,6 });
-		createFloorBlocks({ 3,9 });
-		createFloorBlocks({ 3,12 });
-		createFloorBlocks({ 3,15 });
-		createFloorBlocks({ 10,3 });
-		createFloorBlocks({ 10,7 });
-		createFloorBlocks({ 10,11 });
-		createFloorBlocks({ 10,15 });
+		switch (chapter) {
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+			//ブロック配置
+			gameObjects.blocks.clear();
+			createPeripheryBlocks();
+			createFloorBlocks({ 3,3 });
+			createFloorBlocks({ 3,6 });
+			createFloorBlocks({ 3,9 });
+			createFloorBlocks({ 3,12 });
+			createFloorBlocks({ 3,15 });
+			createFloorBlocks({ 10,3 });
+			createFloorBlocks({ 10,7 });
+			createFloorBlocks({ 10,11 });
+			createFloorBlocks({ 10,15 });
 
-		gameObjects.miku = std::make_shared<Miku>(Vec2{ 704,352 });
+			gameObjects.miku = std::make_shared<Miku>(Vec2{ 704,352 });
+			break;
+		case 6:
+			Global::isInfiniteJumpMode = true;
+			gameObjects.miku = std::make_shared<Miku>(Vec2{ 704,352 });
+			break;
+		}
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
@@ -118,6 +129,8 @@ namespace Iwanna {
 			}
 			b->onCollision(*miku);
 		}
+
+		miku->update();
 		
 		//弾丸削除
 		bullets.remove_if([](auto&& bullet) {
@@ -127,8 +140,6 @@ namespace Iwanna {
 		cherries.remove_if([](auto&& cherry) {
 			return cherry->isOutOfScreen;
 		});
-
-		miku->update();
 	}
 
 	void AvoidanceManager::debug() {
@@ -148,25 +159,25 @@ namespace Iwanna {
 
 	void AvoidanceManager::draw() const {
 		//背景描画
-		Rect(0, 0, 800, 600).draw(ColorF(0.8, 1.0));
-		//ミク描画
-		gameObjects.miku->draw();
-		//ブロック描画
-		for (auto b : gameObjects.blocks) {
-			b->draw();
-		}
-		//kid君描画
-		gameObjects.player->draw();
-		//血の描画
-		for (auto b : gameObjects.bloods) b->draw();
-		//弾丸描画
-		for (auto b : gameObjects.bullets) {
-			b->draw();
-		}
-		//りんご描画
-		for (auto c : gameObjects.cherries) {
-			c->draw();
-		}
+		Rect(0, 0, 800, 608).draw(ColorF(0.8, 1.0));
+
+		Array<std::shared_ptr<GameObject>> drawList;
+
+		//drawListに突っ込む
+		drawList << gameObjects.miku;
+		drawList << gameObjects.player;
+		for (auto b : gameObjects.blocks)drawList << b;
+		for (auto& c : gameObjects.cherries) drawList << c;
+		for (auto& b : gameObjects.bloods) drawList << b;
+		for (auto& b : gameObjects.bullets) drawList << b;
+
+		// ソート
+		drawList.sort_by([](const auto& a, const auto& b) {
+			return a->depth < b->depth;
+		});
+
+		// 描画
+		for (auto& obj : drawList) obj->draw();
 	}
 
 	void AvoidanceManager::setStep(int32 newStep) {
