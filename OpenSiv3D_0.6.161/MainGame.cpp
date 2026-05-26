@@ -5,7 +5,7 @@ namespace Iwanna {
 	}
 
 	void MainGame::startGame() {
-		int32 chapter = 1;
+		int32 chapter = 6;
 		avoidanceManager.setUpObjects(chapter);
 		playBgm(chapter);
 	}
@@ -39,6 +39,9 @@ namespace Iwanna {
 		case 1:startStep = Global::startStep_Chapter1; break;
 		case 2:startStep = Global::startStep_Chapter2; break;
 		case 3:startStep = Global::startStep_Chapter3; break;
+		case 4:startStep = Global::startStep_Chapter4; break;
+		case 5:startStep = Global::startStep_Chapter5; break;
+		case 6:startStep = Global::startStep_Chapter6; break;
 		}
 
 		startTime = SecondsF(static_cast<double>(startStep) / static_cast<double>(Global::FPS));

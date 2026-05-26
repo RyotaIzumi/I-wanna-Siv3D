@@ -8,7 +8,7 @@ using App = SceneManager<Iwanna::SceneType, Iwanna::CommonData>;
 
 void Main()
 {
-	System60::SetDisplaySize(DisplayResolution::SVGA_800x600);
+	System60::SetDisplaySize(Size{ 800,608 });
 
 	Window::SetTitle(U"I wanna Siv3D");
 

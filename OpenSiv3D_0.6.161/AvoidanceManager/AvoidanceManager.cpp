@@ -11,21 +11,37 @@ namespace Iwanna {
 		gameObjects.player = std::make_shared<Player>();
 
 		gameObjects.cherries.clear();
+		gameObjects.bullets.clear();
+		gameObjects.bloods.clear();
 
-		//ブロック配置
-		gameObjects.blocks.clear();
-		createPeripheryBlocks();
-		createFloorBlocks({ 3,3 });
-		createFloorBlocks({ 3,6 });
-		createFloorBlocks({ 3,9 });
-		createFloorBlocks({ 3,12 });
-		createFloorBlocks({ 3,15 });
-		createFloorBlocks({ 10,3 });
-		createFloorBlocks({ 10,7 });
-		createFloorBlocks({ 10,11 });
-		createFloorBlocks({ 10,15 });
+		switch (chapter) {
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+			//ブロック配置
+			gameObjects.blocks.clear();
+			createPeripheryBlocks();
+			createFloorBlocks({ 3,3 });
+			createFloorBlocks({ 3,6 });
+			createFloorBlocks({ 3,9 });
+			createFloorBlocks({ 3,12 });
+			createFloorBlocks({ 3,15 });
+			createFloorBlocks({ 10,3 });
+			createFloorBlocks({ 10,7 });
+			createFloorBlocks({ 10,11 });
+			createFloorBlocks({ 10,15 });
 
-		gameObjects.miku = std::make_shared<Miku>(Vec2{ 704,352 });
+			gameObjects.miku = std::make_shared<Miku>(Vec2{ 704,352 });
+			break;
+		case 6:
+			Global::isInfiniteJumpMode = true;
+			gameObjects.miku = std::make_shared<Miku>(Vec2{ 704,352 });
+			break;
+		}
+
+		// 一部変数の初期化
+		isGenerateBloods = false;
 	}
 
 	void AvoidanceManager::update() {
@@ -39,6 +55,7 @@ namespace Iwanna {
 		auto& bullets = gameObjects.bullets;
 		auto& cherries = gameObjects.cherries;
 		auto& blocks = gameObjects.blocks;
+		auto& bloods = gameObjects.bloods;
 		auto& miku = gameObjects.miku;
 
 		player->update();
@@ -50,6 +67,22 @@ namespace Iwanna {
 				AudioAsset(Sound::SHOOT).playOneShot();
 			}
 			player->setIsGenerateBullet(false);
+		}
+
+		// 血しぶきの生成
+		if (player->getIsDead() && !isGenerateBloods) {
+			double circleNum = 2;
+			double deltaD = 360 / bloodNum;
+			for (int32 count = 0; count < circleNum; count++) {
+				for (int32 i = 0; i < bloodNum / circleNum; i++) {
+					bloods << std::make_shared<Blood>(player->pos, i * deltaD);
+				}
+			}
+			isGenerateBloods = true;
+		}
+		for (auto& bl : bloods) {
+			bl->update();
+			stockNearGameObjects.add(bl.get());
 		}
 
 		//毎フレームGameObjectをspatialGridに登録
@@ -69,11 +102,6 @@ namespace Iwanna {
 			stockNearGameObjects.add(c.get());
 		}
 
-		//画面外のりんごを削除
-		cherries.remove_if([](auto&& cherry) {
-			return cherry->isOutOfScreen;
-		});
-
 		//playerの近くのオブジェクトのみを取得して当たり判定確認
 		auto near = stockNearGameObjects.query(player->getBroadRect());
 		for (auto* obj : near) {
@@ -83,6 +111,15 @@ namespace Iwanna {
 		player->onCollision(*miku);
 		player->updateLate();
 
+		//血のブロックに対する衝突
+		if (!bloods.isEmpty()) {
+			for (auto& b : bloods) {
+				auto nearObjs = stockNearGameObjects.query(b->getBroadRect());
+				for (auto* obj : nearObjs) {
+					b->onCollision(*obj);
+				}
+			}
+		}
 		
 		//各弾丸とブロックとの衝突
 		for (auto& b : bullets) {
@@ -92,13 +129,17 @@ namespace Iwanna {
 			}
 			b->onCollision(*miku);
 		}
+
+		miku->update();
 		
 		//弾丸削除
 		bullets.remove_if([](auto&& bullet) {
 			return bullet->isOutOfScreen || bullet->isDelete;
 		});
-
-		miku->update();
+		//画面外のりんごを削除
+		cherries.remove_if([](auto&& cherry) {
+			return cherry->isOutOfScreen;
+		});
 	}
 
 	void AvoidanceManager::debug() {
@@ -118,23 +159,25 @@ namespace Iwanna {
 
 	void AvoidanceManager::draw() const {
 		//背景描画
-		Rect(0, 0, 800, 600).draw(ColorF(0.8, 1.0));
-		//ミク描画
-		gameObjects.miku->draw();
-		//ブロック描画
-		for (auto b : gameObjects.blocks) {
-			b->draw();
-		}
-		//kid君描画
-		gameObjects.player->draw();
-		//弾丸描画
-		for (auto b : gameObjects.bullets) {
-			b->draw();
-		}
-		//りんご描画
-		for (auto c : gameObjects.cherries) {
-			c->draw();
-		}
+		Rect(0, 0, 800, 608).draw(ColorF(0.8, 1.0));
+
+		Array<std::shared_ptr<GameObject>> drawList;
+
+		//drawListに突っ込む
+		drawList << gameObjects.miku;
+		drawList << gameObjects.player;
+		for (auto b : gameObjects.blocks)drawList << b;
+		for (auto& c : gameObjects.cherries) drawList << c;
+		for (auto& b : gameObjects.bloods) drawList << b;
+		for (auto& b : gameObjects.bullets) drawList << b;
+
+		// ソート
+		drawList.sort_by([](const auto& a, const auto& b) {
+			return a->depth < b->depth;
+		});
+
+		// 描画
+		for (auto& obj : drawList) obj->draw();
 	}
 
 	void AvoidanceManager::setStep(int32 newStep) {

@@ -26,6 +26,13 @@ namespace Global {
 	inline Input inputDebugStart = Key2;
 	inline Input inputDebugMuteki = KeyControl;
 
+	// ステージサイズ
+	inline int32 stageWidth = 800;
+	inline int32 stageHeight = 608;
+
+	// モード設定
+	inline bool isInfiniteJumpMode = false;
+
 	 // ======================
 	// 定数
 	// ======================
@@ -35,10 +42,13 @@ namespace Global {
 
 	// ゲームウィンドウサイズ
 	constexpr int32 windowWidth = 800;
-	constexpr int32 windowHeight = 600;
+	constexpr int32 windowHeight = 608;
 
 	// 各チャプター開始ステップ
 	constexpr int32 startStep_Chapter1 = 0;
 	constexpr int32 startStep_Chapter2 = 840;
 	constexpr int32 startStep_Chapter3 = 1320;
+	constexpr int32 startStep_Chapter4 = 1320;
+	constexpr int32 startStep_Chapter5 = 1320;
+	constexpr int32 startStep_Chapter6 = 3250;
 }

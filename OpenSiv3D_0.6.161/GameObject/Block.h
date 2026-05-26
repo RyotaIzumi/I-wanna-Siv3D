@@ -10,11 +10,15 @@ namespace Iwanna {
 	private:
 		int32 side = 32;
 		String textureName = U"sprBlock";
+		bool hasCollide = true;
 	public:
 		Block(String name, Vec2 startPos);
 
 		void update() override;
 		void draw() const override;
 		void onCollision(GameObject& other) override;
+
+		void setHasCollide(bool b);
+		bool getHasCollide() const;
 	};
 }
