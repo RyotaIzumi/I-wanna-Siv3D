@@ -5,7 +5,7 @@ namespace Iwanna {
 	}
 
 	void MainGame::startGame() {
-		int32 chapter = 6;
+		int32 chapter = 20;
 		avoidanceManager.setUpObjects(chapter);
 		playBgm(chapter);
 	}

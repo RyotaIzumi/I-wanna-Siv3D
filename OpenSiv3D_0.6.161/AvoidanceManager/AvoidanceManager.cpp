@@ -9,6 +9,10 @@ namespace Iwanna {
 
 	void AvoidanceManager::setUpObjects(int32 chapter) {
 		gameObjects.player = std::make_shared<Player>();
+		Global::isInfiniteJumpMode = false;
+		isTraversalStage = false;
+		isTraversalCleared = false;
+		disposablePlatformCount = 0;
 
 		gameObjects.cherries.clear();
 		gameObjects.bullets.clear();
@@ -34,9 +38,10 @@ namespace Iwanna {
 
 			gameObjects.miku = std::make_shared<Miku>(Vec2{ 704,352 });
 			break;
-		case 6:
-			Global::isInfiniteJumpMode = true;
-			gameObjects.miku = std::make_shared<Miku>(Vec2{ 704,352 });
+		case 20:
+			createDisposableTraversalStage();
+			gameObjects.miku = std::make_shared<Miku>(Vec2{ 1200,1200 });
+			gameObjects.miku->canPlayerKill = false;
 			break;
 		}
 
@@ -45,6 +50,7 @@ namespace Iwanna {
 	}
 
 	void AvoidanceManager::update() {
+		if (isTraversalCleared) return;
 
 		//チャプターごとの更新処理
 		if (step < Global::startStep_Chapter2) chapter1();
@@ -91,8 +97,9 @@ namespace Iwanna {
 
 		stockNearGameObjects.add(player.get());
 		for (auto& b : blocks) {
+			b->update();
 			stockNearGameObjects.add(b.get());
-			stockBulletsNearGameObjects.add(b.get());
+			if (b->getHasCollide()) stockBulletsNearGameObjects.add(b.get());
 		}
 		for (auto& b : bullets) {
 			b->update();
@@ -110,6 +117,7 @@ namespace Iwanna {
 		}
 		player->onCollision(*miku);
 		player->updateLate();
+		updateDisposableTraversalStage();
 
 		//血のブロックに対する衝突
 		if (!bloods.isEmpty()) {
@@ -155,6 +163,12 @@ namespace Iwanna {
 		Print << U" Player Pos : " << player->pos;
 		Print << U" Player Muteki : " << player->getIsMuteki();
 		Print << U" Bullets Num : " << gameObjects.bullets.size();
+		if (isTraversalStage) {
+			const int32 visited = static_cast<int32>(gameObjects.blocks.count_if([](const auto& block) {
+				return block->isDisposable() && block->isVisited();
+			}));
+			Print << U" Platforms : " << visited << U" / " << disposablePlatformCount;
+		}
 	}
 
 	void AvoidanceManager::draw() const {
@@ -178,6 +192,21 @@ namespace Iwanna {
 
 		// 描画
 		for (auto& obj : drawList) obj->draw();
+
+		if (isTraversalStage) {
+			const int32 visited = static_cast<int32>(gameObjects.blocks.count_if([](const auto& block) {
+				return block->isDisposable() && block->isVisited();
+			}));
+			FontAsset(U"Button")(U"ONE-SHOT PLATFORM TOUR  ", visited, U" / ", disposablePlatformCount)
+				.draw(20, 16, ColorF{ 0.08, 0.10, 0.16 });
+			FontAsset(U"Button")(U"Visit every yellow platform, then reach the green flag.")
+				.draw(20, 45, ColorF{ 0.15, 0.17, 0.22 });
+			if (isTraversalCleared) {
+				Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(ColorF{ 0.02, 0.08, 0.04, 0.72 });
+				FontAsset(U"Big")(U"CLEAR!").drawAt(400, 270, ColorF{ 0.45, 1.0, 0.55 });
+				FontAsset(U"Button")(U"All vertices visited. Press R to return.").drawAt(400, 340, Palette::White);
+			}
+		}
 	}
 
 	void AvoidanceManager::setStep(int32 newStep) {
@@ -228,5 +257,57 @@ namespace Iwanna {
 			gameObjects.blocks << std::make_shared<Block>(U"sprFloor", Vec2(basePos.x + i, basePos.y));
 		}
 		gameObjects.blocks << std::make_shared<Block>(U"sprBlock", Vec2(basePos.x + 4, basePos.y));
+	}
+
+	void AvoidanceManager::createDisposableTraversalStage() {
+		isTraversalStage = true;
+		gameObjects.blocks.clear();
+
+		gameObjects.blocks << std::make_shared<Block>(U"sprFloor", Vec2{ 2, 16 });
+		gameObjects.player->pos = Vec2{ 80, 492 };
+
+		// Each coordinate is one graph vertex. Reachable jumps act as graph edges.
+		const Array<Point> vertices = {
+			{ 5, 14 }, { 9, 12 }, { 13, 14 }, { 17, 12 }, { 21, 14 },
+			{ 20, 10 }, { 16, 7 }, { 12, 9 }, { 8, 7 }, { 4, 9 },
+			{ 3, 5 }, { 7, 3 }, { 11, 5 }, { 15, 3 }, { 19, 5 }
+		};
+		for (const auto& vertex : vertices) {
+			auto platform = std::make_shared<Block>(U"sprFloor", Vec2{ vertex.x, vertex.y });
+			platform->makeDisposable();
+			gameObjects.blocks << platform;
+		}
+		disposablePlatformCount = static_cast<int32>(vertices.size());
+
+		auto goal = std::make_shared<Block>(U"sprFloor", Vec2{ 22, 2 });
+		goal->makeGoal();
+		gameObjects.blocks << goal;
+	}
+
+	void AvoidanceManager::updateDisposableTraversalStage() {
+		if (!isTraversalStage || gameObjects.player->getIsDead()) return;
+
+		if (gameObjects.player->pos.y > Global::stageHeight + 48
+			|| gameObjects.player->pos.x < -32
+			|| gameObjects.player->pos.x > Global::stageWidth + 32) {
+			gameObjects.player->playerDead();
+			return;
+		}
+
+		const int32 visited = static_cast<int32>(gameObjects.blocks.count_if([](const auto& block) {
+			return block->isDisposable() && block->isVisited();
+		}));
+		if (visited != disposablePlatformCount || !gameObjects.player->getOnGround()) return;
+
+		const double playerFeet = gameObjects.player->hitBox->bottom().y;
+		for (const auto& block : gameObjects.blocks) {
+			if (!block->isGoal()) continue;
+			const auto* rect = block->hitBox->getRect();
+			if (rect && rect->x <= gameObjects.player->pos.x && gameObjects.player->pos.x <= rect->rightX()
+				&& Abs(playerFeet - rect->y) <= 3.0) {
+				isTraversalCleared = true;
+				return;
+			}
+		}
 	}
 }

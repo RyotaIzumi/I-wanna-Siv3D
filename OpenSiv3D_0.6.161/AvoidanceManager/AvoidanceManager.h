@@ -34,6 +34,9 @@ namespace Iwanna {
 		int32 bloodNum = 80;
 		//血を生成したかどうか
 		bool isGenerateBloods = false;
+		bool isTraversalStage = false;
+		bool isTraversalCleared = false;
+		int32 disposablePlatformCount = 0;
 
 		int32 step = 0;
 	public:
@@ -54,6 +57,8 @@ namespace Iwanna {
 
 		void createPeripheryBlocks();
 		void createFloorBlocks(Vec2 basePos);
+		void createDisposableTraversalStage();
+		void updateDisposableTraversalStage();
 
 		void chapter1();
 		void chapter2();

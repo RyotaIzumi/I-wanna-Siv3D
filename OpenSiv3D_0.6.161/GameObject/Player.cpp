@@ -187,6 +187,7 @@ namespace Iwanna{
 						pos.y = other.hitBox->top().y - 10;
 						djump = true;
 						isOnGround = true;
+						block->activateDisposable();
 					}
 					else {
 						pos.y = other.hitBox->bottom().y + 9;

@@ -8,9 +8,13 @@
 namespace Iwanna {
 	class Block : public GameObject {
 	private:
+		enum class Role { Normal, Disposable, Goal };
 		int32 side = 32;
 		String textureName = U"sprBlock";
 		bool hasCollide = true;
+		Role role = Role::Normal;
+		bool visited = false;
+		int32 collapseFrames = 0;
 	public:
 		Block(String name, Vec2 startPos);
 
@@ -20,5 +24,11 @@ namespace Iwanna {
 
 		void setHasCollide(bool b);
 		bool getHasCollide() const;
+		void makeDisposable();
+		void makeGoal();
+		void activateDisposable();
+		bool isDisposable() const;
+		bool isVisited() const;
+		bool isGoal() const;
 	};
 }
