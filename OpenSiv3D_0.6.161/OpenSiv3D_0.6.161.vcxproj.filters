@@ -177,6 +177,9 @@
     <ClCompile Include="AvoidanceManager\Chapter2Manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+	<ClCompile Include="AvoidanceManager\Chapter21Manager.cpp">
+	  <Filter>Source Files</Filter>
+	</ClCompile>
     <ClCompile Include="AvoidanceManager\CherryPatternManagers\GeneralPurposePatterns.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

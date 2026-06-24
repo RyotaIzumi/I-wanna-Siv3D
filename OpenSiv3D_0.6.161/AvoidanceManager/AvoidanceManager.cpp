@@ -9,10 +9,16 @@ namespace Iwanna {
 
 	void AvoidanceManager::setUpObjects(int32 chapter) {
 		gameObjects.player = std::make_shared<Player>();
+		currentChapter = chapter;
 		Global::isInfiniteJumpMode = false;
 		isTraversalStage = false;
 		isTraversalCleared = false;
 		disposablePlatformCount = 0;
+		isSatStage = false;
+		isSatCleared = false;
+		satAssignment.clear();
+		satClauses.clear();
+		satClauseWaveSpawned.clear();
 
 		gameObjects.cherries.clear();
 		gameObjects.bullets.clear();
@@ -43,6 +49,11 @@ namespace Iwanna {
 			gameObjects.miku = std::make_shared<Miku>(Vec2{ 1200,1200 });
 			gameObjects.miku->canPlayerKill = false;
 			break;
+		case 21:
+			createSatStage();
+			gameObjects.miku = std::make_shared<Miku>(Vec2{ 1200,1200 });
+			gameObjects.miku->canPlayerKill = false;
+			break;
 		}
 
 		// 一部変数の初期化
@@ -50,10 +61,11 @@ namespace Iwanna {
 	}
 
 	void AvoidanceManager::update() {
-		if (isTraversalCleared) return;
+		if (isTraversalCleared || isSatCleared) return;
 
 		//チャプターごとの更新処理
-		if (step < Global::startStep_Chapter2) chapter1();
+		if (currentChapter == 21) chapter21();
+		else if (step < Global::startStep_Chapter2) chapter1();
 		else if(step < Global::startStep_Chapter3) chapter2();
 
 		// ----- update関連 -----
@@ -117,7 +129,7 @@ namespace Iwanna {
 		}
 		player->onCollision(*miku);
 		player->updateLate();
-		updateDisposableTraversalStage();
+		if (isTraversalStage) updateDisposableTraversalStage();
 
 		//血のブロックに対する衝突
 		if (!bloods.isEmpty()) {
@@ -169,6 +181,7 @@ namespace Iwanna {
 			}));
 			Print << U" Platforms : " << visited << U" / " << disposablePlatformCount;
 		}
+		if (isSatStage) Print << U" SAT Assignment : " << satAssignment;
 	}
 
 	void AvoidanceManager::draw() const {
@@ -205,6 +218,51 @@ namespace Iwanna {
 				Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(ColorF{ 0.02, 0.08, 0.04, 0.72 });
 				FontAsset(U"Big")(U"CLEAR!").drawAt(400, 270, ColorF{ 0.45, 1.0, 0.55 });
 				FontAsset(U"Button")(U"All vertices visited. Press R to return.").drawAt(400, 340, Palette::White);
+			}
+		}
+
+		if (isSatStage) {
+			if (step < 450) {
+				const int32 variableIndex = Min(step / 150, 2);
+				RectF{ 32, 80, 368, 496 }.draw(ColorF{ 0.20, 0.75, 1.0, 0.10 });
+				RectF{ 400, 80, 368, 496 }.draw(ColorF{ 1.0, 0.30, 0.45, 0.10 });
+				Line{ 400, 80, 400, 576 }.draw(3, ColorF{ 0.15, 0.17, 0.22, 0.65 });
+				FontAsset(U"Big")(U"TRUE").drawAt(215, 160, ColorF{ 0.15, 0.60, 0.95, 0.55 });
+				FontAsset(U"Big")(U"FALSE").drawAt(585, 160, ColorF{ 0.95, 0.20, 0.35, 0.55 });
+				FontAsset(U"Button")(U"Choose x", variableIndex + 1, U" before the timer ends")
+					.drawAt(400, 92, ColorF{ 0.08, 0.10, 0.16 });
+				const double remaining = 1.0 - static_cast<double>(step % 150) / 150.0;
+				RectF{ 200, 120, 400 * remaining, 8 }.draw(ColorF{ 0.25, 0.90, 0.35 });
+			}
+
+			String assignmentText = U"Assignment: ";
+			for (int32 i = 0; i < static_cast<int32>(satAssignment.size()); ++i) {
+				assignmentText += U"x" + Format(i + 1) + U"=";
+				assignmentText += (satAssignment[i] < 0 ? U"?" : (satAssignment[i] == 1 ? U"T" : U"F"));
+				assignmentText += U"  ";
+			}
+			FontAsset(U"Button")(assignmentText).draw(20, 16, ColorF{ 0.08, 0.10, 0.16 });
+
+			if (step >= 450) {
+				const int32 clauseIndex = Clamp((step - 520) / 190, 0, 3);
+				FontAsset(U"Button")(U"Clause verification ", clauseIndex + 1, U" / 4")
+					.draw(20, 45, ColorF{ 0.15, 0.17, 0.22 });
+				const Array<int32> laneCenters = { 160, 400, 640 };
+				for (int32 lane = 0; lane < 3; ++lane) {
+					const bool open = isSatLiteralTrue(satClauses[clauseIndex][lane]);
+					RectF{ laneCenters[lane] - 48, 76, 96, 28 }
+						.draw(open ? ColorF{ 0.20, 0.90, 0.35, 0.85 } : ColorF{ 0.95, 0.18, 0.25, 0.85 });
+					const String literalName = (satClauses[clauseIndex][lane] > 0 ? U"x" : U"not x")
+						+ Format(Abs(satClauses[clauseIndex][lane]));
+					FontAsset(U"Button")(literalName).drawAt(laneCenters[lane], 78, Palette::White);
+				}
+			}
+
+			if (isSatCleared) {
+				Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(ColorF{ 0.02, 0.08, 0.04, 0.72 });
+				FontAsset(U"Big")(U"SAT CLEAR!").drawAt(400, 270, ColorF{ 0.45, 1.0, 0.55 });
+				FontAsset(U"Button")(U"Every clause had a true literal. Press R to return.")
+					.drawAt(400, 340, Palette::White);
 			}
 		}
 	}
@@ -307,6 +365,54 @@ namespace Iwanna {
 				&& Abs(playerFeet - rect->y) <= 3.0) {
 				isTraversalCleared = true;
 				return;
+			}
+		}
+	}
+
+	void AvoidanceManager::createSatStage() {
+		isSatStage = true;
+		gameObjects.blocks.clear();
+		createPeripheryBlocks();
+		gameObjects.player->pos = Vec2{ 400, 550 };
+		gameObjects.player->hitBox->setPos(gameObjects.player->pos);
+
+		satAssignment = { -1, -1, -1 };
+		// Positive values are xi; negative values are not xi.
+		satClauses = {
+			{ 1, -2, 3 },
+			{ -1, 2, 3 },
+			{ 1, 2, -3 },
+			{ -1, -2, -3 }
+		};
+		satClauseWaveSpawned = { false, false, false, false };
+	}
+
+	bool AvoidanceManager::isSatLiteralTrue(int32 literal) const {
+		const int32 index = Abs(literal) - 1;
+		if (index < 0 || index >= static_cast<int32>(satAssignment.size()) || satAssignment[index] < 0) {
+			return false;
+		}
+		return (literal > 0) ? (satAssignment[index] == 1) : (satAssignment[index] == 0);
+	}
+
+	void AvoidanceManager::createSatClauseWave(int32 clauseIndex) {
+		const Array<int32> laneCenters = { 160, 400, 640 };
+		for (int32 row = 0; row < 5; ++row) {
+			for (int32 x = 40; x <= 760; x += 20) {
+				bool isSafeGap = false;
+				for (int32 lane = 0; lane < 3; ++lane) {
+					if (isSatLiteralTrue(satClauses[clauseIndex][lane])
+						&& Abs(x - laneCenters[lane]) <= 52) {
+						isSafeGap = true;
+					}
+				}
+				if (isSafeGap) continue;
+
+				auto cherry = std::make_shared<Cherry>();
+				cherry->pos = Vec2{ x, 36.0 + 20.0 * row };
+				cherry->speed = 4.0;
+				cherry->dir = 270.0;
+				createCherry(cherry);
 			}
 		}
 	}

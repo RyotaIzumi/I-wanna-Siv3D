@@ -37,6 +37,12 @@ namespace Iwanna {
 		bool isTraversalStage = false;
 		bool isTraversalCleared = false;
 		int32 disposablePlatformCount = 0;
+		int32 currentChapter = 0;
+		bool isSatStage = false;
+		bool isSatCleared = false;
+		Array<int32> satAssignment;
+		Array<Array<int32>> satClauses;
+		Array<bool> satClauseWaveSpawned;
 
 		int32 step = 0;
 	public:
@@ -59,6 +65,9 @@ namespace Iwanna {
 		void createFloorBlocks(Vec2 basePos);
 		void createDisposableTraversalStage();
 		void updateDisposableTraversalStage();
+		void createSatStage();
+		void createSatClauseWave(int32 clauseIndex);
+		bool isSatLiteralTrue(int32 literal) const;
 
 		void chapter1();
 		void chapter2();
@@ -66,6 +75,7 @@ namespace Iwanna {
 		//void chapter4();
 		//void chapter5();
 		void chapter6();
+		void chapter21();
 
 		//cherry生成パターン
 		void createCherrySpread(Vec2 pos, int32 num, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
