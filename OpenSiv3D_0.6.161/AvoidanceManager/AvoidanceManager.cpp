@@ -13,8 +13,11 @@ namespace Iwanna {
 		gameObjects.cherries.clear();
 		gameObjects.bullets.clear();
 		gameObjects.bloods.clear();
+		gameObjects.miku = std::make_shared<Miku>(Vec2{ 704,352 });
+		Global::isInfiniteJumpMode = false;
 
 		switch (chapter) {
+		case 1:
 		case 2:
 		case 3:
 		case 4:
@@ -32,16 +35,15 @@ namespace Iwanna {
 			createFloorBlocks({ 10,11 });
 			createFloorBlocks({ 10,15 });
 
-			gameObjects.miku = std::make_shared<Miku>(Vec2{ 704,352 });
 			break;
 		case 6:
 			Global::isInfiniteJumpMode = true;
-			gameObjects.miku = std::make_shared<Miku>(Vec2{ 704,352 });
 			break;
 		}
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
+		previousStep = -1;
 	}
 
 	void AvoidanceManager::update() {
@@ -49,6 +51,10 @@ namespace Iwanna {
 		//チャプターごとの更新処理
 		if (step < Global::startStep_Chapter2) chapter1();
 		else if(step < Global::startStep_Chapter3) chapter2();
+		else if (step < Global::startStep_Chapter4) chapter3();
+		else if (step < Global::startStep_Chapter5) chapter4();
+		else if (step < Global::startStep_Chapter6) chapter5();
+		else chapter6();
 
 		// ----- update関連 -----
 		auto& player = gameObjects.player;
@@ -181,6 +187,12 @@ namespace Iwanna {
 	}
 
 	void AvoidanceManager::setStep(int32 newStep) {
+		if (previousStep < 0 || newStep < step) {
+			previousStep = newStep - 1;
+		}
+		else {
+			previousStep = step;
+		}
 		step = newStep;
 	}
 

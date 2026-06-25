@@ -14,10 +14,13 @@ namespace Iwanna {
 
 		speed = 0;
 		dir = 0;
+		age = 0;
 	}
 
 	void Cherry::update() {
-		checkOutOfScreen();
+		if (behavior) {
+			behavior(*this, age);
+		}
 
 		if (speed != 0) {
 			calculateSpeed();
@@ -28,11 +31,21 @@ namespace Iwanna {
 		}
 		// 当たり判定位置更新
 		hitBox->setPos(pos);
+		checkOutOfScreen();
+		++age;
 	}
 
 	void Cherry::draw() const {
 		TextureAsset(U"sprCherry").drawAt(pos.x,pos.y-1);
 		//hitBox->draw(Palette::Blue);//判定の可視化
+	}
+
+	void Cherry::setBehavior(const Behavior& newBehavior) {
+		behavior = newBehavior;
+	}
+
+	int32 Cherry::getAge() const {
+		return age;
 	}
 
 	//speedとdirからhspeedとvspeedを計算

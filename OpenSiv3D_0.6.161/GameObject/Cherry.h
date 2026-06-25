@@ -7,9 +7,14 @@
 
 namespace Iwanna {
 	class Cherry : public GameObject {
+	public:
+		using Behavior = std::function<void(Cherry&, int32)>;
+
 	private:
 		//当たり判定サイズ(半径)
 		int32 hitBoxSize = 10;
+		int32 age = 0;
+		Behavior behavior;
 
 	public:
 		double speed = 0;
@@ -22,6 +27,9 @@ namespace Iwanna {
 
 		void update() override;
 		void draw() const override;
+
+		void setBehavior(const Behavior& newBehavior);
+		int32 getAge() const;
 
 		void calculateSpeed();
 		void checkOutOfScreen();

@@ -939,6 +939,9 @@
     <ClInclude Include="AvoidanceManager\AvoidanceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AvoidanceManager\Timeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="GameObject\Block.h">
       <Filter>Header Files</Filter>
     </ClInclude>

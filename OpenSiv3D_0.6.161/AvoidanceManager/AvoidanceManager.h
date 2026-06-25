@@ -8,6 +8,7 @@
 #include "../GameObject/Blood.h"
 #include "../GameObject/Miku.h"
 #include "../Global.h"
+#include "Timeline.h"
 
 namespace Iwanna {
 
@@ -35,6 +36,7 @@ namespace Iwanna {
 		//血を生成したかどうか
 		bool isGenerateBloods = false;
 
+		int32 previousStep = -1;
 		int32 step = 0;
 	public:
 		AvoidanceManager();
@@ -57,9 +59,9 @@ namespace Iwanna {
 
 		void chapter1();
 		void chapter2();
-		//void chapter3();
-		//void chapter4();
-		//void chapter5();
+		void chapter3();
+		void chapter4();
+		void chapter5();
 		void chapter6();
 
 		//cherry生成パターン
