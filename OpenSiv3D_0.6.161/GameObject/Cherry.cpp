@@ -15,6 +15,8 @@ namespace Iwanna {
 		speed = 0;
 		dir = 0;
 		age = 0;
+		textureName = U"sprCherry";
+		color = Palette::White;
 	}
 
 	void Cherry::update() {
@@ -36,12 +38,27 @@ namespace Iwanna {
 	}
 
 	void Cherry::draw() const {
-		TextureAsset(U"sprCherry").drawAt(pos.x,pos.y-1);
+		ColorF drawColor = color;
+		drawColor.a *= alpha;
+		TextureAsset(textureName).drawAt(pos.x,pos.y-1, drawColor);
 		//hitBox->draw(Palette::Blue);//判定の可視化
 	}
 
 	void Cherry::setBehavior(const Behavior& newBehavior) {
 		behavior = newBehavior;
+	}
+
+	void Cherry::setVisual(const String& newTextureName, const ColorF& newColor) {
+		textureName = newTextureName;
+		color = newColor;
+	}
+
+	void Cherry::setTextureName(const String& newTextureName) {
+		textureName = newTextureName;
+	}
+
+	void Cherry::setColor(const ColorF& newColor) {
+		color = newColor;
 	}
 
 	int32 Cherry::getAge() const {

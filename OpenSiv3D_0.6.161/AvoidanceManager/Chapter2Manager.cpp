@@ -5,25 +5,24 @@ namespace Iwanna {
 	void AvoidanceManager::chapter2() {
 		Timeline timeline(previousStep, step);
 
-		const auto acceleratingCherry = []() {
-			auto cherry = std::make_shared<Cherry>();
-			cherry->setBehavior([](Cherry& self, int32) {
+		const auto acceleratingCherry = makeCherryFactory(
+			U"sprCherryAllWhite",
+			ColorF(1.0, 0.25, 0.25),
+			[](Cherry& self, int32) {
 				self.speed = Min(self.speed + 0.035, 5.0);
 			});
-			return cherry;
-		};
 
-		const auto waveCherry = []() {
-			auto cherry = std::make_shared<Cherry>();
-			cherry->setBehavior([](Cherry& self, int32 age) {
+		const auto waveCherry = makeCherryFactory(
+			U"sprCherryWhite",
+			ColorF(0.25, 0.55, 1.0),
+			[](Cherry& self, int32 age) {
 				self.dir += Math::Sin(age * 0.12) * 2.4;
 			});
-			return cherry;
-		};
 
-		const auto homingCherry = [player = gameObjects.player]() {
-			auto cherry = std::make_shared<Cherry>();
-			cherry->setBehavior([player](Cherry& self, int32) {
+		const auto homingCherry = makeCherryFactory(
+			U"sprCherryFrameWhite",
+			ColorF(0.45, 1.0, 0.35),
+			[player = gameObjects.player](Cherry& self, int32) {
 				const Vec2 diff = player->pos - self.pos;
 				const double targetDir = Math::ToDegrees(Atan2(-diff.y, diff.x));
 				double delta = targetDir - self.dir;
@@ -33,8 +32,14 @@ namespace Iwanna {
 
 				self.dir += delta * 0.045;
 			});
-			return cherry;
-		};
+
+		const auto rainbowCherry = makeCherryFactory(
+			U"sprCherryAllWhite",
+			Palette::White,
+			[](Cherry& self, int32 age) {
+				self.setColor(ColorF(HSV(age * 5.0, 0.85, 1.0)));
+				self.dir += 1.0;
+			});
 
 		timeline.at(850, [&] {
 			createCherrySpread(Vec2{ 400,300 }, 18, 0.6, acceleratingCherry);
@@ -49,6 +54,10 @@ namespace Iwanna {
 			const double y = 120 + (localStep / 35) * 70;
 			createCherrySpread(Vec2{ 60,y }, 5, 2.4, homingCherry);
 			createCherrySpread(Vec2{ 740,y }, 5, 2.4, homingCherry);
+		});
+
+		timeline.at(1290, [&] {
+			createCherrySpread(Vec2{ 400,300 }, 36, 2.8, rainbowCherry);
 		});
 	}
 }

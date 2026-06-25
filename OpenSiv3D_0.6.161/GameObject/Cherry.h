@@ -15,6 +15,8 @@ namespace Iwanna {
 		int32 hitBoxSize = 10;
 		int32 age = 0;
 		Behavior behavior;
+		String textureName = U"sprCherry";
+		ColorF color = Palette::White;
 
 	public:
 		double speed = 0;
@@ -29,6 +31,9 @@ namespace Iwanna {
 		void draw() const override;
 
 		void setBehavior(const Behavior& newBehavior);
+		void setVisual(const String& newTextureName, const ColorF& newColor);
+		void setTextureName(const String& newTextureName);
+		void setColor(const ColorF& newColor);
 		int32 getAge() const;
 
 		void calculateSpeed();

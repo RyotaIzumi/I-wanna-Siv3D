@@ -53,6 +53,10 @@ namespace Iwanna {
 		std::shared_ptr<Miku> getMiku();
 
 		void createCherry(std::shared_ptr<Cherry> cherry);
+		std::function<std::shared_ptr<Cherry>()> makeCherryFactory(
+			const String& textureName,
+			const ColorF& color,
+			Cherry::Behavior behavior = nullptr);
 
 		void createPeripheryBlocks();
 		void createFloorBlocks(Vec2 basePos);
