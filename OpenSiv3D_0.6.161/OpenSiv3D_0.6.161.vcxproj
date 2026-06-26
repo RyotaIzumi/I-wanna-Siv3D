@@ -366,6 +366,7 @@
     <ClInclude Include="60FPSwithAutoFrameSkip.h" />
     <ClInclude Include="Audio\AudioAsset.h" />
     <ClInclude Include="AvoidanceManager\AvoidanceManager.h" />
+    <ClInclude Include="AvoidanceManager\EasingMove.h" />
     <ClInclude Include="AvoidanceManager\Timeline.h" />
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="GameObject\Block.h" />

@@ -48,7 +48,7 @@ namespace Global {
 	constexpr int32 startStep_Chapter1 = 0;
 	constexpr int32 startStep_Chapter2 = 840;
 	constexpr int32 startStep_Chapter3 = 1320;
-	constexpr int32 startStep_Chapter4 = 1320;
-	constexpr int32 startStep_Chapter5 = 1320;
+	constexpr int32 startStep_Chapter4 = 1800;
+	constexpr int32 startStep_Chapter5 = 2300;
 	constexpr int32 startStep_Chapter6 = 3250;
 }

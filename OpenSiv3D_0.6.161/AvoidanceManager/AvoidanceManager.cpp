@@ -13,37 +13,88 @@ namespace Iwanna {
 		gameObjects.cherries.clear();
 		gameObjects.bullets.clear();
 		gameObjects.bloods.clear();
-		gameObjects.miku = std::make_shared<Miku>(Vec2{ 704,352 });
-		Global::isInfiniteJumpMode = false;
-
-		switch (chapter) {
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-			//ブロック配置
-			gameObjects.blocks.clear();
-			createPeripheryBlocks();
-			createFloorBlocks({ 3,3 });
-			createFloorBlocks({ 3,6 });
-			createFloorBlocks({ 3,9 });
-			createFloorBlocks({ 3,12 });
-			createFloorBlocks({ 3,15 });
-			createFloorBlocks({ 10,3 });
-			createFloorBlocks({ 10,7 });
-			createFloorBlocks({ 10,11 });
-			createFloorBlocks({ 10,15 });
-
-			break;
-		case 6:
-			Global::isInfiniteJumpMode = true;
-			break;
-		}
+		gameObjects.blocks.clear();
+		applyChapterSettings(createChapterSettings(chapter));
 
 		// 一部変数の初期化
 		isGenerateBloods = false;
 		previousStep = -1;
+	}
+
+	ChapterSettings AvoidanceManager::createChapterSettings(int32 chapter) const {
+		ChapterSettings settings;
+
+		switch (chapter) {
+		case 3:
+			settings.playerPos = Vec2{ 400,300 };
+			settings.backgroundColor = ColorF(0.5, 1.0);
+			settings.isInfiniteJumpMode = true;
+			break;
+		case 1:
+		case 2:
+		case 4:
+		case 5:
+			addPeripheryBlockSettings(settings.blocks);
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,3 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,6 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,9 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,12 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,15 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,3 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,7 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,11 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,15 });
+			break;
+		case 6:
+			settings.isInfiniteJumpMode = true;
+			break;
+		default:
+			break;
+		}
+
+		return settings;
+	}
+
+	void AvoidanceManager::applyChapterSettings(const ChapterSettings& settings) {
+		backgroundColor = settings.backgroundColor;
+		Global::isInfiniteJumpMode = settings.isInfiniteJumpMode;
+
+		gameObjects.player->pos = settings.playerPos;
+		gameObjects.player->hitBox->setPos(settings.playerPos);
+		gameObjects.miku = std::make_shared<Miku>(settings.mikuPos);
+
+		for (const auto& blockSetting : settings.blocks) {
+			auto block = std::make_shared<Block>(blockSetting.textureName, blockSetting.gridPos);
+			block->setHasCollide(blockSetting.hasCollide);
+			gameObjects.blocks << block;
+		}
+	}
+
+	void AvoidanceManager::addPeripheryBlockSettings(Array<BlockPlacement>& blocks) const {
+		blocks << BlockPlacement{ U"sprBlock", Vec2{ 0,0 } };
+		blocks << BlockPlacement{ U"sprBlock", Vec2{ 24,0 } };
+		blocks << BlockPlacement{ U"sprBlock", Vec2{ 0,18 } };
+		blocks << BlockPlacement{ U"sprBlock", Vec2{ 24,18 } };
+
+		for (int32 i = 1; i < 18; ++i) {
+			blocks << BlockPlacement{ U"sprWall", Vec2{ 0,i } };
+			blocks << BlockPlacement{ U"sprWall", Vec2{ 24,i } };
+		}
+
+		for (int32 i = 1; i < 24; ++i) {
+			blocks << BlockPlacement{ U"sprFloor", Vec2{ i,0 } };
+			blocks << BlockPlacement{ U"sprFloor", Vec2{ i,18 } };
+		}
+	}
+
+	void AvoidanceManager::addFloorBlockSettings(Array<BlockPlacement>& blocks, Vec2 basePos) const {
+		blocks << BlockPlacement{ U"sprBlock", Vec2{ basePos.x,basePos.y } };
+
+		for (int32 i = 1; i <= 3; ++i) {
+			blocks << BlockPlacement{ U"sprFloor", Vec2{ basePos.x + i,basePos.y } };
+		}
+
+		blocks << BlockPlacement{ U"sprBlock", Vec2{ basePos.x + 4,basePos.y } };
 	}
 
 	void AvoidanceManager::update() {
@@ -144,7 +195,7 @@ namespace Iwanna {
 		});
 		//画面外のりんごを削除
 		cherries.remove_if([](auto&& cherry) {
-			return cherry->isOutOfScreen;
+			return cherry->isOutOfScreen || cherry->isDelete;
 		});
 	}
 
@@ -165,7 +216,7 @@ namespace Iwanna {
 
 	void AvoidanceManager::draw() const {
 		//背景描画
-		Rect(0, 0, 800, 608).draw(ColorF(0.8, 1.0));
+		Rect(0, 0, 800, 608).draw(backgroundColor);
 
 		Array<std::shared_ptr<GameObject>> drawList;
 
@@ -219,26 +270,25 @@ namespace Iwanna {
 
 	//外周のブロック配置
 	void AvoidanceManager::createPeripheryBlocks() {
-		gameObjects.blocks << std::make_shared<Block>(U"sprBlock", Vec2(0, 0));
-		gameObjects.blocks << std::make_shared<Block>(U"sprBlock", Vec2(24, 0));
-		gameObjects.blocks << std::make_shared<Block>(U"sprBlock", Vec2(0, 18));
-		gameObjects.blocks << std::make_shared<Block>(U"sprBlock", Vec2(24, 18));
-		for (int i = 1; i < 18; i++) {
-			gameObjects.blocks << std::make_shared<Block>(U"sprWall", Vec2(0, i));
-			gameObjects.blocks << std::make_shared<Block>(U"sprWall", Vec2(24, i));
-		}
-		for (int i = 1; i < 24; i++) {
-			gameObjects.blocks << std::make_shared<Block>(U"sprFloor", Vec2(i, 0));
-			gameObjects.blocks << std::make_shared<Block>(U"sprFloor", Vec2(i, 18));
+		Array<BlockPlacement> blockSettings;
+		addPeripheryBlockSettings(blockSettings);
+
+		for (const auto& blockSetting : blockSettings) {
+			auto block = std::make_shared<Block>(blockSetting.textureName, blockSetting.gridPos);
+			block->setHasCollide(blockSetting.hasCollide);
+			gameObjects.blocks << block;
 		}
 	}
 
 	//5マス分の床ブロックを作成
 	void AvoidanceManager::createFloorBlocks(Vec2 basePos) {
-		gameObjects.blocks << std::make_shared<Block>(U"sprBlock", Vec2(basePos.x, basePos.y));
-		for (int i = 1; i <= 3; i++) {
-			gameObjects.blocks << std::make_shared<Block>(U"sprFloor", Vec2(basePos.x + i, basePos.y));
+		Array<BlockPlacement> blockSettings;
+		addFloorBlockSettings(blockSettings, basePos);
+
+		for (const auto& blockSetting : blockSettings) {
+			auto block = std::make_shared<Block>(blockSetting.textureName, blockSetting.gridPos);
+			block->setHasCollide(blockSetting.hasCollide);
+			gameObjects.blocks << block;
 		}
-		gameObjects.blocks << std::make_shared<Block>(U"sprBlock", Vec2(basePos.x + 4, basePos.y));
 	}
 }

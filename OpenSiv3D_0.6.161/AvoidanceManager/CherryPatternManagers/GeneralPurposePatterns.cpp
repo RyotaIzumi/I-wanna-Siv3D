@@ -22,20 +22,23 @@ namespace Iwanna {
 		}
 	}
 
+	std::function<std::shared_ptr<Cherry>()> AvoidanceManager::makeCherryFactory(const Cherry::Settings& settings) {
+		return [=]() {
+			auto cherry = std::make_shared<Cherry>();
+			cherry->applySettings(settings);
+			return cherry;
+		};
+	}
+
 	std::function<std::shared_ptr<Cherry>()> AvoidanceManager::makeCherryFactory(
 		const String& textureName,
 		const ColorF& color,
 		Cherry::Behavior behavior) {
 
-		return [=]() {
-			auto cherry = std::make_shared<Cherry>();
-			cherry->setVisual(textureName, color);
-
-			if (behavior) {
-				cherry->setBehavior(behavior);
-			}
-
-			return cherry;
-		};
+		return makeCherryFactory(Cherry::Settings{
+			.textureName = textureName,
+			.color = color,
+			.behavior = behavior,
+		});
 	}
 }

@@ -8,6 +8,7 @@
 #include "../GameObject/Blood.h"
 #include "../GameObject/Miku.h"
 #include "../Global.h"
+#include "EasingMove.h"
 #include "Timeline.h"
 
 namespace Iwanna {
@@ -21,11 +22,26 @@ namespace Iwanna {
 		std::shared_ptr<Miku> miku;
 	};
 
+	struct BlockPlacement {
+		String textureName = U"sprBlock";
+		Vec2 gridPos = Vec2{ 0,0 };
+		bool hasCollide = true;
+	};
+
+	struct ChapterSettings {
+		Vec2 playerPos = Vec2{ 200,500 };
+		Array<BlockPlacement> blocks;
+		ColorF backgroundColor = ColorF(0.8, 1.0);
+		Vec2 mikuPos = Vec2{ 704,352 };
+		bool isInfiniteJumpMode = false;
+	};
+
 	class AvoidanceManager {
 	private:
 		StockNearGameObjects stockNearGameObjects;
 		StockNearGameObjects stockBulletsNearGameObjects;
 		GameObjects gameObjects;
+		ColorF backgroundColor = ColorF(0.8, 1.0);
 
 		//弾丸関連
 		double bulletSpeed = 8;
@@ -38,6 +54,11 @@ namespace Iwanna {
 
 		int32 previousStep = -1;
 		int32 step = 0;
+
+		ChapterSettings createChapterSettings(int32 chapter) const;
+		void applyChapterSettings(const ChapterSettings& settings);
+		void addPeripheryBlockSettings(Array<BlockPlacement>& blocks) const;
+		void addFloorBlockSettings(Array<BlockPlacement>& blocks, Vec2 basePos) const;
 	public:
 		AvoidanceManager();
 
@@ -53,6 +74,7 @@ namespace Iwanna {
 		std::shared_ptr<Miku> getMiku();
 
 		void createCherry(std::shared_ptr<Cherry> cherry);
+		std::function<std::shared_ptr<Cherry>()> makeCherryFactory(const Cherry::Settings& settings);
 		std::function<std::shared_ptr<Cherry>()> makeCherryFactory(
 			const String& textureName,
 			const ColorF& color,

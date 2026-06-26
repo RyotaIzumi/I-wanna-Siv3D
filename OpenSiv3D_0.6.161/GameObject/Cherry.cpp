@@ -11,6 +11,7 @@ namespace Iwanna {
 		canPlayerKill = true;
 		isDelete = false;
 		isOutOfScreen = false;
+		canDeleteOutOfScreen = true;
 
 		speed = 0;
 		dir = 0;
@@ -33,7 +34,7 @@ namespace Iwanna {
 		}
 		// 当たり判定位置更新
 		hitBox->setPos(pos);
-		checkOutOfScreen();
+		if(canDeleteOutOfScreen) checkOutOfScreen();
 		++age;
 	}
 
@@ -42,6 +43,13 @@ namespace Iwanna {
 		drawColor.a *= alpha;
 		TextureAsset(textureName).drawAt(pos.x,pos.y-1, drawColor);
 		//hitBox->draw(Palette::Blue);//判定の可視化
+	}
+
+	void Cherry::applySettings(const Settings& settings) {
+		textureName = settings.textureName;
+		color = settings.color;
+		behavior = settings.behavior;
+		canDeleteOutOfScreen = settings.canDeleteOutOfScreen;
 	}
 
 	void Cherry::setBehavior(const Behavior& newBehavior) {
@@ -59,6 +67,10 @@ namespace Iwanna {
 
 	void Cherry::setColor(const ColorF& newColor) {
 		color = newColor;
+	}
+
+	void Cherry::setCanDeleteOutOfScreen(bool enabled) {
+		canDeleteOutOfScreen = enabled;
 	}
 
 	int32 Cherry::getAge() const {

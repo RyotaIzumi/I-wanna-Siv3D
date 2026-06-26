@@ -10,6 +10,13 @@ namespace Iwanna {
 	public:
 		using Behavior = std::function<void(Cherry&, int32)>;
 
+		struct Settings {
+			String textureName = U"sprCherry";
+			ColorF color = Palette::White;
+			Behavior behavior = nullptr;
+			bool canDeleteOutOfScreen = true;
+		};
+
 	private:
 		//当たり判定サイズ(半径)
 		int32 hitBoxSize = 10;
@@ -17,6 +24,7 @@ namespace Iwanna {
 		Behavior behavior;
 		String textureName = U"sprCherry";
 		ColorF color = Palette::White;
+		bool canDeleteOutOfScreen = true;//画面外で消去するかどうかのフラグ
 
 	public:
 		double speed = 0;
@@ -30,10 +38,12 @@ namespace Iwanna {
 		void update() override;
 		void draw() const override;
 
+		void applySettings(const Settings& settings);
 		void setBehavior(const Behavior& newBehavior);
 		void setVisual(const String& newTextureName, const ColorF& newColor);
 		void setTextureName(const String& newTextureName);
 		void setColor(const ColorF& newColor);
+		void setCanDeleteOutOfScreen(bool enabled);
 		int32 getAge() const;
 
 		void calculateSpeed();
