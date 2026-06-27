@@ -22,6 +22,7 @@ namespace Iwanna{
 		hitBox = std::make_shared<RectHitBox>(pos, hitBoxSize);
 		type = ObjectType::Player;
 		canPlayerKill = false;
+		depth = DrawDepth::Player;
 
 		//アニメーションデータの登録
 		//(アクション名,フレーム数,各フレーム再生時間,ループするかどうか(省略可), 左右差分があるか(省略可))

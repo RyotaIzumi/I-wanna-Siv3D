@@ -15,6 +15,7 @@ namespace Iwanna {
 			ColorF color = Palette::White;
 			Behavior behavior = nullptr;
 			bool canDeleteOutOfScreen = true;
+			double depth = DrawDepth::Cherry;
 		};
 
 	private:

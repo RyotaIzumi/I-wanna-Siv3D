@@ -12,6 +12,7 @@ namespace Iwanna {
 		isDelete = false;
 		isOutOfScreen = false;
 		canDeleteOutOfScreen = true;
+		depth = DrawDepth::Cherry;
 
 		speed = 0;
 		dir = 0;
@@ -39,6 +40,7 @@ namespace Iwanna {
 	}
 
 	void Cherry::draw() const {
+		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		ColorF drawColor = color;
 		drawColor.a *= alpha;
 		TextureAsset(textureName).drawAt(pos.x,pos.y-1, drawColor);
@@ -50,6 +52,7 @@ namespace Iwanna {
 		color = settings.color;
 		behavior = settings.behavior;
 		canDeleteOutOfScreen = settings.canDeleteOutOfScreen;
+		depth = settings.depth;
 	}
 
 	void Cherry::setBehavior(const Behavior& newBehavior) {

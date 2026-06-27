@@ -16,7 +16,7 @@ namespace Iwanna {
 		gravity = 0.4;
 		speed = Random(5, 12);
 
-		depth = 41;
+		depth = DrawDepth::Blood;
 
 		setDirection(dir);
 	}

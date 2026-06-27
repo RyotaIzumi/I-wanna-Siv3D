@@ -7,6 +7,7 @@ namespace Iwanna {
 		hitBox = std::make_shared<MikuHitBox>(pos);
 		type = ObjectType::Miku;
 		canPlayerKill = true;
+		depth = DrawDepth::Miku;
 	}
 	void Miku::update() {
 	}

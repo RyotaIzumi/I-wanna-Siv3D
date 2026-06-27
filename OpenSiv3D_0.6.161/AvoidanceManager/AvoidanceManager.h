@@ -26,6 +26,7 @@ namespace Iwanna {
 		String textureName = U"sprBlock";
 		Vec2 gridPos = Vec2{ 0,0 };
 		bool hasCollide = true;
+		double depth = DrawDepth::Block;
 	};
 
 	struct ChapterSettings {
@@ -34,6 +35,8 @@ namespace Iwanna {
 		ColorF backgroundColor = ColorF(0.8, 1.0);
 		Vec2 mikuPos = Vec2{ 704,352 };
 		bool isInfiniteJumpMode = false;
+		double playerDepth = DrawDepth::Player;
+		double mikuDepth = DrawDepth::Miku;
 	};
 
 	class AvoidanceManager {

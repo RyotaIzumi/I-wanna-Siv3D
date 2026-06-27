@@ -61,11 +61,14 @@ namespace Iwanna {
 
 		gameObjects.player->pos = settings.playerPos;
 		gameObjects.player->hitBox->setPos(settings.playerPos);
+		gameObjects.player->setDepth(settings.playerDepth);
 		gameObjects.miku = std::make_shared<Miku>(settings.mikuPos);
+		gameObjects.miku->setDepth(settings.mikuDepth);
 
 		for (const auto& blockSetting : settings.blocks) {
 			auto block = std::make_shared<Block>(blockSetting.textureName, blockSetting.gridPos);
 			block->setHasCollide(blockSetting.hasCollide);
+			block->setDepth(blockSetting.depth);
 			gameObjects.blocks << block;
 		}
 	}
@@ -212,6 +215,11 @@ namespace Iwanna {
 		Print << U" Player Pos : " << player->pos;
 		Print << U" Player Muteki : " << player->getIsMuteki();
 		Print << U" Bullets Num : " << gameObjects.bullets.size();
+		Print << U" Depth Player/Miku : " << player->getDepth() << U" / " << gameObjects.miku->getDepth();
+		if (!gameObjects.blocks.isEmpty()) Print << U" Depth Block : " << gameObjects.blocks.front()->getDepth();
+		if (!gameObjects.cherries.isEmpty()) Print << U" Depth Cherry : " << gameObjects.cherries.front()->getDepth();
+		if (!gameObjects.bullets.isEmpty()) Print << U" Depth Bullet : " << gameObjects.bullets.front()->getDepth();
+		if (!gameObjects.bloods.isEmpty()) Print << U" Depth Blood : " << gameObjects.bloods.front()->getDepth();
 	}
 
 	void AvoidanceManager::draw() const {
@@ -230,7 +238,7 @@ namespace Iwanna {
 
 		// ソート
 		drawList.sort_by([](const auto& a, const auto& b) {
-			return a->depth < b->depth;
+			return a->getDepth() < b->getDepth();
 		});
 
 		// 描画

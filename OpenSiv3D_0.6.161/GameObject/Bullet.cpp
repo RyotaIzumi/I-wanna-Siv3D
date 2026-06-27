@@ -11,6 +11,7 @@ namespace Iwanna {
 		canPlayerKill = false;
 		isDelete = false;
 		isOutOfScreen = false;
+		depth = DrawDepth::Bullet;
 
 		hspeed = hs;
 		vspeed = 0;
