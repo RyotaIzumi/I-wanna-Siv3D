@@ -8,6 +8,7 @@ namespace {
 	constexpr int32 chapter3LoopPressStep = 73;
 	constexpr int32 chapter3LoopEndStep = 143;
 	constexpr int32 chapter3LoopLength = chapter3LoopEndStep - chapter3LoopFirstStep + 1;
+	constexpr double pressShakeDistance = 50.0;
 
 	struct PressMachineLayout {
 		int32 widthNum = 50;             // 横一列の林檎数
@@ -136,7 +137,6 @@ namespace {
 			constexpr int32 moveTime = 20;
 			constexpr int32 laughMoveTime = 11; // わっはっはのときの一回の移動時間
 			constexpr double shakeWidthX = 1.0;
-			constexpr double shakeWidthY = 50.0;
 
 			const Vec2 currentHome = state->localHome + controller->offset;
 			const double sign = (state->upDown == lowerMachine) ? 1.0 : -1.0;
@@ -174,7 +174,7 @@ namespace {
 				const double t = state->timer / static_cast<double>(shakeTime);
 				const double e = bezierEase(t, 0.5, 0.99);
 				self.pos.x = state->pressHome.x - shakeWidthX * Math::Sin(Math::ToRadians(720.0 * e));
-				self.pos.y = state->pressHome.y + sign * shakeWidthY * e;
+				self.pos.y = state->pressHome.y + sign * pressShakeDistance * e;
 
 				++state->timer;
 				if (state->timer > shakeTime) {
@@ -216,7 +216,7 @@ namespace {
 				const double t = state->timer / static_cast<double>(shakeTime);
 				const double e = bezierEase(t, 0.5, 0.99);
 				self.pos.x = state->pressHome.x - shakeWidthX * Math::Sin(Math::ToRadians(720.0 * e));
-				self.pos.y = state->pressHome.y + sign * shakeWidthY * e;
+				self.pos.y = state->pressHome.y + sign * pressShakeDistance * e;
 
 				++state->timer;
 				if (state->timer > shakeTime) {
@@ -306,6 +306,8 @@ namespace {
 
 	Array<std::shared_ptr<PressMachineController>> pressMachines;
 	Array<std::shared_ptr<CogController>> cogControllers;
+	int32 selectedSpecialMovingSide = lowerMachine;
+	int32 selectedMarkerPress = 1;
 }
 
 namespace Iwanna {
@@ -316,6 +318,10 @@ namespace Iwanna {
 		timeline.at(Global::startStep_Chapter3, [&] {
 			pressMachines.clear();
 			cogControllers.clear();
+			selectedSpecialMovingSide = (pressMachineLayout.specialMovingSide == randomMachine)
+				? Random(lowerMachine, upperMachine)
+				: pressMachineLayout.specialMovingSide;
+			selectedMarkerPress = Random(1, 2);
 		});
 
 		for (auto& machine : pressMachines) {
@@ -390,13 +396,11 @@ namespace Iwanna {
 			}
 		};
 
-		const auto createPressMachine = [&](double baseX) {
+		const auto createPressMachine = [&](double baseX, bool createWhiteMarker) {
 			const auto& layout = pressMachineLayout;
 			const int32 toothWidth = layout.widthNum / layout.toothSegmentNum;
 			auto specialPressState = std::make_shared<SpecialPressState>();
-			const int32 specialMovingSide = (layout.specialMovingSide == randomMachine)
-				? Random(lowerMachine, upperMachine)
-				: layout.specialMovingSide;
+			const int32 specialMovingSide = selectedSpecialMovingSide;
 
 			Array<int32> downProtPattern(layout.toothSegmentNum);
 			Array<int32> upProtPattern(layout.toothSegmentNum);
@@ -496,6 +500,8 @@ namespace Iwanna {
 				const int32 largeWidthNum = layout.widthNum / layout.offscreenFillScale;
 				double largeY = firstOffscreenY
 					+ bodyDirection * (layout.offscreenFillScale - 1) * layout.cellSize / 2.0;
+				Array<Vec2> largeCherryPositions;
+				Array<int32> markerCandidateIndices;
 
 				for (;;) {
 					for (int32 i = 0; i < largeWidthNum; ++i) {
@@ -503,7 +509,14 @@ namespace Iwanna {
 							sideBaseX + (i * layout.offscreenFillScale + (layout.offscreenFillScale - 1) / 2.0) * layout.cellSize,
 							largeY
 						};
-						createMachineCherry(localPos, upDownPattern, largeScaleColor, DrawDepth::Cherry - 0.1, largeScale, controller);
+						const double pressedY = localPos.y
+							- bodyDirection * (layout.pressDistance - pressShakeDistance);
+						const int32 positionIndex = static_cast<int32>(largeCherryPositions.size());
+						largeCherryPositions << localPos;
+
+						if (0.0 <= pressedY && pressedY <= Global::windowHeight) {
+							markerCandidateIndices << positionIndex;
+						}
 					}
 
 					const bool reachedBodyEnd = (upDownPattern == lowerMachine)
@@ -514,6 +527,22 @@ namespace Iwanna {
 					}
 
 					largeY += bodyDirection * largeCellSize;
+				}
+
+				int32 markerIndex = -1;
+				if (createWhiteMarker && !controller->movesOnSpecialPress && !markerCandidateIndices.isEmpty()) {
+					markerIndex = markerCandidateIndices[Random(static_cast<int32>(markerCandidateIndices.size() - 1))];
+				}
+
+				for (int32 i = 0; i < static_cast<int32>(largeCherryPositions.size()); ++i) {
+					const bool isMarker = (i == markerIndex);
+					createMachineCherry(
+						largeCherryPositions[i],
+						upDownPattern,
+						isMarker ? ColorF{ 1.0 } : largeScaleColor,
+						isMarker ? DrawDepth::Cherry : DrawDepth::Cherry - 0.1,
+						largeScale,
+						controller);
 				}
 
 				for (const auto& cell : machineCells) {
@@ -544,15 +573,15 @@ namespace Iwanna {
 			createCog(Vec2{ 400,304 }, 8);
 			createCog(Vec2{ 170,304 }, 8);
 			createCog(Vec2{ 630,304 }, 8);
-			createPressMachine(8);
-			createPressMachine(808.0);
+			createPressMachine(8, false);
+			createPressMachine(808.0, selectedMarkerPress == 1);
 		});
 
 		timeline.every(
 			chapter3LoopLength,
 			Global::startStep_Chapter3 + chapter3LoopFirstStep,
 			Global::startStep_Chapter3 + chapter3LoopFirstStep + chapter3LoopLength * 2 - 1,
-			[&](int32) {
+			[&](int32 localStep) {
 				for (auto& machine : pressMachines) {
 					machine->scrMoveEasing(2, machine->offset + Vec2{ 800.0 * machine->horizontalDirection,0 }, 50);
 				}
@@ -560,7 +589,8 @@ namespace Iwanna {
 					cog->rotateRight(90.0, 50, 2);
 				}
 
-				createPressMachine(808.0);
+				const int32 incomingPressNumber = localStep / chapter3LoopLength + 2;
+				createPressMachine(808.0, incomingPressNumber == selectedMarkerPress);
 			});
 
 		timeline.every(
