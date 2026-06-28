@@ -8,6 +8,7 @@ namespace {
 	constexpr int32 chapter3LoopPressStep = 73;
 	constexpr int32 chapter3LoopEndStep = 143;
 	constexpr int32 chapter3LoopLength = chapter3LoopEndStep - chapter3LoopFirstStep + 1;
+	constexpr int32 finalCorrectPressLeadTime = 50;
 	constexpr double pressShakeDistance = 50.0;
 
 	struct PressMachineLayout {
@@ -38,8 +39,33 @@ namespace {
 
 	constexpr LargeCherryRowSettings largeCherryRowSettings{};
 
+	struct FinalPressSettings {
+		double hiddenOffset = 100.0;
+	};
+
+	constexpr FinalPressSettings finalPressSettings{};
+
+	struct CogHintSettings {
+		int32 beginStepOffset = 370;
+		int32 endStepOffset = 470;
+		int32 interval = 50;
+		int32 rotationTime = 45;
+		double degrees = 90.0;
+	};
+
+	constexpr CogHintSettings cogHintSettings{};
+	static_assert(cogHintSettings.beginStepOffset
+		+ cogHintSettings.interval
+		+ cogHintSettings.rotationTime
+		<= cogHintSettings.endStepOffset);
+
 	struct SpecialPressState {
 		bool moveFinished = false;
+	};
+
+	struct PressMachinePattern {
+		Array<int32> lowerTeeth;
+		Array<int32> upperTeeth;
 	};
 
 	struct PressMachineController {
@@ -47,8 +73,10 @@ namespace {
 		Iwanna::EasingMove move;
 		std::shared_ptr<SpecialPressState> specialPressState;
 		int32 pressRequest = 0;
+		int32 pushRequest = 0;
 		int32 specialPressRequest = 0;
 		int32 horizontalDirection = -1;
+		double pushDistance = 0.0;
 		bool movesOnSpecialPress = false;
 
 		void update() {
@@ -63,6 +91,10 @@ namespace {
 
 		void requestPress() {
 			++pressRequest;
+		}
+
+		void requestPush() {
+			++pushRequest;
 		}
 
 		void requestSpecialPress() {
@@ -146,6 +178,7 @@ namespace {
 			int32 phase = 0;
 			int32 timer = 0;
 			int32 seenPressRequest = 0;
+			int32 seenPushRequest = 0;
 			int32 seenSpecialPressRequest = 0;
 			int32 pressCount = 0;
 		};
@@ -178,6 +211,15 @@ namespace {
 					state->timer = 0;
 					state->pressCount = 0;
 					state->phase = 4;
+				}
+
+				else if (state->seenPushRequest != controller->pushRequest) {
+					state->seenPushRequest = controller->pushRequest;
+					state->pressHome = currentHome;
+					state->phaseStart = currentHome;
+					state->phaseEnd = currentHome + Vec2{ 0, -sign * controller->pushDistance };
+					state->timer = 0;
+					state->phase = 2;
 				}
 
 				else if (state->seenPressRequest != controller->pressRequest) {
@@ -340,6 +382,9 @@ namespace {
 	Array<std::shared_ptr<LargeCherryRowController>> largeCherryRowControllers;
 	int32 selectedSpecialMovingSide = lowerMachine;
 	int32 selectedMarkerPress = 1;
+	int32 selectedCorrectPress = 1;
+	PressMachinePattern correctPressPattern;
+	Array<int32> cogHintDirections;
 }
 
 namespace Iwanna {
@@ -355,6 +400,25 @@ namespace Iwanna {
 				? Random(lowerMachine, upperMachine)
 				: pressMachineLayout.specialMovingSide;
 			selectedMarkerPress = Random(1, 2);
+			selectedCorrectPress = Random(1, 3);
+			correctPressPattern = PressMachinePattern{};
+			cogHintDirections.clear();
+
+			switch (selectedCorrectPress) {
+			case 1:
+				cogHintDirections = { -1, -1 };
+				break;
+			case 2:
+				cogHintDirections = { -1 };
+				break;
+			case 3:
+				if (Random(0, 1) == 0) {
+					cogHintDirections = { -1, 1 };
+				}
+				break;
+			default:
+				break;
+			}
 		});
 
 		for (auto& machine : pressMachines) {
@@ -432,23 +496,37 @@ namespace Iwanna {
 			}
 		};
 
-		const auto createPressMachine = [&](double baseX, bool createWhiteMarker) {
+		const auto createPressMachine = [&](
+			double baseX,
+			bool createWhiteMarker,
+			int32 pressNumber,
+			const PressMachinePattern* savedPattern) {
 			const auto& layout = pressMachineLayout;
 			const int32 toothWidth = layout.widthNum / layout.toothSegmentNum;
 			auto specialPressState = std::make_shared<SpecialPressState>();
 			const int32 specialMovingSide = selectedSpecialMovingSide;
+			PressMachinePattern pattern;
 
-			Array<int32> downProtPattern(layout.toothSegmentNum);
-			Array<int32> upProtPattern(layout.toothSegmentNum);
+			if (savedPattern) {
+				pattern = *savedPattern;
+			}
+			else {
+				pattern.lowerTeeth.resize(layout.toothSegmentNum);
+				pattern.upperTeeth.resize(layout.toothSegmentNum);
 
-			for (int32 i = 0; i < layout.toothSegmentNum; ++i) {
-				downProtPattern[i] = Random(0, 1);
-				upProtPattern[i] = downProtPattern[i] + 1;
+				for (int32 i = 0; i < layout.toothSegmentNum; ++i) {
+					pattern.lowerTeeth[i] = Random(0, 1);
+					pattern.upperTeeth[i] = pattern.lowerTeeth[i] + 1;
+				}
+
+				const int32 safeIndex = Random(3, 5);
+				pattern.lowerTeeth[safeIndex] = 0;
+				pattern.upperTeeth[safeIndex] = 0;
 			}
 
-			const int32 safeIndex = Random(3, 5);
-			downProtPattern[safeIndex] = 0;
-			upProtPattern[safeIndex] = 0;
+			if (pressNumber == selectedCorrectPress) {
+				correctPressPattern = pattern;
+			}
 
 			const auto createMachineCherry = [&](const Vec2& localPos, int32 upDownPattern, const ColorF& color, double depth, double scale, const std::shared_ptr<PressMachineController>& controller) {
 				auto cherry = std::make_shared<Cherry>();
@@ -511,8 +589,8 @@ namespace Iwanna {
 				for (int32 i = 0; i < layout.toothDepthNum; ++i) {
 					for (int32 k = 0; k < layout.toothSegmentNum; ++k) {
 						const bool shouldCreate = (upDownPattern == lowerMachine)
-							? (downProtPattern[k] == 1)
-							: (upProtPattern[k] == 1);
+							? (pattern.lowerTeeth[k] == 1)
+							: (pattern.upperTeeth[k] == 1);
 
 						if (!shouldCreate) {
 							continue;
@@ -600,10 +678,14 @@ namespace Iwanna {
 
 					createMachineCherry(localPos, upDownPattern, color, depth, 1.0, controller);
 				}
+
+				return controller;
 			};
 
-			createMachineSide(lowerMachine, baseX, layout.lowerToothRootY, -1);
-			createMachineSide(upperMachine, -baseX + layout.cellSize, layout.upperToothRootY, 1);
+			Array<std::shared_ptr<PressMachineController>> createdControllers;
+			createdControllers << createMachineSide(lowerMachine, baseX, layout.lowerToothRootY, -1);
+			createdControllers << createMachineSide(upperMachine, -baseX + layout.cellSize, layout.upperToothRootY, 1);
+			return createdControllers;
 		};
 
 		const auto createLargeCherryRows = [&] {
@@ -651,8 +733,8 @@ namespace Iwanna {
 			createCog(Vec2{ 400,304 }, 8);
 			createCog(Vec2{ 170,304 }, 8);
 			createCog(Vec2{ 630,304 }, 8);
-			createPressMachine(8, false);
-			createPressMachine(808.0, selectedMarkerPress == 1);
+			createPressMachine(8, false, 0, nullptr);
+			createPressMachine(808.0, selectedMarkerPress == 1, 1, nullptr);
 		});
 
 		timeline.every(
@@ -668,7 +750,11 @@ namespace Iwanna {
 				}
 
 				const int32 incomingPressNumber = localStep / chapter3LoopLength + 2;
-				createPressMachine(808.0, incomingPressNumber == selectedMarkerPress);
+				createPressMachine(
+					808.0,
+					incomingPressNumber == selectedMarkerPress,
+					incomingPressNumber,
+					nullptr);
 			});
 
 		timeline.every(
@@ -700,6 +786,35 @@ namespace Iwanna {
 
 		timeline.at(Global::startStep_Chapter3 + 370, [&] {
 			createLargeCherryRows();
+		});
+
+		for (int32 i = 0; i < static_cast<int32>(cogHintDirections.size()); ++i) {
+			const int32 direction = cogHintDirections[i];
+			const int32 rotationStep = Global::startStep_Chapter3
+				+ cogHintSettings.beginStepOffset
+				+ cogHintSettings.interval * i;
+
+			timeline.at(rotationStep, [&, direction] {
+				for (auto& cog : cogControllers) {
+					if (direction < 0) {
+						cog->rotateLeft(cogHintSettings.degrees, cogHintSettings.rotationTime, 2);
+					}
+					else {
+						cog->rotateRight(cogHintSettings.degrees, cogHintSettings.rotationTime, 2);
+					}
+				}
+			});
+		}
+
+		timeline.at(Global::startStep_Chapter3 + 475, [&] {
+			auto correctMachines = createPressMachine(8, false, 0, &correctPressPattern);
+			for (const auto& machine : correctMachines) {
+				machine->offset.y = -machine->horizontalDirection * finalPressSettings.hiddenOffset;
+				machine->pushDistance = finalPressSettings.hiddenOffset
+					+ pressMachineLayout.pressDistance
+					- pressShakeDistance;
+				machine->requestPush();
+			}
 		});
 
 	}
