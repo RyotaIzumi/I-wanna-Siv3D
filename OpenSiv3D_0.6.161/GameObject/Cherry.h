@@ -16,6 +16,7 @@ namespace Iwanna {
 			Behavior behavior = nullptr;
 			bool canDeleteOutOfScreen = true;
 			double depth = DrawDepth::Cherry;
+			double scale = 1.0;
 		};
 
 	private:
@@ -25,6 +26,7 @@ namespace Iwanna {
 		Behavior behavior;
 		String textureName = U"sprCherry";
 		ColorF color = Palette::White;
+		double scale = 1.0;
 		bool canDeleteOutOfScreen = true;//画面外で消去するかどうかのフラグ
 
 	public:
@@ -44,6 +46,7 @@ namespace Iwanna {
 		void setVisual(const String& newTextureName, const ColorF& newColor);
 		void setTextureName(const String& newTextureName);
 		void setColor(const ColorF& newColor);
+		void setScale(double newScale);
 		void setCanDeleteOutOfScreen(bool enabled);
 		int32 getAge() const;
 

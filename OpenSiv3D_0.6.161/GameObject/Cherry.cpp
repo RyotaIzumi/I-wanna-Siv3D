@@ -19,6 +19,7 @@ namespace Iwanna {
 		age = 0;
 		textureName = U"sprCherry";
 		color = Palette::White;
+		scale = 1.0;
 	}
 
 	void Cherry::update() {
@@ -43,7 +44,7 @@ namespace Iwanna {
 		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		ColorF drawColor = color;
 		drawColor.a *= alpha;
-		TextureAsset(textureName).drawAt(pos.x,pos.y-1, drawColor);
+		TextureAsset(textureName).scaled(scale).drawAt(pos.x,pos.y-1, drawColor);
 		//hitBox->draw(Palette::Blue);//判定の可視化
 	}
 
@@ -53,6 +54,7 @@ namespace Iwanna {
 		behavior = settings.behavior;
 		canDeleteOutOfScreen = settings.canDeleteOutOfScreen;
 		depth = settings.depth;
+		setScale(settings.scale);
 	}
 
 	void Cherry::setBehavior(const Behavior& newBehavior) {
@@ -70,6 +72,11 @@ namespace Iwanna {
 
 	void Cherry::setColor(const ColorF& newColor) {
 		color = newColor;
+	}
+
+	void Cherry::setScale(double newScale) {
+		scale = Max(newScale, 0.01);
+		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scale);
 	}
 
 	void Cherry::setCanDeleteOutOfScreen(bool enabled) {
@@ -91,7 +98,7 @@ namespace Iwanna {
 
 	//画面外判定
 	void Cherry::checkOutOfScreen() {
-		const int32 excess = hitBoxSize * 2;//画面端からの余白
+		const double excess = hitBoxSize * scale * 2;//画面端からの余白
 		if (pos.x < -1 * excess || pos.x > Global::windowWidth + excess ||
 			pos.y < -1 * excess || pos.y > Global::windowHeight + excess) {
 			isOutOfScreen = true;

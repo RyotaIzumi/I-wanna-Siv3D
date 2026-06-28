@@ -13,6 +13,7 @@ namespace {
 		int32 widthNum = 50;             // 横一列の林檎数
 		int32 toothSegmentNum = 10;      // ギザギザを分割する数
 		int32 toothDepthNum = 6;         // ギザギザの縦方向の長さ
+		int32 offscreenFillScale = 5;    // 画面外を埋める林檎の倍率
 		double cellSize = 16.0;          // 林檎同士の間隔
 		double upperToothRootY = 100.0;  // 小さくすると上端へ寄る
 		double lowerToothRootY = 516.0;  // 大きくすると下端へ寄る
@@ -23,6 +24,7 @@ namespace {
 	// Chapter 3 のプレス機の形状はここでまとめて調整する。
 	constexpr PressMachineLayout pressMachineLayout{};
 	static_assert(pressMachineLayout.widthNum % pressMachineLayout.toothSegmentNum == 0);
+	static_assert(pressMachineLayout.widthNum % pressMachineLayout.offscreenFillScale == 0);
 	static_assert(randomMachine <= pressMachineLayout.specialMovingSide
 		&& pressMachineLayout.specialMovingSide <= upperMachine);
 
@@ -408,15 +410,16 @@ namespace Iwanna {
 			downProtPattern[safeIndex] = 0;
 			upProtPattern[safeIndex] = 0;
 
-			const auto createMachineCherry = [&](const Vec2& localPos, int32 upDownPattern, const std::shared_ptr<PressMachineController>& controller) {
+			const auto createMachineCherry = [&](const Vec2& localPos, int32 upDownPattern, const ColorF& color, double depth, double scale, const std::shared_ptr<PressMachineController>& controller) {
 				auto cherry = std::make_shared<Cherry>();
 				cherry->pos = localPos + controller->offset;
 				cherry->applySettings(Cherry::Settings{
 					.textureName = U"sprCherryAllWhite",
-					.color = ColorF(0.08, 0.08, 0.09),
+					.color = color,
 					.behavior = makePressMachineBehavior(localPos, upDownPattern, controller, layout.pressDistance),
 					.canDeleteOutOfScreen = false,
-					.depth = DrawDepth::Cherry,
+					.depth = depth,
+					.scale = scale,
 				});
 				createCherry(cherry);
 			};
@@ -427,27 +430,44 @@ namespace Iwanna {
 				controller->movesOnSpecialPress = (upDownPattern == specialMovingSide);
 				controller->horizontalDirection = horizontalDirection;
 				pressMachines << controller;
+				Array<Point> machineCells;
+				HashTable<Point, bool> occupiedCells;
+
+				const auto addMachineCell = [&](const Point& cell) {
+					if (!occupiedCells.contains(cell)) {
+						machineCells << cell;
+						occupiedCells[cell] = true;
+					}
+				};
 
 				// 歯の反対側は、プレス後にも画面端まで覆う位置まで生成する。
 				const double bodyEndY = (upDownPattern == lowerMachine)
-					? Global::windowHeight + layout.pressDistance + layout.cellSize
-					: -layout.pressDistance - layout.cellSize;
-				const double bodyDirection = (upDownPattern == lowerMachine) ? 1.0 : -1.0;
+					? (Global::windowHeight + layout.pressDistance + layout.cellSize) + Global::windowHeight / 2
+					: (0.0 - layout.pressDistance - layout.cellSize) - Global::windowHeight / 2;
+				const int32 bodyDirection = (upDownPattern == lowerMachine) ? 1 : -1;
+				double firstOffscreenY = 0.0;
+				bool foundOffscreenRow = false;
 
-				for (double y = toothRootY + bodyDirection * layout.cellSize;
-					(upDownPattern == lowerMachine) ? (y <= bodyEndY) : (y >= bodyEndY);
-					y += bodyDirection * layout.cellSize) {
-					for (int32 i = 0; i < layout.widthNum; ++i) {
-						const double x = sideBaseX + i * layout.cellSize;
-						createMachineCherry(Vec2{ x, y }, upDownPattern, controller);
+				for (int32 row = 1; ; ++row) {
+					const double y = toothRootY + bodyDirection * row * layout.cellSize;
+
+					if ((upDownPattern == lowerMachine) ? (y > bodyEndY) : (y < bodyEndY)) {
+						break;
+					}
+
+					if (0.0 <= y && y <= Global::windowHeight) {
+						for (int32 i = 0; i < layout.widthNum; ++i) {
+							addMachineCell(Point{ i, bodyDirection * row });
+						}
+					}
+					else if (!foundOffscreenRow) {
+						firstOffscreenY = y;
+						foundOffscreenRow = true;
 					}
 				}
 
+				const int32 toothDirection = -bodyDirection;
 				for (int32 i = 0; i < layout.toothDepthNum; ++i) {
-					const double y = (upDownPattern == lowerMachine)
-						? toothRootY - i * layout.cellSize
-						: toothRootY + i * layout.cellSize;
-
 					for (int32 k = 0; k < layout.toothSegmentNum; ++k) {
 						const bool shouldCreate = (upDownPattern == lowerMachine)
 							? (downProtPattern[k] == 1)
@@ -458,21 +478,74 @@ namespace Iwanna {
 						}
 
 						for (int32 j = 0; j < toothWidth; ++j) {
-							const double x = sideBaseX + toothWidth * layout.cellSize * k + j * layout.cellSize;
-							createMachineCherry(Vec2{ x, y }, upDownPattern, controller);
+							addMachineCell(Point{
+								toothWidth * k + j,
+								toothDirection * i
+							});
 						}
 					}
+				}
+
+				const ColorF bodyColor{ 0.38, 0.40, 0.42 };
+				const ColorF warningYellow{ 1.0, 0.72, 0.05 };
+				const ColorF warningBlack{ 0.06, 0.06, 0.07 };
+				const ColorF largeScaleColor{ 0.06, 0.06, 0.07 };
+				const double largeScale = static_cast<double>(layout.offscreenFillScale);
+				const double largeCellSize = layout.cellSize * largeScale;
+				const double largeHalfSize = largeCellSize / 2.0;
+				const int32 largeWidthNum = layout.widthNum / layout.offscreenFillScale;
+				double largeY = firstOffscreenY
+					+ bodyDirection * (layout.offscreenFillScale - 1) * layout.cellSize / 2.0;
+
+				for (;;) {
+					for (int32 i = 0; i < largeWidthNum; ++i) {
+						const Vec2 localPos{
+							sideBaseX + (i * layout.offscreenFillScale + (layout.offscreenFillScale - 1) / 2.0) * layout.cellSize,
+							largeY
+						};
+						createMachineCherry(localPos, upDownPattern, largeScaleColor, DrawDepth::Cherry - 0.1, largeScale, controller);
+					}
+
+					const bool reachedBodyEnd = (upDownPattern == lowerMachine)
+						? (largeY + largeHalfSize >= bodyEndY)
+						: (largeY - largeHalfSize <= bodyEndY);
+					if (reachedBodyEnd) {
+						break;
+					}
+
+					largeY += bodyDirection * largeCellSize;
+				}
+
+				for (const auto& cell : machineCells) {
+					const bool isOutline = !occupiedCells.contains(cell + Point{ -1,0 })
+						|| !occupiedCells.contains(cell + Point{ 1,0 })
+						|| !occupiedCells.contains(cell + Point{ 0,toothDirection });
+					const int32 stripeIndex = ((cell.x + cell.y + 1024) / 2) % 2;
+					const ColorF color = isOutline
+						? ((stripeIndex == 0) ? warningYellow : warningBlack)
+						: bodyColor;
+					const double depth = isOutline
+						? DrawDepth::Cherry + 1.0
+						: DrawDepth::Cherry;
+					const Vec2 localPos{
+						sideBaseX + cell.x * layout.cellSize,
+						toothRootY + cell.y * layout.cellSize
+					};
+
+					createMachineCherry(localPos, upDownPattern, color, depth, 1.0, controller);
 				}
 			};
 
 			createMachineSide(lowerMachine, baseX, layout.lowerToothRootY, -1);
-			createMachineSide(upperMachine, -baseX, layout.upperToothRootY, 1);
+			createMachineSide(upperMachine, -baseX + layout.cellSize, layout.upperToothRootY, 1);
 		};
 
 		timeline.at(Global::startStep_Chapter3 + 1, [&] {
 			createCog(Vec2{ 400,304 }, 8);
-			createPressMachine(0.0);
-			createPressMachine(800.0);
+			createCog(Vec2{ 170,304 }, 8);
+			createCog(Vec2{ 630,304 }, 8);
+			createPressMachine(8);
+			createPressMachine(808.0);
 		});
 
 		timeline.every(
@@ -487,7 +560,7 @@ namespace Iwanna {
 					cog->rotateRight(90.0, 50, 2);
 				}
 
-				createPressMachine(800.0);
+				createPressMachine(808.0);
 			});
 
 		timeline.every(
