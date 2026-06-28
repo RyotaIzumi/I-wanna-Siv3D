@@ -15,6 +15,7 @@ namespace Iwanna {
 			ColorF color = Palette::White;
 			Behavior behavior = nullptr;
 			bool canDeleteOutOfScreen = true;
+			bool canPlayerKill = true;
 			double depth = DrawDepth::Cherry;
 			double scale = 1.0;
 		};

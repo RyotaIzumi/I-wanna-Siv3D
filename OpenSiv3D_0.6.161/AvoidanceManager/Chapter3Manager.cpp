@@ -29,6 +29,15 @@ namespace {
 	static_assert(randomMachine <= pressMachineLayout.specialMovingSide
 		&& pressMachineLayout.specialMovingSide <= upperMachine);
 
+	struct LargeCherryRowSettings {
+		double scale = 12.0;
+		int32 appearanceTime = 60;
+		double flowSpeed = 1.0;
+		int32 extraColumnsEachSide = 2;
+	};
+
+	constexpr LargeCherryRowSettings largeCherryRowSettings{};
+
 	struct SpecialPressState {
 		bool moveFinished = false;
 	};
@@ -75,6 +84,19 @@ namespace {
 			}
 
 			return offset.x > 1600.0;
+		}
+	};
+
+	struct LargeCherryRowController {
+		Vec2 offset = Vec2{ 0,0 };
+		Iwanna::EasingMove move;
+		double horizontalSpeed = 0.0;
+
+		void update() {
+			if (move.isActive()) {
+				offset.y = move.update().y;
+			}
+			offset.x += horizontalSpeed;
 		}
 	};
 
@@ -245,7 +267,7 @@ namespace {
 
 					if (state->pressCount >= 3) {
 						state->phaseStart = self.pos;
-						state->phaseEnd = state->pressHome;
+						state->phaseEnd = state->pressHome + Vec2(0, ((state->upDown == lowerMachine) ? 1.0 : -1.0) * 100);
 						controller->finishSpecialMove();
 						state->phase = 6;
 					}
@@ -266,7 +288,7 @@ namespace {
 				++state->timer;
 				if (state->timer > moveTime + 20) {
 					state->timer = 0;
-					state->phase = 0;
+					state->phase = 8;
 				}
 				break;
 			}
@@ -276,9 +298,9 @@ namespace {
 
 				if (controller->isSpecialMoveFinished()) {
 					state->phaseStart = self.pos;
-					state->phaseEnd = state->pressHome;
+					state->phaseEnd = state->pressHome + Vec2(0, ((state->upDown == lowerMachine) ? 1.0 : -1.0) * 100);
 					state->timer = 0;
-					state->phase = 3;
+					state->phase = 6;
 				}
 				break;
 			}
@@ -304,8 +326,18 @@ namespace {
 		};
 	}
 
+	Iwanna::Cherry::Behavior makeLargeCherryRowBehavior(
+		const Vec2& localPos,
+		const std::shared_ptr<LargeCherryRowController>& controller) {
+
+		return [localPos, controller](Iwanna::Cherry& self, int32) {
+			self.pos = localPos + controller->offset;
+		};
+	}
+
 	Array<std::shared_ptr<PressMachineController>> pressMachines;
 	Array<std::shared_ptr<CogController>> cogControllers;
+	Array<std::shared_ptr<LargeCherryRowController>> largeCherryRowControllers;
 	int32 selectedSpecialMovingSide = lowerMachine;
 	int32 selectedMarkerPress = 1;
 }
@@ -318,6 +350,7 @@ namespace Iwanna {
 		timeline.at(Global::startStep_Chapter3, [&] {
 			pressMachines.clear();
 			cogControllers.clear();
+			largeCherryRowControllers.clear();
 			selectedSpecialMovingSide = (pressMachineLayout.specialMovingSide == randomMachine)
 				? Random(lowerMachine, upperMachine)
 				: pressMachineLayout.specialMovingSide;
@@ -329,6 +362,9 @@ namespace Iwanna {
 		}
 		for (auto& cog : cogControllers) {
 			cog->update();
+		}
+		for (auto& row : largeCherryRowControllers) {
+			row->update();
 		}
 		pressMachines.remove_if([](const auto& machine) {
 			return machine->canRemove();
@@ -354,9 +390,9 @@ namespace Iwanna {
 					.color = ColorF(1.0, 1.00, 1.00),
 					.behavior = makeCogBehavior(localOffset, controller),
 					.canDeleteOutOfScreen = false,
+					.canPlayerKill = false,
 					.depth = DrawDepth::Cherry - 1.0,
 				});
-				cherry->canPlayerKill = false;
 				createCherry(cherry);
 			};
 
@@ -422,6 +458,7 @@ namespace Iwanna {
 					.color = color,
 					.behavior = makePressMachineBehavior(localPos, upDownPattern, controller, layout.pressDistance),
 					.canDeleteOutOfScreen = false,
+					.canPlayerKill = true,
 					.depth = depth,
 					.scale = scale,
 				});
@@ -569,6 +606,47 @@ namespace Iwanna {
 			createMachineSide(upperMachine, -baseX + layout.cellSize, layout.upperToothRootY, 1);
 		};
 
+		const auto createLargeCherryRows = [&] {
+			const auto& settings = largeCherryRowSettings;
+			const double cherrySize = pressMachineLayout.cellSize * settings.scale;
+			const double halfSize = cherrySize / 2.0 - 15.0; // Adjust this value as needed
+			const int32 visibleWidthNum = static_cast<int32>(std::ceil(Global::windowWidth / cherrySize));
+			const int32 widthNum = visibleWidthNum + settings.extraColumnsEachSide * 2;
+			const double startX = halfSize - settings.extraColumnsEachSide * cherrySize;
+
+			for (const int32 direction : { -1, 1 }) {
+				auto controller = std::make_shared<LargeCherryRowController>();
+				controller->offset = Vec2{ 0, direction * cherrySize };
+				controller->horizontalSpeed = -direction * settings.flowSpeed;
+				controller->move.start(
+					EasingMoveType::EaseOut,
+					controller->offset,
+					Vec2{ 0,0 },
+					settings.appearanceTime);
+				largeCherryRowControllers << controller;
+
+				const double targetY = (direction < 0)
+					? halfSize
+					: Global::windowHeight - halfSize;
+
+				for (int32 i = 0; i < widthNum; ++i) {
+					const Vec2 localPos{ startX + i * cherrySize, targetY };
+					auto cherry = std::make_shared<Cherry>();
+					cherry->pos = localPos + controller->offset;
+					cherry->applySettings(Cherry::Settings{
+						.textureName = U"sprCherryWhite",
+						.color = Palette::White,
+						.behavior = makeLargeCherryRowBehavior(localPos, controller),
+						.canDeleteOutOfScreen = false,
+						.canPlayerKill = true,
+						.depth = DrawDepth::Cherry + 10,
+						.scale = settings.scale,
+					});
+					createCherry(cherry);
+				}
+			}
+		};
+
 		timeline.at(Global::startStep_Chapter3 + 1, [&] {
 			createCog(Vec2{ 400,304 }, 8);
 			createCog(Vec2{ 170,304 }, 8);
@@ -618,6 +696,10 @@ namespace Iwanna {
 			for (auto& machine : pressMachines) {
 				machine->requestSpecialPress();
 			}
+		});
+
+		timeline.at(Global::startStep_Chapter3 + 370, [&] {
+			createLargeCherryRows();
 		});
 
 	}

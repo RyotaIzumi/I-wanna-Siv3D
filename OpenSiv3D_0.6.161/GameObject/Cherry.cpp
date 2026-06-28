@@ -53,6 +53,7 @@ namespace Iwanna {
 		color = settings.color;
 		behavior = settings.behavior;
 		canDeleteOutOfScreen = settings.canDeleteOutOfScreen;
+		canPlayerKill = settings.canPlayerKill;
 		depth = settings.depth;
 		setScale(settings.scale);
 	}
