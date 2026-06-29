@@ -18,6 +18,7 @@ namespace Iwanna {
 			bool canPlayerKill = true;
 			double depth = DrawDepth::Cherry;
 			double scale = 1.0;
+			double alpha = 1.0;
 		};
 
 	private:

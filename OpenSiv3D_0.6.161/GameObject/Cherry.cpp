@@ -56,6 +56,7 @@ namespace Iwanna {
 		canPlayerKill = settings.canPlayerKill;
 		depth = settings.depth;
 		setScale(settings.scale);
+		alpha = Clamp(settings.alpha, 0.0, 1.0);
 	}
 
 	void Cherry::setBehavior(const Behavior& newBehavior) {

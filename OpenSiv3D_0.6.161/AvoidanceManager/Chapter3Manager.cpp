@@ -39,6 +39,39 @@ namespace {
 
 	constexpr LargeCherryRowSettings largeCherryRowSettings{};
 
+	struct GuideColumnSettings {
+		String textureName = U"sprCherryAllWhite";
+		ColorF color = ColorF{ 0.3, 0.3, 0.3 };
+		double targetAlpha = 0.35;
+		double scale = 0.25;
+		double spacing = 8.0;
+		double baseX = 8.0;
+		int32 rowDelay = 1;
+		int32 fadeTime = 12;
+	};
+
+	const GuideColumnSettings guideColumnSettings{};
+
+	struct HorizontalSweepSettings {
+		String textureName = U"sprCherryWhite";
+		ColorF color = Palette::White;
+		int32 startStepOffset = 370;
+		int32 count = 4;
+		int32 rowDelay = 14;
+		int32 fadeTime = 12;
+		int32 moveTime = 140;
+		double startX = 784.0;
+		double targetX = 16.0;
+		double topY = 240.0;
+		double verticalSpacing = 50.0;
+		double targetAlpha = 1.0;
+		double disabledAlpha = 0.35;
+		double scale = 1.0;
+		bool canPlayerKill = true;
+	};
+
+	const HorizontalSweepSettings horizontalSweepSettings{};
+
 	struct FinalPressSettings {
 		double hiddenOffset = 100.0;
 	};
@@ -385,6 +418,9 @@ namespace {
 	int32 selectedCorrectPress = 1;
 	PressMachinePattern correctPressPattern;
 	Array<int32> cogHintDirections;
+	bool horizontalSweepStartsFromRight = true;
+	bool horizontalSweepStartsFromTop = true;
+	bool horizontalSweepDisabled = false;
 }
 
 namespace Iwanna {
@@ -401,6 +437,9 @@ namespace Iwanna {
 				: pressMachineLayout.specialMovingSide;
 			selectedMarkerPress = Random(1, 2);
 			selectedCorrectPress = Random(1, 3);
+			horizontalSweepStartsFromRight = (Random(0, 1) == 1);
+			horizontalSweepStartsFromTop = (Random(0, 1) == 1);
+			horizontalSweepDisabled = false;
 			correctPressPattern = PressMachinePattern{};
 			cogHintDirections.clear();
 
@@ -717,7 +756,7 @@ namespace Iwanna {
 					cherry->pos = localPos + controller->offset;
 					cherry->applySettings(Cherry::Settings{
 						.textureName = U"sprCherryWhite",
-						.color = Palette::White,
+						.color = ColorF{0.9},
 						.behavior = makeLargeCherryRowBehavior(localPos, controller),
 						.canDeleteOutOfScreen = false,
 						.canPlayerKill = true,
@@ -726,6 +765,100 @@ namespace Iwanna {
 					});
 					createCherry(cherry);
 				}
+			}
+		};
+
+		const auto createGuideColumns = [&] {
+			const auto& settings = guideColumnSettings;
+			const int32 teethWidth = pressMachineLayout.widthNum / pressMachineLayout.toothSegmentNum;
+			const double segmentWidth = teethWidth * pressMachineLayout.cellSize;
+			const int32 heightNum = static_cast<int32>(std::ceil(Global::windowHeight / settings.spacing));
+
+			// 左右端を除く、ギザギザ区画同士の境界に縦列を作る。
+			for (int32 boundary = 1; boundary < pressMachineLayout.toothSegmentNum; ++boundary) {
+				const double x = settings.baseX + boundary * segmentWidth;
+
+				for (int32 row = 0; row < heightNum; ++row) {
+					const double y = settings.spacing / 2.0 + row * settings.spacing;
+					const int32 fadeDelay = row * settings.rowDelay;
+					const int32 fadeTime = Max(settings.fadeTime, 1);
+					const double targetAlpha = settings.targetAlpha;
+					auto cherry = std::make_shared<Cherry>();
+					cherry->pos = Vec2{ x,y };
+					cherry->applySettings(Cherry::Settings{
+						.textureName = settings.textureName,
+						.color = settings.color,
+						.behavior = [fadeDelay, fadeTime, targetAlpha](Cherry& self, int32 age) {
+							const double t = (age - fadeDelay) / static_cast<double>(fadeTime);
+							self.alpha = targetAlpha * applyEasing(EasingMoveType::EaseInOut, t);
+						},
+						.canDeleteOutOfScreen = false,
+						.canPlayerKill = false,
+						.depth = DrawDepth::Cherry + 1.0,
+						.scale = settings.scale,
+						.alpha = 0.0,
+					});
+					createCherry(cherry);
+				}
+			}
+		};
+
+		const auto createHorizontalSweep = [&] {
+			const auto& settings = horizontalSweepSettings;
+			const int32 fadeTime = Max(settings.fadeTime, 1);
+			const int32 moveTime = Max(settings.moveTime, 1);
+
+			for (int32 row = 0; row < settings.count; ++row) {
+				const int32 moveDelay = fadeTime + row * settings.rowDelay;
+				const int32 verticalIndex = horizontalSweepStartsFromTop
+					? row
+					: settings.count - 1 - row;
+				const double y = settings.topY + verticalIndex * settings.verticalSpacing;
+				const double startX = horizontalSweepStartsFromRight
+					? settings.startX
+					: settings.targetX;
+				const double targetX = horizontalSweepStartsFromRight
+					? settings.targetX
+					: settings.startX;
+				const double targetAlpha = settings.targetAlpha;
+				const double disabledAlpha = settings.disabledAlpha;
+				auto cherry = std::make_shared<Cherry>();
+				cherry->pos = Vec2{ startX,y };
+				cherry->applySettings(Cherry::Settings{
+					.textureName = settings.textureName,
+					.color = settings.color,
+					.behavior = [moveDelay, fadeTime, moveTime, startX, targetX, targetAlpha, disabledAlpha](Cherry& self, int32 age) {
+						const auto applyAttackState = [&](double normalAlpha) {
+							self.alpha = horizontalSweepDisabled ? disabledAlpha : normalAlpha;
+							if (horizontalSweepDisabled) {
+								self.canPlayerKill = false;
+							}
+						};
+
+						if (age < fadeTime) {
+							const double fadeT = age / static_cast<double>(fadeTime);
+							applyAttackState(targetAlpha * applyEasing(EasingMoveType::EaseInOut, fadeT));
+							self.pos.x = startX;
+							return;
+						}
+
+						applyAttackState(targetAlpha);
+						if (age < moveDelay) {
+							self.pos.x = startX;
+							return;
+						}
+
+						const double moveT = (age - moveDelay) / static_cast<double>(moveTime);
+						const double eased = applyEasing(EasingMoveType::EaseInOut, moveT);
+						self.pos.x = startX + (targetX - startX) * eased;
+					},
+					.canDeleteOutOfScreen = false,
+					.canPlayerKill = settings.canPlayerKill,
+					.depth = DrawDepth::Cherry + 12.0,
+					.scale = settings.scale,
+					.alpha = 0.0,
+				});
+				createCherry(cherry);
 			}
 		};
 
@@ -786,6 +919,11 @@ namespace Iwanna {
 
 		timeline.at(Global::startStep_Chapter3 + 370, [&] {
 			createLargeCherryRows();
+			createGuideColumns();
+		});
+
+		timeline.at(Global::startStep_Chapter3 + horizontalSweepSettings.startStepOffset, [&] {
+			//createHorizontalSweep();
 		});
 
 		for (int32 i = 0; i < static_cast<int32>(cogHintDirections.size()); ++i) {
@@ -807,6 +945,7 @@ namespace Iwanna {
 		}
 
 		timeline.at(Global::startStep_Chapter3 + 475, [&] {
+			horizontalSweepDisabled = true;
 			auto correctMachines = createPressMachine(8, false, 0, &correctPressPattern);
 			for (const auto& machine : correctMachines) {
 				machine->offset.y = -machine->horizontalDirection * finalPressSettings.hiddenOffset;
