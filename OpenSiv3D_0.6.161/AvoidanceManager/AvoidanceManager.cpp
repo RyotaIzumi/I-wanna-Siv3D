@@ -10,6 +10,8 @@ namespace Iwanna {
 	void AvoidanceManager::setUpObjects(int32 chapter) {
 		gameObjects.player = std::make_shared<Player>();
 
+		stockNearGameObjects.clear();
+		stockBulletsNearGameObjects.clear();
 		gameObjects.cherries.clear();
 		gameObjects.bullets.clear();
 		gameObjects.bloods.clear();
@@ -17,8 +19,18 @@ namespace Iwanna {
 		applyChapterSettings(createChapterSettings(chapter));
 
 		// 一部変数の初期化
+		activeChapter = chapter;
 		isGenerateBloods = false;
 		previousStep = -1;
+	}
+
+	int32 AvoidanceManager::getChapterFromStep(int32 targetStep) const {
+		if (targetStep < Global::startStep_Chapter2) return 1;
+		if (targetStep < Global::startStep_Chapter3) return 2;
+		if (targetStep < Global::startStep_Chapter4) return 3;
+		if (targetStep < Global::startStep_Chapter5) return 4;
+		if (targetStep < Global::startStep_Chapter6) return 5;
+		return 6;
 	}
 
 	ChapterSettings AvoidanceManager::createChapterSettings(int32 chapter) const {
@@ -101,14 +113,21 @@ namespace Iwanna {
 	}
 
 	void AvoidanceManager::update() {
+		const int32 chapter = getChapterFromStep(step);
+		if (chapter != activeChapter) {
+			setUpObjects(chapter);
+		}
 
 		//チャプターごとの更新処理
-		if (step < Global::startStep_Chapter2) chapter1();
-		else if(step < Global::startStep_Chapter3) chapter2();
-		else if (step < Global::startStep_Chapter4) chapter3();
-		else if (step < Global::startStep_Chapter5) chapter4();
-		else if (step < Global::startStep_Chapter6) chapter5();
-		else chapter6();
+		switch (chapter) {
+		case 1: chapter1(); break;
+		case 2: chapter2(); break;
+		case 3: chapter3(); break;
+		case 4: chapter4(); break;
+		case 5: chapter5(); break;
+		case 6: chapter6(); break;
+		default: break;
+		}
 
 		// ----- update関連 -----
 		auto& player = gameObjects.player;
@@ -211,6 +230,7 @@ namespace Iwanna {
 
 		ClearPrint();
 		Print << U" Avoidance Step : " << step;
+		Print << U" Chapter : " << activeChapter;
 		Print << U" Cherries Num : " << gameObjects.cherries.size();
 		Print << U" Player Pos : " << player->pos;
 		Print << U" Player Muteki : " << player->getIsMuteki();

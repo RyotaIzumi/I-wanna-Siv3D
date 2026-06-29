@@ -57,7 +57,9 @@ namespace Iwanna {
 
 		int32 previousStep = -1;
 		int32 step = 0;
+		int32 activeChapter = 0;
 
+		int32 getChapterFromStep(int32 targetStep) const;
 		ChapterSettings createChapterSettings(int32 chapter) const;
 		void applyChapterSettings(const ChapterSettings& settings);
 		void addPeripheryBlockSettings(Array<BlockPlacement>& blocks) const;
