@@ -435,8 +435,8 @@ namespace Iwanna {
 		});
 
 		const auto createCog = [&](const Vec2& center, int32 teethNum) {
-			constexpr int32 cirNum = 4;
-			constexpr int32 outCirNum = 4;
+			constexpr int32 cirNum = 7;
+			constexpr int32 outCirNum = 5;
 			constexpr int32 minCirNum = 15;
 			constexpr int32 addCirNum = 5;
 			constexpr double startRadius = 40.0;
@@ -731,8 +731,8 @@ namespace Iwanna {
 
 		timeline.at(Global::startStep_Chapter3 + 1, [&] {
 			createCog(Vec2{ 400,304 }, 8);
-			createCog(Vec2{ 170,304 }, 8);
-			createCog(Vec2{ 630,304 }, 8);
+			createCog(Vec2{ 100,304 }, 8);
+			createCog(Vec2{ 700,304 }, 8);
 			createPressMachine(8, false, 0, nullptr);
 			createPressMachine(808.0, selectedMarkerPress == 1, 1, nullptr);
 		});
