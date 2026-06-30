@@ -495,6 +495,8 @@ namespace Iwanna {
 					.canDeleteOutOfScreen = false,
 					.canPlayerKill = false,
 					.depth = DrawDepth::Cherry - 1.0,
+					.appearanceEffect = CherryEffect::ScaleIn,
+					.appearanceDuration = 20,
 				});
 				createCherry(cherry);
 			};
@@ -955,6 +957,5 @@ namespace Iwanna {
 				machine->requestPush();
 			}
 		});
-
 	}
 }

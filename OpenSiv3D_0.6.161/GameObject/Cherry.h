@@ -6,6 +6,14 @@
 #include "GameObject.h"
 
 namespace Iwanna {
+	enum class CherryEffect {
+		None,
+		FadeIn,
+		ScaleIn,
+		FadeOut,
+		ScaleOut,
+	};
+
 	class Cherry : public GameObject {
 	public:
 		using Behavior = std::function<void(Cherry&, int32)>;
@@ -19,6 +27,8 @@ namespace Iwanna {
 			double depth = DrawDepth::Cherry;
 			double scale = 1.0;
 			double alpha = 1.0;
+			CherryEffect appearanceEffect = CherryEffect::None;
+			int32 appearanceDuration = 30;
 		};
 
 	private:
@@ -29,7 +39,15 @@ namespace Iwanna {
 		String textureName = U"sprCherry";
 		ColorF color = Palette::White;
 		double scale = 1.0;
+		CherryEffect appearanceEffect = CherryEffect::None;
+		int32 appearanceElapsed = 0;
+		int32 appearanceDuration = 1;
+		double appearanceTargetScale = 1.0;
+		double appearanceTargetAlpha = 1.0;
+		bool canPlayerKillAtFullAlpha = true;
 		bool canDeleteOutOfScreen = true;//画面外で消去するかどうかのフラグ
+
+		void updateAppearanceEffect();
 
 	public:
 		double speed = 0;
@@ -49,6 +67,8 @@ namespace Iwanna {
 		void setTextureName(const String& newTextureName);
 		void setColor(const ColorF& newColor);
 		void setScale(double newScale);
+		void setEffect(CherryEffect effect, int32 duration = 30);
+		void setAppearanceEffect(CherryEffect effect, int32 duration = 30);
 		void setCanDeleteOutOfScreen(bool enabled);
 		int32 getAge() const;
 
