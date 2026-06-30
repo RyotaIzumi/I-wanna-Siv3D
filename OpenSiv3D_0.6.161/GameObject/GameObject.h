@@ -20,6 +20,15 @@ namespace Iwanna {
 		Item
 	};
 
+	namespace DrawDepth {
+		constexpr double Block = 10.0;
+		constexpr double Miku = 20.0;
+		constexpr double Cherry = 30.0;
+		constexpr double Bullet = 40.0;
+		constexpr double Blood = 50.0;
+		constexpr double Player = 60.0;
+	}
+
 	class GameObject {
 	private:
 		double prevSpd = 0.0;
@@ -46,6 +55,14 @@ namespace Iwanna {
 
 		virtual void update() = 0;
 		virtual void draw() const = 0;
+
+		void setDepth(double newDepth) {
+			depth = newDepth;
+		}
+
+		double getDepth() const {
+			return depth;
+		}
 
 		RectF getBroadRect() const {
 			if (auto r = hitBox->getRect()) return *r;

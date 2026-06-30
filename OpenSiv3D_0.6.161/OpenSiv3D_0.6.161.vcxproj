@@ -122,8 +122,11 @@
     <ClCompile Include="AvoidanceManager\AvoidanceManager.cpp" />
     <ClCompile Include="AvoidanceManager\Chapter1Manager.cpp" />
     <ClCompile Include="AvoidanceManager\Chapter2Manager.cpp" />
+    <ClCompile Include="AvoidanceManager\Chapter4Manager.cpp" />
+    <ClCompile Include="AvoidanceManager\Chapter5Manager.cpp" />
     <ClCompile Include="AvoidanceManager\Chapter6Manager.cpp" />
     <ClCompile Include="AvoidanceManager\CherryPatternManagers\GeneralPurposePatterns.cpp" />
+    <ClCompile Include="AvoidanceManager\Chapter3Manager.cpp" />
     <ClCompile Include="GameObject\Block.cpp" />
     <ClCompile Include="GameObject\Blood.cpp" />
     <ClCompile Include="GameObject\Bullet.cpp" />
@@ -363,6 +366,8 @@
     <ClInclude Include="60FPSwithAutoFrameSkip.h" />
     <ClInclude Include="Audio\AudioAsset.h" />
     <ClInclude Include="AvoidanceManager\AvoidanceManager.h" />
+    <ClInclude Include="AvoidanceManager\EasingMove.h" />
+    <ClInclude Include="AvoidanceManager\Timeline.h" />
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="GameObject\Block.h" />
     <ClInclude Include="GameObject\Blood.h" />

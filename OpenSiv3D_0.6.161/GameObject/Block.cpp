@@ -10,6 +10,7 @@ namespace Iwanna {
 
 		canPlayerKill = false;
 		hasCollide = true;
+		depth = DrawDepth::Block;
 	}
 	void Block::update() {
 	}

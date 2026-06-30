@@ -8,6 +8,8 @@
 #include "../GameObject/Blood.h"
 #include "../GameObject/Miku.h"
 #include "../Global.h"
+#include "EasingMove.h"
+#include "Timeline.h"
 
 namespace Iwanna {
 
@@ -20,11 +22,29 @@ namespace Iwanna {
 		std::shared_ptr<Miku> miku;
 	};
 
+	struct BlockPlacement {
+		String textureName = U"sprBlock";
+		Vec2 gridPos = Vec2{ 0,0 };
+		bool hasCollide = true;
+		double depth = DrawDepth::Block;
+	};
+
+	struct ChapterSettings {
+		Vec2 playerPos = Vec2{ 200,500 };
+		Array<BlockPlacement> blocks;
+		ColorF backgroundColor = ColorF(0.8, 1.0);
+		Vec2 mikuPos = Vec2{ 704,352 };
+		bool isInfiniteJumpMode = false;
+		double playerDepth = DrawDepth::Player;
+		double mikuDepth = DrawDepth::Miku;
+	};
+
 	class AvoidanceManager {
 	private:
 		StockNearGameObjects stockNearGameObjects;
 		StockNearGameObjects stockBulletsNearGameObjects;
 		GameObjects gameObjects;
+		ColorF backgroundColor = ColorF(0.8, 1.0);
 
 		//弾丸関連
 		double bulletSpeed = 8;
@@ -35,7 +55,15 @@ namespace Iwanna {
 		//血を生成したかどうか
 		bool isGenerateBloods = false;
 
+		int32 previousStep = -1;
 		int32 step = 0;
+		int32 activeChapter = 0;
+
+		int32 getChapterFromStep(int32 targetStep) const;
+		ChapterSettings createChapterSettings(int32 chapter) const;
+		void applyChapterSettings(const ChapterSettings& settings);
+		void addPeripheryBlockSettings(Array<BlockPlacement>& blocks) const;
+		void addFloorBlockSettings(Array<BlockPlacement>& blocks, Vec2 basePos) const;
 	public:
 		AvoidanceManager();
 
@@ -51,15 +79,20 @@ namespace Iwanna {
 		std::shared_ptr<Miku> getMiku();
 
 		void createCherry(std::shared_ptr<Cherry> cherry);
+		std::function<std::shared_ptr<Cherry>()> makeCherryFactory(const Cherry::Settings& settings);
+		std::function<std::shared_ptr<Cherry>()> makeCherryFactory(
+			const String& textureName,
+			const ColorF& color,
+			Cherry::Behavior behavior = nullptr);
 
 		void createPeripheryBlocks();
 		void createFloorBlocks(Vec2 basePos);
 
 		void chapter1();
 		void chapter2();
-		//void chapter3();
-		//void chapter4();
-		//void chapter5();
+		void chapter3();
+		void chapter4();
+		void chapter5();
 		void chapter6();
 
 		//cherry生成パターン

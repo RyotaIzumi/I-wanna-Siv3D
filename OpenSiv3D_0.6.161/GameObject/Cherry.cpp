@@ -9,15 +9,25 @@ namespace Iwanna {
 		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize);
 		type = ObjectType::Cherry;
 		canPlayerKill = true;
+		canPlayerKillAtFullAlpha = true;
 		isDelete = false;
 		isOutOfScreen = false;
+		canDeleteOutOfScreen = true;
+		depth = DrawDepth::Cherry;
 
 		speed = 0;
 		dir = 0;
+		age = 0;
+		textureName = U"sprCherry";
+		color = Palette::White;
+		scale = 1.0;
+		appearanceEffect = CherryEffect::None;
 	}
 
 	void Cherry::update() {
-		checkOutOfScreen();
+		if (behavior) {
+			behavior(*this, age);
+		}
 
 		if (speed != 0) {
 			calculateSpeed();
@@ -26,13 +36,143 @@ namespace Iwanna {
 			pos.x += hspeed;
 			pos.y += vspeed;
 		}
+		updateAppearanceEffect();
+		canPlayerKill = canPlayerKillAtFullAlpha && (alpha >= 1.0);
 		// 当たり判定位置更新
 		hitBox->setPos(pos);
+		if(canDeleteOutOfScreen) checkOutOfScreen();
+		++age;
 	}
 
 	void Cherry::draw() const {
-		TextureAsset(U"sprCherry").drawAt(pos.x,pos.y-1);
+		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
+		ColorF drawColor = color;
+		drawColor.a *= alpha;
+		TextureAsset(textureName).scaled(scale).drawAt(pos.x,pos.y-1, drawColor);
 		//hitBox->draw(Palette::Blue);//判定の可視化
+	}
+
+	void Cherry::applySettings(const Settings& settings) {
+		textureName = settings.textureName;
+		color = settings.color;
+		behavior = settings.behavior;
+		canDeleteOutOfScreen = settings.canDeleteOutOfScreen;
+		canPlayerKillAtFullAlpha = settings.canPlayerKill;
+		depth = settings.depth;
+		setScale(settings.scale);
+		alpha = Clamp(settings.alpha, 0.0, 1.0);
+		setAppearanceEffect(settings.appearanceEffect, settings.appearanceDuration);
+		canPlayerKill = canPlayerKillAtFullAlpha && (alpha >= 1.0);
+	}
+
+	void Cherry::setBehavior(const Behavior& newBehavior) {
+		behavior = newBehavior;
+	}
+
+	void Cherry::setVisual(const String& newTextureName, const ColorF& newColor) {
+		textureName = newTextureName;
+		color = newColor;
+	}
+
+	void Cherry::setTextureName(const String& newTextureName) {
+		textureName = newTextureName;
+	}
+
+	void Cherry::setColor(const ColorF& newColor) {
+		color = newColor;
+	}
+
+	void Cherry::setScale(double newScale) {
+		scale = Max(newScale, 0.0);
+		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scale);
+	}
+
+	void Cherry::setEffect(CherryEffect effect, int32 duration) {
+		appearanceEffect = effect;
+		appearanceElapsed = 0;
+		appearanceDuration = Max(duration, 1);
+		appearanceTargetScale = scale;
+		appearanceTargetAlpha = alpha;
+
+		switch (appearanceEffect) {
+		case CherryEffect::FadeIn:
+			alpha = 0.0;
+			break;
+		case CherryEffect::ScaleIn:
+			setScale(0.0);
+			break;
+		case CherryEffect::FadeOut:
+		case CherryEffect::ScaleOut:
+		case CherryEffect::None:
+		default:
+			break;
+		}
+	}
+
+	void Cherry::setAppearanceEffect(CherryEffect effect, int32 duration) {
+		setEffect(effect, duration);
+	}
+
+	void Cherry::updateAppearanceEffect() {
+		if (appearanceEffect == CherryEffect::None) {
+			return;
+		}
+
+		const double t = Clamp(
+			appearanceElapsed / static_cast<double>(appearanceDuration),
+			0.0,
+			1.0);
+		const double eased = t * t * (3.0 - 2.0 * t);
+
+		switch (appearanceEffect) {
+		case CherryEffect::FadeIn:
+			alpha = appearanceTargetAlpha * eased;
+			break;
+		case CherryEffect::ScaleIn:
+			setScale(appearanceTargetScale * eased);
+			break;
+		case CherryEffect::FadeOut:
+			alpha = appearanceTargetAlpha * (1.0 - eased);
+			break;
+		case CherryEffect::ScaleOut:
+			setScale(appearanceTargetScale * (1.0 - eased));
+			break;
+		case CherryEffect::None:
+		default:
+			break;
+		}
+
+		++appearanceElapsed;
+		if (appearanceElapsed > appearanceDuration) {
+			const bool shouldDelete = (appearanceEffect == CherryEffect::FadeOut)
+				|| (appearanceEffect == CherryEffect::ScaleOut);
+
+			if (appearanceEffect == CherryEffect::FadeIn) {
+				alpha = appearanceTargetAlpha;
+			}
+			else if (appearanceEffect == CherryEffect::ScaleIn) {
+				setScale(appearanceTargetScale);
+			}
+			else if (appearanceEffect == CherryEffect::FadeOut) {
+				alpha = 0.0;
+			}
+			else if (appearanceEffect == CherryEffect::ScaleOut) {
+				setScale(0.0);
+			}
+
+			appearanceEffect = CherryEffect::None;
+			if (shouldDelete) {
+				isDelete = true;
+			}
+		}
+	}
+
+	void Cherry::setCanDeleteOutOfScreen(bool enabled) {
+		canDeleteOutOfScreen = enabled;
+	}
+
+	int32 Cherry::getAge() const {
+		return age;
 	}
 
 	//speedとdirからhspeedとvspeedを計算
@@ -46,7 +186,7 @@ namespace Iwanna {
 
 	//画面外判定
 	void Cherry::checkOutOfScreen() {
-		const int32 excess = hitBoxSize * 2;//画面端からの余白
+		const double excess = hitBoxSize * scale * 2;//画面端からの余白
 		if (pos.x < -1 * excess || pos.x > Global::windowWidth + excess ||
 			pos.y < -1 * excess || pos.y > Global::windowHeight + excess) {
 			isOutOfScreen = true;
