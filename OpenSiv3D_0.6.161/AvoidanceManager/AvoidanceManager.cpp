@@ -5,6 +5,13 @@ namespace Iwanna {
 	AvoidanceManager::AvoidanceManager() {
 		stockNearGameObjects.cellSize = 64;
 		stockBulletsNearGameObjects.cellSize = 32;
+
+		// Chapter 3 のピーク数を先に確保し、演出中の大量確保を避ける。
+		constexpr size_t cherryPoolInitialCapacity = 6000;
+		inactiveCherries.reserve(cherryPoolInitialCapacity);
+		for (size_t i = 0; i < cherryPoolInitialCapacity; ++i) {
+			inactiveCherries << std::make_shared<Cherry>();
+		}
 	}
 
 	void AvoidanceManager::setUpObjects(int32 chapter) {
@@ -12,7 +19,7 @@ namespace Iwanna {
 
 		stockNearGameObjects.clear();
 		stockBulletsNearGameObjects.clear();
-		gameObjects.cherries.clear();
+		recycleAllCherries();
 		gameObjects.bullets.clear();
 		gameObjects.bloods.clear();
 		gameObjects.blocks.clear();
@@ -216,8 +223,13 @@ namespace Iwanna {
 			return bullet->isOutOfScreen || bullet->isDelete;
 		});
 		//画面外のりんごを削除
-		cherries.remove_if([](auto&& cherry) {
-			return cherry->isOutOfScreen || cherry->isDelete;
+		cherries.remove_if([this](const auto& cherry) {
+			if (!(cherry->isOutOfScreen || cherry->isDelete)) {
+				return false;
+			}
+
+			recycleCherry(cherry);
+			return true;
 		});
 	}
 
@@ -246,15 +258,20 @@ namespace Iwanna {
 		//背景描画
 		Rect(0, 0, 800, 608).draw(backgroundColor);
 
-		Array<std::shared_ptr<GameObject>> drawList;
+		Array<GameObject*> drawList;
+		drawList.reserve(2
+			+ gameObjects.blocks.size()
+			+ gameObjects.cherries.size()
+			+ gameObjects.bloods.size()
+			+ gameObjects.bullets.size());
 
 		//drawListに突っ込む
-		drawList << gameObjects.miku;
-		drawList << gameObjects.player;
-		for (auto b : gameObjects.blocks)drawList << b;
-		for (auto& c : gameObjects.cherries) drawList << c;
-		for (auto& b : gameObjects.bloods) drawList << b;
-		for (auto& b : gameObjects.bullets) drawList << b;
+		drawList << gameObjects.miku.get();
+		drawList << gameObjects.player.get();
+		for (const auto& b : gameObjects.blocks) drawList << b.get();
+		for (const auto& c : gameObjects.cherries) drawList << c.get();
+		for (const auto& b : gameObjects.bloods) drawList << b.get();
+		for (const auto& b : gameObjects.bullets) drawList << b.get();
 
 		// ソート
 		drawList.sort_by([](const auto& a, const auto& b) {
@@ -294,6 +311,39 @@ namespace Iwanna {
 	//りんご生成と管理配列への追加
 	void AvoidanceManager::createCherry(std::shared_ptr<Cherry> cherry) {
 		gameObjects.cherries << cherry;
+	}
+
+	void AvoidanceManager::createCherry(const Vec2& pos, const Cherry::Settings& settings) {
+		gameObjects.cherries << acquireCherry(pos, settings);
+	}
+
+	std::shared_ptr<Cherry> AvoidanceManager::acquireCherry(
+		const Vec2& pos,
+		const Cherry::Settings& settings) {
+
+		std::shared_ptr<Cherry> cherry;
+		if (inactiveCherries.isEmpty()) {
+			cherry = std::make_shared<Cherry>();
+		}
+		else {
+			cherry = inactiveCherries.back();
+			inactiveCherries.pop_back();
+		}
+
+		cherry->reset(pos, settings);
+		return cherry;
+	}
+
+	void AvoidanceManager::recycleCherry(const std::shared_ptr<Cherry>& cherry) {
+		cherry->deactivate();
+		inactiveCherries << cherry;
+	}
+
+	void AvoidanceManager::recycleAllCherries() {
+		for (const auto& cherry : gameObjects.cherries) {
+			recycleCherry(cherry);
+		}
+		gameObjects.cherries.clear();
 	}
 
 	//外周のブロック配置

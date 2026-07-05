@@ -57,6 +57,8 @@ namespace Iwanna {
 		bool isOutOfScreen = false;//画面外判定用フラグ
 
 		Cherry();
+		void reset(const Vec2& newPos, const Settings& settings);
+		void deactivate();
 
 		void update() override;
 		void draw() const override;

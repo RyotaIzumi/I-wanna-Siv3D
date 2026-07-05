@@ -486,9 +486,7 @@ namespace Iwanna {
 			cogControllers << controller;
 
 			const auto createCogCherry = [&](const Vec2& localOffset) {
-				auto cherry = std::make_shared<Cherry>();
-				cherry->pos = center + localOffset;
-				cherry->applySettings(Cherry::Settings{
+				createCherry(center + localOffset, Cherry::Settings{
 					.textureName = U"sprCherryAllWhite",
 					.color = ColorF(1.0, 1.00, 1.00),
 					.behavior = makeCogBehavior(localOffset, controller),
@@ -498,7 +496,6 @@ namespace Iwanna {
 					.appearanceEffect = CherryEffect::ScaleIn,
 					.appearanceDuration = 20,
 				});
-				createCherry(cherry);
 			};
 
 			double radius = startRadius;
@@ -570,9 +567,7 @@ namespace Iwanna {
 			}
 
 			const auto createMachineCherry = [&](const Vec2& localPos, int32 upDownPattern, const ColorF& color, double depth, double scale, const std::shared_ptr<PressMachineController>& controller) {
-				auto cherry = std::make_shared<Cherry>();
-				cherry->pos = localPos + controller->offset;
-				cherry->applySettings(Cherry::Settings{
+				createCherry(localPos + controller->offset, Cherry::Settings{
 					.textureName = U"sprCherryAllWhite",
 					.color = color,
 					.behavior = makePressMachineBehavior(localPos, upDownPattern, controller, layout.pressDistance),
@@ -581,7 +576,6 @@ namespace Iwanna {
 					.depth = depth,
 					.scale = scale,
 				});
-				createCherry(cherry);
 			};
 
 			const auto createMachineSide = [&](int32 upDownPattern, double sideBaseX, double toothRootY, int32 horizontalDirection) {
@@ -754,9 +748,7 @@ namespace Iwanna {
 
 				for (int32 i = 0; i < widthNum; ++i) {
 					const Vec2 localPos{ startX + i * cherrySize, targetY };
-					auto cherry = std::make_shared<Cherry>();
-					cherry->pos = localPos + controller->offset;
-					cherry->applySettings(Cherry::Settings{
+					createCherry(localPos + controller->offset, Cherry::Settings{
 						.textureName = U"sprCherryWhite",
 						.color = ColorF{0.9},
 						.behavior = makeLargeCherryRowBehavior(localPos, controller),
@@ -765,7 +757,6 @@ namespace Iwanna {
 						.depth = DrawDepth::Cherry + 10,
 						.scale = settings.scale,
 					});
-					createCherry(cherry);
 				}
 			}
 		};
@@ -785,9 +776,7 @@ namespace Iwanna {
 					const int32 fadeDelay = row * settings.rowDelay;
 					const int32 fadeTime = Max(settings.fadeTime, 1);
 					const double targetAlpha = settings.targetAlpha;
-					auto cherry = std::make_shared<Cherry>();
-					cherry->pos = Vec2{ x,y };
-					cherry->applySettings(Cherry::Settings{
+					createCherry(Vec2{ x,y }, Cherry::Settings{
 						.textureName = settings.textureName,
 						.color = settings.color,
 						.behavior = [fadeDelay, fadeTime, targetAlpha](Cherry& self, int32 age) {
@@ -800,7 +789,6 @@ namespace Iwanna {
 						.scale = settings.scale,
 						.alpha = 0.0,
 					});
-					createCherry(cherry);
 				}
 			}
 		};
@@ -824,9 +812,7 @@ namespace Iwanna {
 					: settings.startX;
 				const double targetAlpha = settings.targetAlpha;
 				const double disabledAlpha = settings.disabledAlpha;
-				auto cherry = std::make_shared<Cherry>();
-				cherry->pos = Vec2{ startX,y };
-				cherry->applySettings(Cherry::Settings{
+				createCherry(Vec2{ startX,y }, Cherry::Settings{
 					.textureName = settings.textureName,
 					.color = settings.color,
 					.behavior = [moveDelay, fadeTime, moveTime, startX, targetX, targetAlpha, disabledAlpha](Cherry& self, int32 age) {
@@ -860,7 +846,6 @@ namespace Iwanna {
 					.scale = settings.scale,
 					.alpha = 0.0,
 				});
-				createCherry(cherry);
 			}
 		};
 
