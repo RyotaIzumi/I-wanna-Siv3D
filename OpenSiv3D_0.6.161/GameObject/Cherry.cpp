@@ -24,6 +24,35 @@ namespace Iwanna {
 		appearanceEffect = CherryEffect::None;
 	}
 
+	void Cherry::reset(const Vec2& newPos, const Settings& settings) {
+		pos = newPos;
+		hspeed = 0.0;
+		vspeed = 0.0;
+		speed = 0.0;
+		dir = 0.0;
+		direction = 0.0;
+		gravity = 0.0;
+		textureAngle = 0.0;
+		age = 0;
+		appearanceElapsed = 0;
+		appearanceEffect = CherryEffect::None;
+		alpha = 1.0;
+		isDelete = false;
+		GameObject::isDelete = false;
+		isOutOfScreen = false;
+		hitBox->setPos(pos);
+		applySettings(settings);
+	}
+
+	void Cherry::deactivate() {
+		// Behavior が保持する controller / state を、プール待機中は解放する。
+		behavior = nullptr;
+		isDelete = false;
+		GameObject::isDelete = false;
+		isOutOfScreen = false;
+		canPlayerKill = false;
+	}
+
 	void Cherry::update() {
 		if (behavior) {
 			behavior(*this, age);
@@ -84,7 +113,8 @@ namespace Iwanna {
 
 	void Cherry::setScale(double newScale) {
 		scale = Max(newScale, 0.0);
-		hitBox = std::make_shared<CircleHitBox>(pos, hitBoxSize * scale);
+		auto& circleHitBox = static_cast<CircleHitBox&>(*hitBox);
+		circleHitBox.circle.r = hitBoxSize * scale;
 	}
 
 	void Cherry::setEffect(CherryEffect effect, int32 duration) {

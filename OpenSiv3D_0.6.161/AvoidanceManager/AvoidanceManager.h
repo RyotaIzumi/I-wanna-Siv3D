@@ -44,6 +44,9 @@ namespace Iwanna {
 		StockNearGameObjects stockNearGameObjects;
 		StockNearGameObjects stockBulletsNearGameObjects;
 		GameObjects gameObjects;
+		Array<std::shared_ptr<Cherry>> inactiveCherries;
+		mutable Array<GameObject*> sortedDrawList;
+		mutable bool drawListDirty = true;
 		ColorF backgroundColor = ColorF(0.8, 1.0);
 
 		//弾丸関連
@@ -64,6 +67,11 @@ namespace Iwanna {
 		void applyChapterSettings(const ChapterSettings& settings);
 		void addPeripheryBlockSettings(Array<BlockPlacement>& blocks) const;
 		void addFloorBlockSettings(Array<BlockPlacement>& blocks, Vec2 basePos) const;
+		std::shared_ptr<Cherry> acquireCherry(const Vec2& pos, const Cherry::Settings& settings);
+		void recycleCherry(const std::shared_ptr<Cherry>& cherry);
+		void recycleAllCherries();
+		void markDrawListDirty();
+		void rebuildDrawListIfNeeded() const;
 	public:
 		AvoidanceManager();
 
@@ -79,6 +87,7 @@ namespace Iwanna {
 		std::shared_ptr<Miku> getMiku();
 
 		void createCherry(std::shared_ptr<Cherry> cherry);
+		void createCherry(const Vec2& pos, const Cherry::Settings& settings);
 		std::function<std::shared_ptr<Cherry>()> makeCherryFactory(const Cherry::Settings& settings);
 		std::function<std::shared_ptr<Cherry>()> makeCherryFactory(
 			const String& textureName,
