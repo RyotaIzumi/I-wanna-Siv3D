@@ -942,6 +942,9 @@
     <ClInclude Include="AvoidanceManager\EasingMove.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AvoidanceManager\ScreenEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="AvoidanceManager\Timeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>

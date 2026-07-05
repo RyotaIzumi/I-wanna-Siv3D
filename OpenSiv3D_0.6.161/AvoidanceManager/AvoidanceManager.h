@@ -9,6 +9,7 @@
 #include "../GameObject/Miku.h"
 #include "../Global.h"
 #include "EasingMove.h"
+#include "ScreenEffect.h"
 #include "Timeline.h"
 
 namespace Iwanna {
@@ -45,6 +46,7 @@ namespace Iwanna {
 		StockNearGameObjects stockBulletsNearGameObjects;
 		GameObjects gameObjects;
 		ColorF backgroundColor = ColorF(0.8, 1.0);
+		ScreenEffect screenEffect;
 
 		//弾丸関連
 		double bulletSpeed = 8;
@@ -72,6 +74,10 @@ namespace Iwanna {
 		void debug();
 		void draw() const;
 		void setStep(int32 newStep);
+		void fadeScreenIn(int32 steps, const ColorF& color = Palette::Black);
+		void fadeScreenOut(int32 steps, const ColorF& color = Palette::Black);
+		void flashScreen(int32 holdSteps = 2, int32 fadeOutSteps = 8, const ColorF& color = Palette::White);
+		void resetScreenEffect();
 
 		std::shared_ptr<Player> getPlayer();
 		Array<std::shared_ptr<Cherry>> getCherries();

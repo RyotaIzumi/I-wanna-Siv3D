@@ -44,8 +44,21 @@ namespace Iwanna {
 			break;
 		case 1:
 		case 2:
-		case 4:
 		case 5:
+			addPeripheryBlockSettings(settings.blocks);
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,3 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,6 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,9 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,12 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,15 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,3 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,7 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,11 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,15 });
+			break;
+		case 4:
+			settings.playerPos = Vec2{ 400,500 };
+			settings.backgroundColor = Palette::Black;
 			addPeripheryBlockSettings(settings.blocks);
 			addFloorBlockSettings(settings.blocks, Vec2{ 3,3 });
 			addFloorBlockSettings(settings.blocks, Vec2{ 3,6 });
@@ -219,6 +232,8 @@ namespace Iwanna {
 		cherries.remove_if([](auto&& cherry) {
 			return cherry->isOutOfScreen || cherry->isDelete;
 		});
+
+		screenEffect.update();
 	}
 
 	void AvoidanceManager::debug() {
@@ -263,6 +278,25 @@ namespace Iwanna {
 
 		// 描画
 		for (auto& obj : drawList) obj->draw();
+
+		// Chapter や depth に関係なく、画面演出は常に最前面へ描画する
+		screenEffect.draw();
+	}
+
+	void AvoidanceManager::fadeScreenIn(int32 steps, const ColorF& color) {
+		screenEffect.fadeIn(steps, color);
+	}
+
+	void AvoidanceManager::fadeScreenOut(int32 steps, const ColorF& color) {
+		screenEffect.fadeOut(steps, color);
+	}
+
+	void AvoidanceManager::flashScreen(int32 holdSteps, int32 fadeOutSteps, const ColorF& color) {
+		screenEffect.flash(holdSteps, fadeOutSteps, color);
+	}
+
+	void AvoidanceManager::resetScreenEffect() {
+		screenEffect.reset();
 	}
 
 	void AvoidanceManager::setStep(int32 newStep) {
