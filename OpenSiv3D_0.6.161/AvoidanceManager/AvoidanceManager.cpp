@@ -24,6 +24,7 @@ namespace Iwanna {
 		gameObjects.bloods.clear();
 		gameObjects.blocks.clear();
 		applyChapterSettings(createChapterSettings(chapter));
+		markDrawListDirty();
 
 		// 一部変数の初期化
 		activeChapter = chapter;
@@ -150,6 +151,7 @@ namespace Iwanna {
 		if (player->getIsGenerateBullet()) {
 			if (bullets.size() < bulletMaxNum) {
 				bullets << std::make_shared<Bullet>(player->pos, player->getDirection() == Global::Direction::RIGHT ? bulletSpeed : -bulletSpeed);
+				markDrawListDirty();
 				AudioAsset(Sound::SHOOT).playOneShot();
 			}
 			player->setIsGenerateBullet(false);
@@ -165,6 +167,7 @@ namespace Iwanna {
 				}
 			}
 			isGenerateBloods = true;
+			markDrawListDirty();
 		}
 		for (auto& bl : bloods) {
 			bl->update();
@@ -185,7 +188,6 @@ namespace Iwanna {
 		}
 		for (auto& c : cherries) {
 			c->update();
-			stockNearGameObjects.add(c.get());
 		}
 
 		//playerの近くのオブジェクトのみを取得して当たり判定確認
@@ -193,6 +195,16 @@ namespace Iwanna {
 		for (auto* obj : near) {
 			if (obj == player.get()) continue;
 			player->onCollision(*obj);
+		}
+
+		// Cherry は数が多いため spatial grid へ登録しない。
+		// プレイヤーの矩形と重なる候補だけ、正確な当たり判定へ進める。
+		const RectF playerBroadRect = player->getBroadRect();
+		for (const auto& cherry : cherries) {
+			if (cherry->canPlayerKill
+				&& cherry->getBroadRect().intersects(playerBroadRect)) {
+				player->onCollision(*cherry);
+			}
 		}
 		player->onCollision(*miku);
 		player->updateLate();
@@ -219,10 +231,15 @@ namespace Iwanna {
 		miku->update();
 		
 		//弾丸削除
+		const size_t bulletCountBeforeRemove = bullets.size();
 		bullets.remove_if([](auto&& bullet) {
 			return bullet->isOutOfScreen || bullet->isDelete;
 		});
+		if (bullets.size() != bulletCountBeforeRemove) {
+			markDrawListDirty();
+		}
 		//画面外のりんごを削除
+		const size_t cherryCountBeforeRemove = cherries.size();
 		cherries.remove_if([this](const auto& cherry) {
 			if (!(cherry->isOutOfScreen || cherry->isDelete)) {
 				return false;
@@ -231,6 +248,9 @@ namespace Iwanna {
 			recycleCherry(cherry);
 			return true;
 		});
+		if (cherries.size() != cherryCountBeforeRemove) {
+			markDrawListDirty();
+		}
 	}
 
 	void AvoidanceManager::debug() {
@@ -258,28 +278,18 @@ namespace Iwanna {
 		//背景描画
 		Rect(0, 0, 800, 608).draw(backgroundColor);
 
-		Array<GameObject*> drawList;
-		drawList.reserve(2
-			+ gameObjects.blocks.size()
-			+ gameObjects.cherries.size()
-			+ gameObjects.bloods.size()
-			+ gameObjects.bullets.size());
-
-		//drawListに突っ込む
-		drawList << gameObjects.miku.get();
-		drawList << gameObjects.player.get();
-		for (const auto& b : gameObjects.blocks) drawList << b.get();
-		for (const auto& c : gameObjects.cherries) drawList << c.get();
-		for (const auto& b : gameObjects.bloods) drawList << b.get();
-		for (const auto& b : gameObjects.bullets) drawList << b.get();
-
-		// ソート
-		drawList.sort_by([](const auto& a, const auto& b) {
-			return a->getDepth() < b->getDepth();
-		});
+		rebuildDrawListIfNeeded();
+		const RectF cherryVisibleArea{ -32.0, -32.0,
+			Global::windowWidth + 64.0, Global::windowHeight + 64.0 };
 
 		// 描画
-		for (auto& obj : drawList) obj->draw();
+		for (auto* obj : sortedDrawList) {
+			if (obj->type == ObjectType::Cherry
+				&& !obj->getBroadRect().intersects(cherryVisibleArea)) {
+				continue;
+			}
+			obj->draw();
+		}
 	}
 
 	void AvoidanceManager::setStep(int32 newStep) {
@@ -311,10 +321,12 @@ namespace Iwanna {
 	//りんご生成と管理配列への追加
 	void AvoidanceManager::createCherry(std::shared_ptr<Cherry> cherry) {
 		gameObjects.cherries << cherry;
+		markDrawListDirty();
 	}
 
 	void AvoidanceManager::createCherry(const Vec2& pos, const Cherry::Settings& settings) {
 		gameObjects.cherries << acquireCherry(pos, settings);
+		markDrawListDirty();
 	}
 
 	std::shared_ptr<Cherry> AvoidanceManager::acquireCherry(
@@ -344,6 +356,36 @@ namespace Iwanna {
 			recycleCherry(cherry);
 		}
 		gameObjects.cherries.clear();
+		markDrawListDirty();
+	}
+
+	void AvoidanceManager::markDrawListDirty() {
+		drawListDirty = true;
+	}
+
+	void AvoidanceManager::rebuildDrawListIfNeeded() const {
+		if (!drawListDirty) {
+			return;
+		}
+
+		sortedDrawList.clear();
+		sortedDrawList.reserve(2
+			+ gameObjects.blocks.size()
+			+ gameObjects.cherries.size()
+			+ gameObjects.bloods.size()
+			+ gameObjects.bullets.size());
+
+		sortedDrawList << gameObjects.miku.get();
+		sortedDrawList << gameObjects.player.get();
+		for (const auto& block : gameObjects.blocks) sortedDrawList << block.get();
+		for (const auto& cherry : gameObjects.cherries) sortedDrawList << cherry.get();
+		for (const auto& blood : gameObjects.bloods) sortedDrawList << blood.get();
+		for (const auto& bullet : gameObjects.bullets) sortedDrawList << bullet.get();
+
+		sortedDrawList.sort_by([](const GameObject* a, const GameObject* b) {
+			return a->getDepth() < b->getDepth();
+		});
+		drawListDirty = false;
 	}
 
 	//外周のブロック配置
@@ -356,6 +398,7 @@ namespace Iwanna {
 			block->setHasCollide(blockSetting.hasCollide);
 			gameObjects.blocks << block;
 		}
+		markDrawListDirty();
 	}
 
 	//5マス分の床ブロックを作成
@@ -368,5 +411,6 @@ namespace Iwanna {
 			block->setHasCollide(blockSetting.hasCollide);
 			gameObjects.blocks << block;
 		}
+		markDrawListDirty();
 	}
 }

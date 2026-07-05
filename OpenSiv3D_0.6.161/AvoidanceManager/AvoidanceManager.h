@@ -45,6 +45,8 @@ namespace Iwanna {
 		StockNearGameObjects stockBulletsNearGameObjects;
 		GameObjects gameObjects;
 		Array<std::shared_ptr<Cherry>> inactiveCherries;
+		mutable Array<GameObject*> sortedDrawList;
+		mutable bool drawListDirty = true;
 		ColorF backgroundColor = ColorF(0.8, 1.0);
 
 		//弾丸関連
@@ -68,6 +70,8 @@ namespace Iwanna {
 		std::shared_ptr<Cherry> acquireCherry(const Vec2& pos, const Cherry::Settings& settings);
 		void recycleCherry(const std::shared_ptr<Cherry>& cherry);
 		void recycleAllCherries();
+		void markDrawListDirty();
+		void rebuildDrawListIfNeeded() const;
 	public:
 		AvoidanceManager();
 
