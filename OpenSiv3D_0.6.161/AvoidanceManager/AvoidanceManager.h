@@ -89,11 +89,19 @@ namespace Iwanna {
 		int32 previousStep = -1;
 		int32 step = 0;
 		int32 activeChapter = 0;
+
+		// スクリーンシェイク関連
 		bool screenShakeActive = false;
 		Stopwatch screenShakeStopwatch;
 		double screenShakeAmplitude = 0.0;
 		int32 screenShakeDurationStep = 1;
 		double screenShakeFrequency = 1.0;
+
+		// チャプター遷移フェード関連
+		bool chapterTransitionFadeActive = false;
+		Stopwatch chapterTransitionFadeStopwatch;
+		int32 chapterTransitionFadeDurationStep = 40;
+		ColorF chapterTransitionFadeColor = ColorF{ 0.0, 0.0, 0.0, 1.0 };
 
 		int32 getChapterFromStep(int32 targetStep) const;
 		ChapterSettings createChapterSettings(int32 chapter) const;
@@ -112,6 +120,8 @@ namespace Iwanna {
 		void createChapter2SatResultBarrage();
 		void createChapter2MikuHandBarrage();
 		double getScreenShakeOffset() const;
+		double getChapterTransitionFadeAlpha() const;
+		void requestChapterTransitionFade(int32 durationStep = 40);
 		void drawChapter2SatBarrageMasks() const;
 		void drawChapter2SniperSight() const;
 	public:

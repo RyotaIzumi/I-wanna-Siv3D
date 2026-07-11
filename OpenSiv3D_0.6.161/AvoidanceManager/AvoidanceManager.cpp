@@ -15,6 +15,8 @@ namespace Iwanna {
 	}
 
 	void AvoidanceManager::setUpObjects(int32 chapter) {
+		const bool shouldStartChapterTransitionFade = (activeChapter != 0 && activeChapter != chapter);
+
 		gameObjects.player = std::make_shared<Player>();
 
 		stockNearGameObjects.clear();
@@ -32,6 +34,10 @@ namespace Iwanna {
 		previousStep = -1;
 		screenShakeActive = false;
 		screenShakeStopwatch.reset();
+
+		if (shouldStartChapterTransitionFade) {
+			requestChapterTransitionFade(chapterTransitionFadeDurationStep);
+		}
 	}
 
 	int32 AvoidanceManager::getChapterFromStep(int32 targetStep) const {
@@ -291,39 +297,48 @@ namespace Iwanna {
 
 	void AvoidanceManager::draw() const {
 		const double screenShakeY = getScreenShakeOffset();
-		const Transformer2D screenShakeTransformer{ Mat3x2::Translate(0.0, screenShakeY) };
+		{
+			const Transformer2D screenShakeTransformer{ Mat3x2::Translate(0.0, screenShakeY) };
 
-		//背景描画
-		Rect(-16, -16, 832, 640).draw(backgroundColor);
+			//背景描画
+			Rect(-16, -16, 832, 640).draw(backgroundColor);
 
-		rebuildDrawListIfNeeded();
-		const RectF cherryVisibleArea{ -32.0, -32.0,
-			Global::windowWidth + 64.0, Global::windowHeight + 64.0 };
-		const double chapter2SatBarrageFrontDepth = DrawDepth::Player + 10.0;
+			rebuildDrawListIfNeeded();
+			const RectF cherryVisibleArea{ -32.0, -32.0,
+				Global::windowWidth + 64.0, Global::windowHeight + 64.0 };
+			const double chapter2SatBarrageFrontDepth = DrawDepth::Player + 10.0;
 
-		for (auto* obj : sortedDrawList) {
-			if (obj->getDepth() < chapter2SatBarrageFrontDepth) {
-				if (obj->type == ObjectType::Cherry
-					&& !obj->getBroadRect().intersects(cherryVisibleArea)) {
-					continue;
+			for (auto* obj : sortedDrawList) {
+				if (obj->getDepth() < chapter2SatBarrageFrontDepth) {
+					if (obj->type == ObjectType::Cherry
+						&& !obj->getBroadRect().intersects(cherryVisibleArea)) {
+						continue;
+					}
+					obj->draw();
 				}
-				obj->draw();
 			}
+
+			drawChapter2SatBarrageMasks();
+
+			for (auto* obj : sortedDrawList) {
+				if (chapter2SatBarrageFrontDepth <= obj->getDepth()) {
+					if (obj->type == ObjectType::Cherry
+						&& !obj->getBroadRect().intersects(cherryVisibleArea)) {
+						continue;
+					}
+					obj->draw();
+				}
+			}
+
+			drawChapter2SniperSight();
 		}
 
-		drawChapter2SatBarrageMasks();
-
-		for (auto* obj : sortedDrawList) {
-			if (chapter2SatBarrageFrontDepth <= obj->getDepth()) {
-				if (obj->type == ObjectType::Cherry
-					&& !obj->getBroadRect().intersects(cherryVisibleArea)) {
-					continue;
-				}
-				obj->draw();
-			}
+		const double fadeAlpha = getChapterTransitionFadeAlpha();
+		if (0.0 < fadeAlpha) {
+			ColorF fadeColor = chapterTransitionFadeColor;
+			fadeColor.a *= fadeAlpha;
+			Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(fadeColor);
 		}
-
-		drawChapter2SniperSight();
 	}
 
 	double AvoidanceManager::getScreenShakeOffset() const {
@@ -351,6 +366,26 @@ namespace Iwanna {
 		screenShakeAmplitude = amplitude;
 		screenShakeDurationStep = Max(durationStep, 1);
 		screenShakeFrequency = frequency;
+	}
+
+	double AvoidanceManager::getChapterTransitionFadeAlpha() const {
+		if (!chapterTransitionFadeActive) {
+			return 0.0;
+		}
+
+		const double age = chapterTransitionFadeStopwatch.sF() * 50.0;
+		if (chapterTransitionFadeDurationStep < age) {
+			return 0.0;
+		}
+
+		const double t = age / static_cast<double>(Max(chapterTransitionFadeDurationStep, 1));
+		return 1.0 - Iwanna::applyEasing(Iwanna::EasingMoveType::EaseOut, t);
+	}
+
+	void AvoidanceManager::requestChapterTransitionFade(int32 durationStep) {
+		chapterTransitionFadeActive = true;
+		chapterTransitionFadeStopwatch.restart();
+		chapterTransitionFadeDurationStep = Max(durationStep, 1);
 	}
 
 	void AvoidanceManager::setStep(int32 newStep) {
