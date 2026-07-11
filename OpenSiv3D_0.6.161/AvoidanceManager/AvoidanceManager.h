@@ -39,6 +39,34 @@ namespace Iwanna {
 		double mikuDepth = DrawDepth::Miku;
 	};
 
+	struct Chapter2CherryRodSettings {
+		String textureName = U"sprCherryAllWhite";
+		ColorF color = Palette::White;
+		double startX = 16.0;
+		int32 columnCount = 25;
+		double columnSpacing = 32.0;
+		double topY = 16.0;
+		double bottomY = 592.0;
+		double rodLength = 152.0;
+		double cherrySpacing = 16.0;
+		double scale = 1.55;
+		double moveDistance = 44.0;
+		int32 moveTime = 40;
+		int32 holdTime = 0;
+		double depth = DrawDepth::Cherry + 5.0;
+		bool canPlayerKill = true;
+	};
+
+	struct Chapter2CherryRodWaveSettings {
+		double amplitude = 24.0;
+		int32 periodStep = 80;
+		double columnPhaseStep = 0.45;
+		int32 columnStartIntervalStep = 3;
+		int32 fadeInStep = 20;
+		double topDirection = 1.0;
+		double bottomDirection = -1.0;
+	};
+
 	class AvoidanceManager {
 	private:
 		StockNearGameObjects stockNearGameObjects;
@@ -61,6 +89,11 @@ namespace Iwanna {
 		int32 previousStep = -1;
 		int32 step = 0;
 		int32 activeChapter = 0;
+		bool screenShakeActive = false;
+		Stopwatch screenShakeStopwatch;
+		double screenShakeAmplitude = 0.0;
+		int32 screenShakeDurationStep = 1;
+		double screenShakeFrequency = 1.0;
 
 		int32 getChapterFromStep(int32 targetStep) const;
 		ChapterSettings createChapterSettings(int32 chapter) const;
@@ -72,6 +105,15 @@ namespace Iwanna {
 		void recycleAllCherries();
 		void markDrawListDirty();
 		void rebuildDrawListIfNeeded() const;
+		void createChapter2MeasureGuide(int32 index);
+		void createChapter2MeasureFill(int32 index);
+		void updateChapter2Measurements(int32 localStep);
+		void createChapter2SatBarrage();
+		void createChapter2SatResultBarrage();
+		void createChapter2MikuHandBarrage();
+		double getScreenShakeOffset() const;
+		void drawChapter2SatBarrageMasks() const;
+		void drawChapter2SniperSight() const;
 	public:
 		AvoidanceManager();
 
@@ -80,6 +122,10 @@ namespace Iwanna {
 		void debug();
 		void draw() const;
 		void setStep(int32 newStep);
+		void requestScreenShake(
+			double amplitude = 6.0,
+			int32 durationStep = 18,
+			double frequency = 0.85);
 
 		std::shared_ptr<Player> getPlayer();
 		Array<std::shared_ptr<Cherry>> getCherries();
@@ -105,6 +151,10 @@ namespace Iwanna {
 		void chapter6();
 
 		//cherry生成パターン
+		void createChapter2CherryRods(const Chapter2CherryRodSettings& settings = Chapter2CherryRodSettings{});
+		void requestChapter2CherryRodMove(int32 staggerColumnCount, int32 intervalStep);
+		void startChapter2CherryRodWave(const Chapter2CherryRodWaveSettings& settings = Chapter2CherryRodWaveSettings{});
+		void requestChapter2MikuHandBarrageState(bool isAttackState);
 		void createCherrySpread(Vec2 pos, int32 num, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
 	};
 }

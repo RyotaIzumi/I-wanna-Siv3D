@@ -30,6 +30,8 @@ namespace Iwanna {
 		activeChapter = chapter;
 		isGenerateBloods = false;
 		previousStep = -1;
+		screenShakeActive = false;
+		screenShakeStopwatch.reset();
 	}
 
 	int32 AvoidanceManager::getChapterFromStep(int32 targetStep) const {
@@ -45,13 +47,26 @@ namespace Iwanna {
 		ChapterSettings settings;
 
 		switch (chapter) {
+		case 2:
+			settings.playerPos = Vec2{ 400,300 };
+
+			addPeripheryBlockSettings(settings.blocks);
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,3 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,6 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,9 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,12 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,15 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,3 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,7 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,11 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,15 });
+			break;
 		case 3:
 			settings.playerPos = Vec2{ 400,300 };
 			settings.backgroundColor = ColorF(0.5, 1.0);
 			settings.isInfiniteJumpMode = true;
 			break;
 		case 1:
-		case 2:
 		case 4:
 		case 5:
 			addPeripheryBlockSettings(settings.blocks);
@@ -275,21 +290,67 @@ namespace Iwanna {
 	}
 
 	void AvoidanceManager::draw() const {
+		const double screenShakeY = getScreenShakeOffset();
+		const Transformer2D screenShakeTransformer{ Mat3x2::Translate(0.0, screenShakeY) };
+
 		//背景描画
-		Rect(0, 0, 800, 608).draw(backgroundColor);
+		Rect(-16, -16, 832, 640).draw(backgroundColor);
 
 		rebuildDrawListIfNeeded();
 		const RectF cherryVisibleArea{ -32.0, -32.0,
 			Global::windowWidth + 64.0, Global::windowHeight + 64.0 };
+		const double chapter2SatBarrageFrontDepth = DrawDepth::Player + 10.0;
 
-		// 描画
 		for (auto* obj : sortedDrawList) {
-			if (obj->type == ObjectType::Cherry
-				&& !obj->getBroadRect().intersects(cherryVisibleArea)) {
-				continue;
+			if (obj->getDepth() < chapter2SatBarrageFrontDepth) {
+				if (obj->type == ObjectType::Cherry
+					&& !obj->getBroadRect().intersects(cherryVisibleArea)) {
+					continue;
+				}
+				obj->draw();
 			}
-			obj->draw();
 		}
+
+		drawChapter2SatBarrageMasks();
+
+		for (auto* obj : sortedDrawList) {
+			if (chapter2SatBarrageFrontDepth <= obj->getDepth()) {
+				if (obj->type == ObjectType::Cherry
+					&& !obj->getBroadRect().intersects(cherryVisibleArea)) {
+					continue;
+				}
+				obj->draw();
+			}
+		}
+
+		drawChapter2SniperSight();
+	}
+
+	double AvoidanceManager::getScreenShakeOffset() const {
+		if (!screenShakeActive) {
+			return 0.0;
+		}
+
+		const double age = screenShakeStopwatch.sF() * 50.0;
+		if (screenShakeDurationStep < age) {
+			return 0.0;
+		}
+
+		const double t = age / static_cast<double>(Max(screenShakeDurationStep, 1));
+		const double decay = 1.0 - Iwanna::applyEasing(Iwanna::EasingMoveType::EaseOut, t);
+		return screenShakeAmplitude * decay * Math::Cos(age * screenShakeFrequency);
+	}
+
+	void AvoidanceManager::requestScreenShake(
+		double amplitude,
+		int32 durationStep,
+		double frequency) {
+
+		screenShakeActive = true;
+		screenShakeStopwatch.restart();
+		screenShakeAmplitude = amplitude;
+		screenShakeDurationStep = Max(durationStep, 1);
+		screenShakeFrequency = frequency;
 	}
 
 	void AvoidanceManager::setStep(int32 newStep) {
