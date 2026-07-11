@@ -10,6 +10,8 @@ namespace Iwanna {
 		type = ObjectType::Cherry;
 		canPlayerKill = true;
 		canPlayerKillAtFullAlpha = true;
+		canPlayerKillBeforeFullAlpha = false;
+		manualCanPlayerKillControl = false;
 		isDelete = false;
 		isOutOfScreen = false;
 		canDeleteOutOfScreen = true;
@@ -37,6 +39,8 @@ namespace Iwanna {
 		appearanceElapsed = 0;
 		appearanceEffect = CherryEffect::None;
 		alpha = 1.0;
+		canPlayerKillBeforeFullAlpha = false;
+		manualCanPlayerKillControl = false;
 		isDelete = false;
 		GameObject::isDelete = false;
 		isOutOfScreen = false;
@@ -66,7 +70,9 @@ namespace Iwanna {
 			pos.y += vspeed;
 		}
 		updateAppearanceEffect();
-		canPlayerKill = canPlayerKillAtFullAlpha && (alpha >= 1.0);
+		if (!manualCanPlayerKillControl) {
+			canPlayerKill = canPlayerKillAtFullAlpha && (canPlayerKillBeforeFullAlpha || alpha >= 1.0);
+		}
 		// 当たり判定位置更新
 		hitBox->setPos(pos);
 		if(canDeleteOutOfScreen) checkOutOfScreen();
@@ -87,11 +93,18 @@ namespace Iwanna {
 		behavior = settings.behavior;
 		canDeleteOutOfScreen = settings.canDeleteOutOfScreen;
 		canPlayerKillAtFullAlpha = settings.canPlayerKill;
+		canPlayerKillBeforeFullAlpha = settings.canPlayerKillBeforeFullAlpha;
+		manualCanPlayerKillControl = settings.manualCanPlayerKillControl;
 		depth = settings.depth;
 		setScale(settings.scale);
 		alpha = Clamp(settings.alpha, 0.0, 1.0);
 		setAppearanceEffect(settings.appearanceEffect, settings.appearanceDuration);
-		canPlayerKill = canPlayerKillAtFullAlpha && (alpha >= 1.0);
+		if (!manualCanPlayerKillControl) {
+			canPlayerKill = canPlayerKillAtFullAlpha && (canPlayerKillBeforeFullAlpha || alpha >= 1.0);
+		}
+		else {
+			canPlayerKill = settings.canPlayerKill;
+		}
 	}
 
 	void Cherry::setBehavior(const Behavior& newBehavior) {

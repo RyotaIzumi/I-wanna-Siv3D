@@ -29,6 +29,8 @@ namespace Iwanna {
 			double alpha = 1.0;
 			CherryEffect appearanceEffect = CherryEffect::None;
 			int32 appearanceDuration = 30;
+			bool canPlayerKillBeforeFullAlpha = false;
+			bool manualCanPlayerKillControl = false;
 		};
 
 	private:
@@ -45,6 +47,8 @@ namespace Iwanna {
 		double appearanceTargetScale = 1.0;
 		double appearanceTargetAlpha = 1.0;
 		bool canPlayerKillAtFullAlpha = true;
+		bool canPlayerKillBeforeFullAlpha = false;
+		bool manualCanPlayerKillControl = false;
 		bool canDeleteOutOfScreen = true;//画面外で消去するかどうかのフラグ
 
 		void updateAppearanceEffect();
