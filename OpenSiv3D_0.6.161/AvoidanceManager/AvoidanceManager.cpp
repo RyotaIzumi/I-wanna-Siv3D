@@ -6,12 +6,9 @@ namespace Iwanna {
 		stockNearGameObjects.cellSize = 64;
 		stockBulletsNearGameObjects.cellSize = 32;
 
-		// Chapter 3 のピーク数を先に確保し、演出中の大量確保を避ける。
-		constexpr size_t cherryPoolInitialCapacity = 6000;
-		inactiveCherries.reserve(cherryPoolInitialCapacity);
-		for (size_t i = 0; i < cherryPoolInitialCapacity; ++i) {
-			inactiveCherries << std::make_shared<Cherry>();
-		}
+		// 実体は必要になった分だけ生成し、タイトル画面での大量初期化を避ける。
+		constexpr size_t cherryPoolReserveCapacity = 1024;
+		inactiveCherries.reserve(cherryPoolReserveCapacity);
 	}
 
 	void AvoidanceManager::setUpObjects(int32 chapter) {
@@ -444,7 +441,10 @@ namespace Iwanna {
 
 	void AvoidanceManager::recycleCherry(const std::shared_ptr<Cherry>& cherry) {
 		cherry->deactivate();
-		inactiveCherries << cherry;
+		constexpr size_t cherryPoolMaxInactiveCount = 2048;
+		if (inactiveCherries.size() < cherryPoolMaxInactiveCount) {
+			inactiveCherries << cherry;
+		}
 	}
 
 	void AvoidanceManager::recycleAllCherries() {
