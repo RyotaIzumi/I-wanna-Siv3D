@@ -1,0 +1,202 @@
+{"kind":"deck","id":"pr/vecmdx","name":"Deck"}
+{"kind":"layout","layoutId":"eae6eeaf-0c3f-4117-b0e0-666390c4f85e","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"833eb91e-fd49-4e93-873f-63aab233599e","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/v9k31f","slide":1,"title":"Making Bullet-Hell Generation Safer with 3SAT and Hamilton Paths","textShapes":7}
+{"kind":"textbox","id":"sh/q5sj2pkz","slide":1,"text":"Making Bullet-Hell Generation Safer with 3SAT and Hamilton Paths","textPreview":"Making Bullet-Hell Generation Safer with 3SAT and Hamilton Paths","textChars":64,"textLines":1,"bbox":[64,92,820,190]}
+{"kind":"textbox","id":"sh/d832x43q","slide":1,"text":"Starting a research project in an I Wanna-style engine built with Siv3D","textPreview":"Starting a research project in an I Wanna-style engine built with Siv3D","textChars":71,"textLines":1,"bbox":[68,304,760,58]}
+{"kind":"shape","id":"sh/c7u14z25","slide":1,"bbox":[914,96,252,424]}
+{"kind":"textbox","id":"sh/321krulo","slide":1,"text":"3SAT","textPreview":"3SAT","textChars":4,"textLines":1,"bbox":[956,154,170,50]}
+{"kind":"textbox","id":"sh/21sjypk3","slide":1,"text":"+","textPreview":"+","textChars":1,"textLines":1,"bbox":[1010,250,60,44]}
+{"kind":"textbox","id":"sh/p4j2t43u","slide":1,"text":"Hamilton\nPath","textPreview":"Hamilton | Path","textChars":13,"textLines":2,"bbox":[954,332,180,94]}
+{"kind":"textbox","id":"sh/o3a10z29","slide":1,"text":"20-minute research introduction","textPreview":"20-minute research introduction","textChars":31,"textLines":1,"bbox":[68,588,500,32]}
+{"kind":"textbox","id":"sh/fehknalc","slide":1,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[1180,654,48,24]}
+{"kind":"notes","id":"nt/v9k31f","slide":1,"text":""}
+{"kind":"slide","id":"sl/v9i0dz","slide":2,"title":"I build the kind of games I love to play","textShapes":8}
+{"kind":"textbox","id":"sh/cjyd87yt","slide":2,"text":"I build the kind of games I love to play","textPreview":"I build the kind of games I love to play","textChars":40,"textLines":1,"bbox":[64,42,1120,72]}
+{"kind":"textbox","id":"sh/ripcf2h8","slide":2,"text":"A short introduction to the perspective behind this project.","textPreview":"A short introduction to the perspective behind this project.","textChars":60,"textLines":1,"bbox":[66,126,1080,42]}
+{"kind":"textbox","id":"sh/qxgv6xgn","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1180,654,48,24]}
+{"kind":"shape","id":"sh/pw7udsz2","slide":2,"bbox":[76,202,420,330]}
+{"kind":"textbox","id":"sh/4vyd4nih","slide":2,"text":"Ryota Izumi","textPreview":"Ryota Izumi","textChars":11,"textLines":1,"bbox":[112,242,340,46]}
+{"kind":"shape","id":"sh/3upcbihw","slide":2,"bbox":[112,330,10,10]}
+{"kind":"textbox","id":"sh/2twb2d0r","slide":2,"text":"I enjoy I Wanna fangames","textPreview":"I enjoy I Wanna fangames","textChars":24,"textLines":1,"bbox":[136,320,316,66]}
+{"kind":"shape","id":"sh/9sre9wz6","slide":2,"bbox":[112,396,10,10]}
+{"kind":"textbox","id":"sh/oridgry1","slide":2,"text":"My favorite stages are Avoidance-style bullet hells","textPreview":"My favorite stages are Avoidance-style bullet hells","textChars":51,"textLines":1,"bbox":[136,386,316,66]}
+{"kind":"shape","id":"sh/2h07mdgr","slide":2,"bbox":[112,462,10,10]}
+{"kind":"textbox","id":"sh/3i98vihc","slide":2,"text":"I am developing an I Wanna engine with Siv3D","textPreview":"I am developing an I Wanna engine with Siv3D","textChars":44,"textLines":1,"bbox":[136,452,316,66]}
+{"kind":"textbox","id":"sh/pkbqxszi","slide":2,"text":"Design interest: patterns that feel musical, readable, and fair.","textPreview":"Design interest: patterns that feel musical, readable, and fair.","textChars":64,"textLines":1,"bbox":[558,570,626,42]}
+{"kind":"image","id":"im/zq5c7m5k","slide":2,"name":"","geometry":"roundRect","alt":"Siv3D prototype screenshot","bbox":[558,194,630,354]}
+{"kind":"notes","id":"nt/v9i0dz","slide":2,"text":""}
+{"kind":"slide","id":"sl/cay8j8","slide":3,"title":"Avoidance turns survival into a performance","textShapes":8}
+{"kind":"textbox","id":"sh/fahsbmh4","slide":3,"text":"Avoidance turns survival into a performance","textPreview":"Avoidance turns survival into a performance","textChars":43,"textLines":1,"bbox":[64,42,1120,72]}
+{"kind":"textbox","id":"sh/0bq9kryp","slide":3,"text":"The player dodges a scripted barrage—often synchronized to music—until the sequence ends.","textPreview":"The player dodges a scripted barrage—often synchronized to music—until the sequence ends.","textChars":89,"textLines":1,"bbox":[66,126,1080,42]}
+{"kind":"textbox","id":"sh/1cjadwza","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1180,654,48,24]}
+{"kind":"shape","id":"sh/r6hs7mh8","slide":3,"bbox":[770,194,418,404]}
+{"kind":"textbox","id":"sh/s7q9gryt","slide":3,"text":"Typical rules","textPreview":"Typical rules","textChars":13,"textLines":1,"bbox":[808,232,330,40]}
+{"kind":"shape","id":"sh/d8za9czy","slide":3,"bbox":[808,320,10,10]}
+{"kind":"textbox","id":"sh/ahsbq1gr","slide":3,"text":"One hit usually means death","textPreview":"One hit usually means death","textChars":27,"textLines":1,"bbox":[832,310,306,62]}
+{"kind":"shape","id":"sh/b21sj6xc","slide":3,"bbox":[808,382,10,10]}
+{"kind":"textbox","id":"sh/zuhkfatc","slide":3,"text":"The player has a small, precise hitbox","textPreview":"The player has a small, precise hitbox","textChars":38,"textLines":1,"bbox":[832,372,306,62]}
+{"kind":"shape","id":"sh/yt8365sr","slide":3,"bbox":[808,444,10,10]}
+{"kind":"textbox","id":"sh/lwz2hkb2","slide":3,"text":"Patterns evolve with the song","textPreview":"Patterns evolve with the song","textChars":29,"textLines":1,"bbox":[832,434,306,62]}
+{"kind":"shape","id":"sh/0vql8fax","slide":3,"bbox":[808,506,10,10]}
+{"kind":"textbox","id":"sh/ny1kjat8","slide":3,"text":"Learning through retries is expected","textPreview":"Learning through retries is expected","textChars":36,"textLines":1,"bbox":[832,496,306,62]}
+{"kind":"image","id":"im/76d4v2t0","slide":3,"name":"","geometry":"roundRect","alt":"Siv3D prototype screenshot","bbox":[74,194,650,404]}
+{"kind":"notes","id":"nt/cay8j8","slide":3,"text":""}
+{"kind":"slide","id":"sl/pfm93r","slide":4,"title":"Siv3D provides a controllable testbed for I Wanna mechanics","textShapes":15}
+{"kind":"textbox","id":"sh/10ve5gvi","slide":4,"text":"Siv3D provides a controllable testbed for I Wanna mechanics","textPreview":"Siv3D provides a controllable testbed for I Wanna mechanics","textChars":59,"textLines":1,"bbox":[64,42,1120,72]}
+{"kind":"textbox","id":"sh/edkvu1c7","slide":4,"text":"The engine lets the same runtime support ordinary stages, Avoidance patterns, and research prototypes.","textPreview":"The engine lets the same runtime support ordinary stages, Avoidance patterns, and research prototypes.","textChars":102,"textLines":1,"bbox":[66,126,1080,42]}
+{"kind":"textbox","id":"sh/zetw36ds","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1180,654,48,24]}
+{"kind":"shape","id":"sh/o3md0bu9","slide":4,"bbox":[74,226,244,270]}
+{"kind":"textbox","id":"sh/94ve9gvu","slide":4,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[98,250,44,42]}
+{"kind":"textbox","id":"sh/m14vylc3","slide":4,"text":"Core movement","textPreview":"Core movement","textChars":13,"textLines":1,"bbox":[98,314,194,66]}
+{"kind":"textbox","id":"sh/n2dw76do","slide":4,"text":"Run, jump, double jump, collision","textPreview":"Run, jump, double jump, collision","textChars":33,"textLines":1,"bbox":[98,400,194,70]}
+{"kind":"shape","id":"sh/47idore5","slide":4,"bbox":[322,360,36,0]}
+{"kind":"shape","id":"sh/p8rexwvq","slide":4,"bbox":[370,226,244,270]}
+{"kind":"textbox","id":"sh/xk72903e","slide":4,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[394,250,44,42]}
+{"kind":"textbox","id":"sh/cjel0v2t","slide":4,"text":"I Wanna objects","textPreview":"I Wanna objects","textChars":15,"textLines":1,"bbox":[394,314,194,66]}
+{"kind":"textbox","id":"sh/bi5k7ql8","slide":4,"text":"Blocks, spikes, cherries, saves","textPreview":"Blocks, spikes, cherries, saves","textChars":31,"textLines":1,"bbox":[394,400,194,70]}
+{"kind":"shape","id":"sh/ahw3ylk3","slide":4,"bbox":[618,360,36,0]}
+{"kind":"shape","id":"sh/lo72d03q","slide":4,"bbox":[666,226,244,270]}
+{"kind":"textbox","id":"sh/knyl4v25","slide":4,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[690,250,44,42]}
+{"kind":"textbox","id":"sh/zmpkbalk","slide":4,"text":"Avoidance control","textPreview":"Avoidance control","textChars":17,"textLines":1,"bbox":[690,314,194,66]}
+{"kind":"textbox","id":"sh/ylg325kz","slide":4,"text":"Timed spawns, music cues, scripted motion","textPreview":"Timed spawns, music cues, scripted motion","textChars":41,"textLines":1,"bbox":[690,400,194,70]}
+{"kind":"shape","id":"sh/9crmhk3m","slide":4,"bbox":[914,360,36,0]}
+{"kind":"shape","id":"sh/8byl8f21","slide":4,"bbox":[962,226,244,270]}
+{"kind":"textbox","id":"sh/sv654jad","slide":4,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[986,250,44,42]}
+{"kind":"textbox","id":"sh/twzmdoby","slide":4,"text":"Research layer","textPreview":"Research layer","textChars":14,"textLines":1,"bbox":[986,314,194,66]}
+{"kind":"textbox","id":"sh/6ton29s7","slide":4,"text":"Generate, validate, and replay candidate patterns","textPreview":"Generate, validate, and replay candidate patterns","textChars":49,"textLines":1,"bbox":[986,400,194,70]}
+{"kind":"notes","id":"nt/pfm93r","slide":4,"text":""}
+{"kind":"slide","id":"sl/1alib1","slide":5,"title":"A beautiful barrage can still create an impossible state","textShapes":10}
+{"kind":"textbox","id":"sh/2l87a18z","slide":5,"text":"A beautiful barrage can still create an impossible state","textPreview":"A beautiful barrage can still create an impossible state","textChars":56,"textLines":1,"bbox":[64,42,1120,72]}
+{"kind":"textbox","id":"sh/poz6lwrq","slide":5,"text":"Music synchronization, spectacle, and difficulty interact—so manual or automatic generation may accidentally trap the player.","textPreview":"Music synchronization, spectacle, and difficulty interact—so manual or automatic generation may accidentally trap the player.","textChars":125,"textLines":1,"bbox":[66,126,1080,42]}
+{"kind":"textbox","id":"sh/onqpcrq5","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1180,654,48,24]}
+{"kind":"shape","id":"sh/fihofm9o","slide":5,"bbox":[74,216,314,270]}
+{"kind":"textbox","id":"sh/eh876h83","slide":5,"text":"Musical timing","textPreview":"Musical timing","textChars":14,"textLines":1,"bbox":[106,252,250,38]}
+{"kind":"textbox","id":"sh/1kz6hwre","slide":5,"text":"Spawns and transitions must land on beats and phrases.","textPreview":"Spawns and transitions must land on beats and phrases.","textChars":54,"textLines":1,"bbox":[106,326,238,92]}
+{"kind":"shape","id":"sh/0jqp8rqt","slide":5,"bbox":[484,216,314,270]}
+{"kind":"textbox","id":"sh/ze18r69s","slide":5,"text":"Visual impact","textPreview":"Visual impact","textChars":13,"textLines":1,"bbox":[516,252,250,38]}
+{"kind":"textbox","id":"sh/yds7il87","slide":5,"text":"Dense motion and dramatic changes make the pattern memorable.","textPreview":"Dense motion and dramatic changes make the pattern memorable.","textChars":61,"textLines":1,"bbox":[516,326,238,92]}
+{"kind":"shape","id":"sh/43yp4rql","slide":5,"bbox":[894,216,314,270]}
+{"kind":"textbox","id":"sh/547qxwrq","slide":5,"text":"Guaranteed escape","textPreview":"Guaranteed escape","textChars":17,"textLines":1,"bbox":[926,252,250,38]}
+{"kind":"textbox","id":"sh/i1w72hsf","slide":5,"text":"At least one survivable route must remain through the barrage.","textPreview":"At least one survivable route must remain through the barrage.","textChars":62,"textLines":1,"bbox":[926,326,238,92]}
+{"kind":"textbox","id":"sh/j2p8vm90","slide":5,"text":"Research goal: encode survivability constraints so generation becomes easier to design and safer to trust.","textPreview":"Research goal: encode survivability constraints so generation becomes easier to design and safer to trust.","textChars":106,"textLines":1,"bbox":[118,552,1044,54]}
+{"kind":"notes","id":"nt/1alib1","slide":5,"text":""}
+{"kind":"slide","id":"sl/e0kve4","slide":6,"title":"Constraint problems can act as generation scaffolds","textShapes":15}
+{"kind":"textbox","id":"sh/x8rqhsru","slide":6,"text":"Constraint problems can act as generation scaffolds","textPreview":"Constraint problems can act as generation scaffolds","textChars":51,"textLines":1,"bbox":[64,42,1120,72]}
+{"kind":"textbox","id":"sh/a5grmx83","slide":6,"text":"Instead of placing every hazard directly, define choices and checks that preserve at least one valid route.","textPreview":"Instead of placing every hazard directly, define choices and checks that preserve at least one valid route.","textChars":107,"textLines":1,"bbox":[66,126,1080,42]}
+{"kind":"textbox","id":"sh/b6p8f29o","slide":6,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1180,654,48,24]}
+{"kind":"shape","id":"sh/kvi9s7ql","slide":6,"bbox":[172,326,198,0]}
+{"kind":"shape","id":"sh/lwrqlcrq","slide":6,"bbox":[92,286,80,80]}
+{"kind":"textbox","id":"sh/y90rqx8f","slide":6,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[110,304,44,36]}
+{"kind":"textbox","id":"sh/ju98j290","slide":6,"text":"Describe","textPreview":"Describe","textChars":8,"textLines":1,"bbox":[48,402,168,38]}
+{"kind":"textbox","id":"sh/0ze9g3a1","slide":6,"text":"Represent candidate routes or safe regions","textPreview":"Represent candidate routes or safe regions","textChars":42,"textLines":1,"bbox":[24,454,216,90]}
+{"kind":"shape","id":"sh/10nq98rm","slide":6,"bbox":[470,326,198,0]}
+{"kind":"shape","id":"sh/p0vipozi","slide":6,"bbox":[390,286,80,80]}
+{"kind":"textbox","id":"sh/oz21gjyx","slide":6,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[408,304,44,36]}
+{"kind":"textbox","id":"sh/3yt0nehc","slide":6,"text":"Encode","textPreview":"Encode","textChars":6,"textLines":1,"bbox":[346,402,168,38]}
+{"kind":"textbox","id":"sh/2xkje9gr","slide":6,"text":"Translate design rules into 3SAT or a graph","textPreview":"Translate design rules into 3SAT or a graph","textChars":43,"textLines":1,"bbox":[322,454,216,90]}
+{"kind":"shape","id":"sh/x4vit8ze","slide":6,"bbox":[768,326,198,0]}
+{"kind":"shape","id":"sh/c3m1k3yt","slide":6,"bbox":[688,286,80,80]}
+{"kind":"textbox","id":"sh/b2d0ryh8","slide":6,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[706,304,44,36]}
+{"kind":"textbox","id":"sh/q14jitg3","slide":6,"text":"Solve","textPreview":"Solve","textChars":5,"textLines":1,"bbox":[644,402,168,38]}
+{"kind":"textbox","id":"sh/l8f2x8zq","slide":6,"text":"Find a satisfying assignment or Hamilton path","textPreview":"Find a satisfying assignment or Hamilton path","textChars":45,"textLines":1,"bbox":[620,454,216,90]}
+{"kind":"shape","id":"sh/k7m1o3y5","slide":6,"bbox":[986,286,80,80]}
+{"kind":"textbox","id":"sh/kbulk761","slide":6,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[1004,304,44,36]}
+{"kind":"textbox","id":"sh/5cn2tcnm","slide":6,"text":"Build","textPreview":"Build","textChars":5,"textLines":1,"bbox":[942,402,168,38]}
+{"kind":"textbox","id":"sh/i9c3ihob","slide":6,"text":"Convert the solution into timed stage elements","textPreview":"Convert the solution into timed stage elements","textChars":46,"textLines":1,"bbox":[918,454,216,90]}
+{"kind":"notes","id":"nt/e0kve4","slide":6,"text":""}
+{"kind":"slide","id":"sl/uihbp7","slide":7,"title":"3SAT turns route choices into a playable logic test","textShapes":7}
+{"kind":"textbox","id":"sh/lof2dgf2","slide":7,"text":"3SAT turns route choices into a playable logic test","textPreview":"3SAT turns route choices into a playable logic test","textChars":51,"textLines":1,"bbox":[64,42,1120,72]}
+{"kind":"textbox","id":"sh/ylo321wb","slide":7,"text":"The player commits to truth values, then each clause becomes a gate that must have one satisfied literal.","textPreview":"The player commits to truth values, then each clause becomes a gate that must have one satisfied literal.","textChars":105,"textLines":1,"bbox":[66,126,1080,42]}
+{"kind":"textbox","id":"sh/jmxkb6xw","slide":7,"text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1180,654,48,24]}
+{"kind":"textbox","id":"sh/ah4jy1gf","slide":7,"text":"ASSIGN","textPreview":"ASSIGN","textChars":6,"textLines":1,"bbox":[88,204,100,34]}
+{"kind":"textbox","id":"sh/bidk7mx0","slide":7,"text":"VERIFY","textPreview":"VERIFY","textChars":6,"textLines":1,"bbox":[688,204,100,34]}
+{"kind":"textbox","id":"sh/gfqlcvep","slide":7,"text":"Choose TRUE or FALSE before the timer ends.","textPreview":"Choose TRUE or FALSE before the timer ends.","textChars":43,"textLines":1,"bbox":[92,614,470,30]}
+{"kind":"textbox","id":"sh/hgzml0fa","slide":7,"text":"A clause is passable when at least one literal is true.","textPreview":"A clause is passable when at least one literal is true.","textChars":55,"textLines":1,"bbox":[692,614,470,30]}
+{"kind":"image","id":"im/9gjit43y","slide":7,"name":"","geometry":"roundRect","alt":"Siv3D prototype screenshot","bbox":[70,188,540,414]}
+{"kind":"image","id":"im/8fah0z2d","slide":7,"name":"","geometry":"roundRect","alt":"Siv3D prototype screenshot","bbox":[670,188,540,414]}
+{"kind":"notes","id":"nt/uihbp7","slide":7,"text":""}
+{"kind":"slide","id":"sl/jt6i0x","slide":8,"title":"The prototype preserves the meaning of a 3SAT formula","textShapes":18}
+{"kind":"textbox","id":"sh/vmhg3axs","slide":8,"text":"The prototype preserves the meaning of a 3SAT formula","textPreview":"The prototype preserves the meaning of a 3SAT formula","textChars":53,"textLines":1,"bbox":[64,42,1120,72]}
+{"kind":"textbox","id":"sh/w7qhwvyd","slide":8,"text":"A satisfying assignment corresponds to a complete route through every clause check.","textPreview":"A satisfying assignment corresponds to a complete route through every clause check.","textChars":83,"textLines":1,"bbox":[66,126,1080,42]}
+{"kind":"textbox","id":"sh/x8zy50fy","slide":8,"text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1180,654,48,24]}
+{"kind":"shape","id":"sh/mhofqlgb","slide":8,"bbox":[76,190,248.16,78]}
+{"kind":"textbox","id":"sh/nihgzqxw","slide":8,"text":"Formula","textPreview":"Formula","textChars":7,"textLines":1,"bbox":[90,204,220.16,56]}
+{"kind":"shape","id":"sh/8jqhsvy1","slide":8,"bbox":[324.16,190,428.64,78]}
+{"kind":"textbox","id":"sh/9kzy10fm","slide":8,"text":"Game mechanic","textPreview":"Game mechanic","textChars":13,"textLines":1,"bbox":[338.16,204,400.64,56]}
+{"kind":"shape","id":"sh/ydofmlgz","slide":8,"bbox":[752.8,190,451.2,78]}
+{"kind":"textbox","id":"sh/zexgvqxk","slide":8,"text":"Clearability condition","textPreview":"Clearability condition","textChars":22,"textLines":1,"bbox":[766.8,204,423.2,56]}
+{"kind":"shape","id":"sh/filkruhg","slide":8,"bbox":[76,268,248.16,78]}
+{"kind":"textbox","id":"sh/ehc3ipgv","slide":8,"text":"Variable","textPreview":"Variable","textChars":8,"textLines":1,"bbox":[90,282,220.16,56]}
+{"kind":"shape","id":"sh/14n2dkz6","slide":8,"bbox":[324.16,268,428.64,78]}
+{"kind":"textbox","id":"sh/0julkfy1","slide":8,"text":"Forced TRUE / FALSE choice","textPreview":"Forced TRUE / FALSE choice","textChars":26,"textLines":1,"bbox":[338.16,282,400.64,56]}
+{"kind":"shape","id":"sh/n65kfuhc","slide":8,"bbox":[752.8,268,451.2,78]}
+{"kind":"textbox","id":"sh/25w3mpgr","slide":8,"text":"One value is committed","textPreview":"One value is committed","textChars":22,"textLines":1,"bbox":[766.8,282,423.2,56]}
+{"kind":"shape","id":"sh/p8nmh4zi","slide":8,"bbox":[76,346,248.16,78]}
+{"kind":"textbox","id":"sh/o7elozyx","slide":8,"text":"Literal","textPreview":"Literal","textChars":7,"textLines":1,"bbox":[90,360,220.16,56]}
+{"kind":"shape","id":"sh/ja1kjah8","slide":8,"bbox":[324.16,346,428.64,78]}
+{"kind":"textbox","id":"sh/i9sja5gn","slide":8,"text":"Route-linked condition","textPreview":"Route-linked condition","textChars":22,"textLines":1,"bbox":[338.16,360,400.64,56]}
+{"kind":"shape","id":"sh/m50nid0b","slide":8,"bbox":[752.8,346,451.2,78]}
+{"kind":"textbox","id":"sh/769ori1w","slide":8,"text":"Positive and negated values differ","textPreview":"Positive and negated values differ","textChars":34,"textLines":1,"bbox":[766.8,360,423.2,56]}
+{"kind":"shape","id":"sh/87i5k3i1","slide":8,"bbox":[76,424,248.16,78]}
+{"kind":"textbox","id":"sh/98r6t8jm","slide":8,"text":"Clause","textPreview":"Clause","textChars":6,"textLines":1,"bbox":[90,438,220.16,56]}
+{"kind":"shape","id":"sh/y1gnet0z","slide":8,"bbox":[324.16,424,428.64,78]}
+{"kind":"textbox","id":"sh/z2pony1k","slide":8,"text":"Pass / fail barrage gate","textPreview":"Pass / fail barrage gate","textChars":24,"textLines":1,"bbox":[338.16,438,400.64,56]}
+{"kind":"shape","id":"sh/k3i5g3i5","slide":8,"bbox":[752.8,424,451.2,78]}
+{"kind":"textbox","id":"sh/l4r6p8jq","slide":8,"text":"At least one literal opens the route","textPreview":"At least one literal opens the route","textChars":36,"textLines":1,"bbox":[766.8,438,423.2,56]}
+{"kind":"shape","id":"sh/adgnat03","slide":8,"bbox":[76,502,248.16,78]}
+{"kind":"textbox","id":"sh/bypojy1o","slide":8,"text":"Solution","textPreview":"Solution","textChars":8,"textLines":1,"bbox":[90,516,220.16,56]}
+{"kind":"shape","id":"sh/tsvqpw36","slide":8,"bbox":[324.16,502,428.64,78]}
+{"kind":"textbox","id":"sh/srm9gr2l","slide":8,"text":"Complete sequence of choices","textPreview":"Complete sequence of choices","textChars":28,"textLines":1,"bbox":[338.16,516,400.64,56]}
+{"kind":"shape","id":"sh/rqd8nml0","slide":8,"bbox":[752.8,502,451.2,78]}
+{"kind":"textbox","id":"sh/6p4rehkf","slide":8,"text":"Every clause can be survived","textPreview":"Every clause can be survived","textChars":28,"textLines":1,"bbox":[766.8,516,423.2,56]}
+{"kind":"notes","id":"nt/jt6i0x","slide":8,"text":""}
+{"kind":"slide","id":"sl/5jyc31","slide":9,"title":"Live demo: the 3SAT stage in action","textShapes":10}
+{"kind":"textbox","id":"sh/bmtk369c","slide":9,"text":"Live demo: the 3SAT stage in action","textPreview":"Live demo: the 3SAT stage in action","textChars":35,"textLines":1,"bbox":[64,42,1120,72]}
+{"kind":"textbox","id":"sh/c7m1cbax","slide":9,"text":"The prototype will be launched here to show assignment, clause checks, failure, and a successful clear.","textPreview":"The prototype will be launched here to show assignment, clause checks, failure, and a successful clear.","textChars":103,"textLines":1,"bbox":[66,126,1080,42]}
+{"kind":"textbox","id":"sh/x8v25wr2","slide":9,"text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[1180,654,48,24]}
+{"kind":"shape","id":"sh/2hkj6hsf","slide":9,"bbox":[70,190,774,420]}
+{"kind":"textbox","id":"sh/nitkzm90","slide":9,"text":"LIVE DEMO / SCREENSHOT","textPreview":"LIVE DEMO / SCREENSHOT","textChars":22,"textLines":1,"bbox":[204,354,506,50]}
+{"kind":"textbox","id":"sh/oj218ral","slide":9,"text":"Insert one full-frame gameplay image here","textPreview":"Insert one full-frame gameplay image here","textChars":41,"textLines":1,"bbox":[230,418,454,34]}
+{"kind":"shape","id":"sh/pkb21wr6","slide":9,"bbox":[892,190,318,420]}
+{"kind":"textbox","id":"sh/md43ilsz","slide":9,"text":"Watch for","textPreview":"Watch for","textChars":9,"textLines":1,"bbox":[928,228,244,38]}
+{"kind":"shape","id":"sh/7edkbq9k","slide":9,"bbox":[928,312,10,10]}
+{"kind":"textbox","id":"sh/zydg3qds","slide":9,"text":"Timed truth assignment","textPreview":"Timed truth assignment","textChars":22,"textLines":1,"bbox":[952,302,216,64]}
+{"kind":"shape","id":"sh/yx4zalw7","slide":9,"bbox":[928,376,10,10]}
+{"kind":"textbox","id":"sh/l0fy50vi","slide":9,"text":"Clause-by-clause feedback","textPreview":"Clause-by-clause feedback","textChars":25,"textLines":1,"bbox":[952,366,216,64]}
+{"kind":"shape","id":"sh/0zmhcved","slide":9,"bbox":[928,440,10,10]}
+{"kind":"textbox","id":"sh/n2xg7ado","slide":9,"text":"What happens on failure","textPreview":"What happens on failure","textChars":23,"textLines":1,"bbox":[952,430,216,64]}
+{"kind":"shape","id":"sh/m1oze5w3","slide":9,"bbox":[928,504,10,10]}
+{"kind":"textbox","id":"sh/94fy90vu","slide":9,"text":"How the stage communicates a valid route","textPreview":"How the stage communicates a valid route","textChars":40,"textLines":1,"bbox":[952,494,216,64]}
+{"kind":"notes","id":"nt/5jyc31","slide":9,"text":""}
+{"kind":"slide","id":"sl/02daet","slide":10,"title":"Hamilton Path creates one-shot route planning","textShapes":8}
+{"kind":"textbox","id":"sh/yh4jup4f","slide":10,"text":"Hamilton Path creates one-shot route planning","textPreview":"Hamilton Path creates one-shot route planning","textChars":45,"textLines":1,"bbox":[64,42,1120,72]}
+{"kind":"textbox","id":"sh/lkv254nq","slide":10,"text":"Visit every platform exactly once, follow valid connections, then reach the goal.","textPreview":"Visit every platform exactly once, follow valid connections, then reach the goal.","textChars":81,"textLines":1,"bbox":[66,126,1080,42]}
+{"kind":"textbox","id":"sh/kjm1wzm5","slide":10,"text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1180,654,48,24]}
+{"kind":"shape","id":"sh/atkjqp43","slide":10,"bbox":[824,186,386,430]}
+{"kind":"textbox","id":"sh/xgv214nu","slide":10,"text":"Generation idea","textPreview":"Generation idea","textChars":15,"textLines":1,"bbox":[860,224,308,38]}
+{"kind":"shape","id":"sh/cf21szm9","slide":10,"bbox":[860,306,10,10]}
+{"kind":"textbox","id":"sh/vaxkbe5s","slide":10,"text":"Vertices become safe platforms","textPreview":"Vertices become safe platforms","textChars":30,"textLines":1,"bbox":[884,296,276,66]}
+{"kind":"shape","id":"sh/upoj294n","slide":10,"bbox":[860,372,10,10]}
+{"kind":"textbox","id":"sh/k7yds32x","slide":10,"text":"Edges define permitted transitions","textPreview":"Edges define permitted transitions","textChars":34,"textLines":1,"bbox":[884,362,276,66]}
+{"kind":"shape","id":"sh/ls7ul832","slide":10,"bbox":[860,438,10,10]}
+{"kind":"textbox","id":"sh/y5gvqtkr","slide":10,"text":"Visited vertices cannot be reused","textPreview":"Visited vertices cannot be reused","textChars":33,"textLines":1,"bbox":[884,428,276,66]}
+{"kind":"shape","id":"sh/z6pcjylc","slide":10,"bbox":[860,504,10,10]}
+{"kind":"textbox","id":"sh/c3edo32l","slide":10,"text":"A Hamilton path supplies a complete survivable route","textPreview":"A Hamilton path supplies a complete survivable route","textChars":52,"textLines":1,"bbox":[884,494,276,66]}
+{"kind":"image","id":"im/mdove50z","slide":10,"name":"","geometry":"roundRect","alt":"Siv3D prototype screenshot","bbox":[70,186,706,430]}
+{"kind":"notes","id":"nt/02daet","slide":10,"text":""}
+{"kind":"slide","id":"sl/j8i8c7","slide":11,"title":"Next, move from prototypes to reliable pattern generation","textShapes":10}
+{"kind":"textbox","id":"sh/9wfm18v6","slide":11,"text":"Next, move from prototypes to reliable pattern generation","textPreview":"Next, move from prototypes to reliable pattern generation","textChars":57,"textLines":1,"bbox":[64,42,1120,72]}
+{"kind":"textbox","id":"sh/m9o3qdwv","slide":11,"text":"The immediate work is to implement, evaluate, and improve the two approaches.","textPreview":"The immediate work is to implement, evaluate, and improve the two approaches.","textChars":77,"textLines":1,"bbox":[66,126,1080,42]}
+{"kind":"textbox","id":"sh/nax4zidg","slide":11,"text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[1180,654,48,24]}
+{"kind":"shape","id":"sh/wzqlwnex","slide":11,"bbox":[74,210,342,300]}
+{"kind":"textbox","id":"sh/x0zm5svi","slide":11,"text":"Implement","textPreview":"Implement","textChars":9,"textLines":1,"bbox":[108,246,270,38]}
+{"kind":"textbox","id":"sh/axo3udwr","slide":11,"text":"Build a playable Hamilton Path example inside an actual Avoidance or stage sequence.","textPreview":"Build a playable Hamilton Path example inside an actual Avoidance or stage sequence.","textChars":84,"textLines":1,"bbox":[108,326,256,112]}
+{"kind":"shape","id":"sh/byh43idc","slide":11,"bbox":[469,210,342,300]}
+{"kind":"textbox","id":"sh/k3ql0net","slide":11,"text":"Improve","textPreview":"Improve","textChars":7,"textLines":1,"bbox":[503,246,270,38]}
+{"kind":"textbox","id":"sh/l4zm9sve","slide":11,"text":"Refine the 3SAT example: readability, pacing, difficulty, and integration with music.","textPreview":"Refine the 3SAT example: readability, pacing, difficulty, and integration with music.","textChars":85,"textLines":1,"bbox":[503,326,256,112]}
+{"kind":"shape","id":"sh/5sre9c7m","slide":11,"bbox":[864,210,342,300]}
+{"kind":"textbox","id":"sh/4ryd07qh","slide":11,"text":"Evaluate","textPreview":"Evaluate","textChars":8,"textLines":1,"bbox":[898,246,270,38]}
+{"kind":"textbox","id":"sh/3qpw72pw","slide":11,"text":"Check both logical correctness and whether players experience the result as fair and fun.","textPreview":"Check both logical correctness and whether players experience the result as fair and fun.","textChars":89,"textLines":1,"bbox":[898,326,256,112]}
+{"kind":"textbox","id":"sh/ipgvyx8b","slide":11,"text":"Can formal constraints help us author expressive bullet hells without sacrificing a guaranteed route?","textPreview":"Can formal constraints help us author expressive bullet hells without sacrificing a guaranteed route?","textChars":101,"textLines":1,"bbox":[112,558,1056,54]}
+{"kind":"notes","id":"nt/j8i8c7","slide":11,"text":""}

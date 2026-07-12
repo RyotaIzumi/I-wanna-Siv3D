@@ -281,6 +281,7 @@ namespace Iwanna {
 		ClearPrint();
 		Print << U" Avoidance Step : " << step;
 		Print << U" Chapter : " << activeChapter;
+		/*
 		Print << U" Cherries Num : " << gameObjects.cherries.size();
 		Print << U" Player Pos : " << player->pos;
 		Print << U" Player Muteki : " << player->getIsMuteki();
@@ -290,6 +291,7 @@ namespace Iwanna {
 		if (!gameObjects.cherries.isEmpty()) Print << U" Depth Cherry : " << gameObjects.cherries.front()->getDepth();
 		if (!gameObjects.bullets.isEmpty()) Print << U" Depth Bullet : " << gameObjects.bullets.front()->getDepth();
 		if (!gameObjects.bloods.isEmpty()) Print << U" Depth Blood : " << gameObjects.bloods.front()->getDepth();
+		*/
 	}
 
 	void AvoidanceManager::draw() const {

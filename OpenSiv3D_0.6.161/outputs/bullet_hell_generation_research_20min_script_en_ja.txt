@@ -1,0 +1,109 @@
+﻿========================================================================
+Slide 1: Making Bullet-Hell Generation Safer with 3SAT and Hamilton Paths
+========================================================================
+
+[English presenter script]
+Hello, everyone. Today I would like to introduce a research project that I am beginning with my I Wanna-style engine built in Siv3D. The project asks whether ideas from 3SAT and Hamilton Path can make bullet-hell generation easier and safer. Here, “safer” means that a generated barrage should still leave the player at least one valid route. I will first explain the game and the engine, then show the two prototypes, and finally discuss the next steps.
+
+[日本語訳]
+皆さん、こんにちは。本日は、Siv3Dで開発しているアイワナ風エンジンを用いて、これから始める研究について紹介します。この研究では、3SATとHamilton Pathの考え方を利用することで、弾幕生成をより簡単かつ安全にできないかを考えます。ここで「安全」とは、生成された弾幕に少なくとも一つはプレイヤーが生存できる経路が残ることを意味します。最初にゲームとエンジンを説明し、その後二つの試作を紹介し、最後に今後の展望をお話しします。
+
+========================================================================
+Slide 2: I build the kind of games I love to play
+========================================================================
+
+[English presenter script]
+First, a brief introduction. My name is Ryota Izumi. I enjoy playing I Wanna fangames, and I especially like Avoidance stages, where the player dodges a long barrage synchronized with music. That interest led me to develop my own I Wanna-style engine with Siv3D. I am interested not only in making patterns difficult, but also in making them musical, readable, and fair. This personal design interest is the starting point of the research.
+
+[日本語訳]
+まず簡単に自己紹介します。泉涼太です。私はアイワナのファンゲームが好きで、特に音楽に合わせた長い弾幕を避け続けるAvoidanceステージを好んで遊んでいます。その興味から、Siv3Dを使って自分のアイワナ風エンジンを開発しています。単に難しい弾幕を作るだけでなく、音楽的で、見やすく、公平なパターンを作ることに関心があります。この個人的なゲームデザインへの興味が、今回の研究の出発点です。
+
+========================================================================
+Slide 3: Avoidance turns survival into a performance
+========================================================================
+
+[English presenter script]
+Avoidance is a style of I Wanna gameplay focused on surviving a scripted barrage. One hit usually kills the player, so precise movement and a small hitbox are important. The bullet patterns often change with the song, and players learn them through repeated attempts. A successful stage feels like a performance: movement, music, and visual effects come together. However, because the patterns are dense and time-dependent, it is difficult to guarantee that every moment remains survivable.
+
+[日本語訳]
+Avoidanceは、あらかじめ構成された弾幕を最後まで生き残ることに重点を置いたアイワナのゲーム形式です。通常は一度当たると死亡するため、正確な操作と小さな当たり判定が重要になります。弾幕は曲に合わせて変化し、プレイヤーは繰り返し挑戦しながら覚えていきます。良いステージでは、操作、音楽、演出が一体となり、一つのパフォーマンスのように感じられます。しかし、弾幕が高密度で時間に依存するため、すべての瞬間で生存可能性を保証することは困難です。
+
+========================================================================
+Slide 4: Siv3D provides a controllable testbed for I Wanna mechanics
+========================================================================
+
+[English presenter script]
+My Siv3D engine provides the environment for this work. It supports the basic I Wanna movement, including running, jumping, double jumping, and collision. It also supports familiar objects such as blocks, spikes, cherries, and save points. For Avoidance, I can control timed spawns, music cues, and scripted motion. On top of these systems, I can add a research layer that generates candidate patterns, validates constraints, and replays the result in the same game runtime.
+
+[日本語訳]
+この研究の実験環境になるのが、Siv3Dで開発しているエンジンです。走る、ジャンプ、二段ジャンプ、衝突判定といったアイワナの基本動作を実装しています。また、ブロック、針、チェリー、セーブポイントなどのおなじみのオブジェクトにも対応しています。Avoidance向けには、時間指定の生成、音楽上の合図、スクリプトによる移動を制御できます。これらの上に研究用の層を追加し、候補となる弾幕の生成、制約の検証、同じゲーム環境での再生を行えます。
+
+========================================================================
+Slide 5: A beautiful barrage can still create an impossible state
+========================================================================
+
+[English presenter script]
+This slide shows the main motivation. When designing a barrage, I want attacks and transitions to match the music. I also want dense motion and dramatic visual changes. At the same time, the player needs at least one route that remains survivable. These goals interact. A pattern can look impressive and match the song, but two individually reasonable attacks may overlap and create an unavoidable situation. Therefore, the research goal is to encode survivability constraints so that generation becomes easier to design and safer to trust.
+
+[日本語訳]
+このスライドが研究の主な動機です。弾幕を設計するときは、攻撃や場面転換を音楽に合わせたいと考えます。また、密度の高い動きや劇的な演出も取り入れたいです。一方で、プレイヤーが生存できる経路を少なくとも一つ残す必要があります。これらの目標は相互に影響します。見栄えが良く曲にも合っていても、それぞれ単独では妥当な二つの攻撃が重なることで、回避不能な状況が生まれる可能性があります。そこで、生存可能性を制約として表現し、設計しやすく信頼できる生成方法を目指します。
+
+========================================================================
+Slide 6: Constraint problems can act as generation scaffolds
+========================================================================
+
+[English presenter script]
+The proposed workflow has four steps. First, describe candidate routes or safe regions in the play area. Second, encode the design rules as a 3SAT formula or a graph. Third, solve the encoded problem to find a satisfying assignment or a Hamilton path. Finally, convert that solution into timed stage elements. The important idea is that the solver does not replace game design. It provides a scaffold: the designer can still control the music and presentation while the formal structure protects at least one valid route.
+
+[日本語訳]
+提案する流れは四段階です。まず、プレイ領域内の候補経路や安全領域を記述します。次に、設計ルールを3SATの論理式、またはグラフとして符号化します。三番目に、符号化した問題を解き、充足割当てやHamilton Pathを求めます。最後に、その解を時間に沿ったステージ要素へ変換します。重要なのは、ソルバーがゲームデザインを置き換えるわけではないという点です。音楽や演出は制作者が制御しながら、形式的な構造によって少なくとも一つの有効経路を保護するための土台として利用します。
+
+========================================================================
+Slide 7: 3SAT turns route choices into a playable logic test
+========================================================================
+
+[English presenter script]
+This is the current 3SAT prototype. On the left, the player assigns a truth value to each variable by moving into the TRUE or FALSE region before the timer ends. On the right, the game verifies a clause. Each green label represents a literal that is satisfied by the current assignment. A clause is passable when at least one of its three literals is true. In this way, a Boolean assignment becomes a sequence of movement decisions, and clause satisfaction becomes a playable obstacle check.
+
+[日本語訳]
+こちらが現在の3SAT試作です。左側では、制限時間内にTRUEまたはFALSEの領域へ移動することで、各変数の真偽値を決定します。右側では、ゲームが節を検証しています。緑色の表示は、現在の割当てによって真になっているリテラルを表します。三つのリテラルのうち少なくとも一つが真であれば、その節を通過できます。このように、真偽値の割当てを移動による選択へ、節の充足をプレイ可能な障害判定へ変換しています。
+
+========================================================================
+Slide 8: The prototype preserves the meaning of a 3SAT formula
+========================================================================
+
+[English presenter script]
+The key research claim is correspondence, not only visual similarity. A variable becomes a forced TRUE or FALSE choice. A literal becomes a condition linked to that choice. A clause becomes a pass-or-fail gate, and a satisfying assignment becomes a complete sequence that can survive every gate. If this mapping is correct, the stage is clearable exactly when the represented formula is satisfiable. Establishing and testing this relationship will be an important part of the research.
+
+[日本語訳]
+研究上重要なのは、見た目が似ていることではなく、対応関係です。変数はTRUEかFALSEを選ぶ強制選択になります。リテラルはその選択に結び付いた条件になります。節は通過できるか失敗するかを決めるゲートになり、充足割当てはすべてのゲートを生き残れる一連の選択になります。この対応が正しければ、表現した論理式が充足可能である場合に限り、ステージもクリア可能になります。この関係を証明し、実験で確認することが研究の重要な部分になります。
+
+========================================================================
+Slide 9: Live demo: the 3SAT stage in action
+========================================================================
+
+[English presenter script]
+At this point, I will switch from the slides to the game. First, I will demonstrate how a variable is assigned under a time limit. Next, I will show how the clause checks respond to that assignment. I will intentionally choose a failing assignment once, and then replay with a satisfying assignment to clear the sequence. Please notice whether the relationship between the logical choice and the stage response is understandable without a long explanation. After the demonstration, I will return to the slides.
+
+[日本語訳]
+ここでスライドからゲーム画面へ切り替えます。最初に、制限時間の中で変数を割り当てる方法を実演します。次に、その割当てに対して節の判定がどのように反応するかを示します。一度は意図的に失敗する割当てを選び、その後、充足する割当てで再挑戦して一連の場面をクリアします。論理上の選択とステージの反応の関係が、長い説明なしでも理解できるかに注目してください。実演後、スライドへ戻ります。
+
+========================================================================
+Slide 10: Hamilton Path creates one-shot route planning
+========================================================================
+
+[English presenter script]
+The second prototype uses Hamilton Path. Each yellow platform represents a vertex, and permitted transitions represent graph edges. The player must visit every platform exactly once and then reach the green goal. Revisiting a platform or taking a transition that is not represented by an edge should be prevented or punished. A valid Hamilton path therefore supplies a complete safe route through the stage. At present, this is a provisional prototype; integrating it into an actual barrage is one of the next tasks.
+
+[日本語訳]
+二つ目の試作はHamilton Pathを利用します。黄色い足場がそれぞれ頂点を表し、許可された移動がグラフの辺を表します。プレイヤーはすべての足場をちょうど一度ずつ訪れ、その後、緑色のゴールへ到達する必要があります。同じ足場への再訪や、辺として表現されていない移動は、防止するか失敗として扱う必要があります。したがって、有効なHamilton Pathがステージ全体を通る完全な安全経路になります。現状は仮の試作であり、実際の弾幕へ組み込むことが次の課題の一つです。
+
+========================================================================
+Slide 11: Next, move from prototypes to reliable pattern generation
+========================================================================
+
+[English presenter script]
+To conclude, there are three immediate directions. First, I will implement a practical Hamilton Path example inside an actual stage or Avoidance sequence. Second, I will improve the 3SAT example, especially its readability, pacing, difficulty, and synchronization with music. Third, I will evaluate both logical correctness and playability. The central question is whether formal constraints can help us create expressive bullet hells without losing a guaranteed route. These prototypes are only the starting point, and I would appreciate feedback on both the formal model and the game design.
+
+[日本語訳]
+まとめとして、直近には三つの方向性があります。第一に、実際のステージまたはAvoidanceの流れの中へ、Hamilton Pathの実例を実装します。第二に、3SATの実例について、分かりやすさ、進行、難易度、音楽との同期を改善します。第三に、論理的な正しさとゲームとしての遊びやすさの両方を評価します。中心となる問いは、形式的な制約を使うことで、生存可能な経路を保証しながら表現力のある弾幕を作れるか、というものです。現在の試作は出発点にすぎないため、形式モデルとゲームデザインの両面からご意見をいただければと思います。
