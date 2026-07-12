@@ -1,0 +1,259 @@
+{"kind":"deck","id":"pr/z8cnmw","name":"Deck"}
+{"kind":"layout","layoutId":"/ppt/slideMasters/slideMaster1.xml","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout1.xml","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/y90nupkv","slide":1,"title":"Encoding NP-Complete Problems as Bullet-Hell Game Gimmicks","textShapes":7}
+{"kind":"textbox","id":"sh/i1w3yp8f","slide":1,"text":"Encoding NP-Complete Problems as Bullet-Hell Game Gimmicks","textPreview":"Encoding NP-Complete Problems as Bullet-Hell Game Gimmicks","textChars":58,"textLines":1,"bbox":[64,92,960,176]}
+{"kind":"textbox","id":"sh/547294r6","slide":1,"text":"A research presentation using an I Wanna-style engine built with Siv3D","textPreview":"A research presentation using an I Wanna-style engine built with Siv3D","textChars":70,"textLines":1,"bbox":[68,296,820,54]}
+{"kind":"shape","id":"sh/k3yl0zql","slide":1,"bbox":[910,100,260,420]}
+{"kind":"textbox","id":"sh/7qp4be9c","slide":1,"text":"3SAT","textPreview":"3SAT","textChars":4,"textLines":1,"bbox":[950,152,180,52]}
+{"kind":"textbox","id":"sh/65g3298r","slide":1,"text":"+","textPreview":"+","textChars":1,"textLines":1,"bbox":[1014,244,60,48]}
+{"kind":"textbox","id":"sh/ts7md4r2","slide":1,"text":"Hamilton\nPath","textPreview":"Hamilton | Path","textChars":13,"textLines":2,"bbox":[950,326,190,100]}
+{"kind":"textbox","id":"sh/sryl4zqx","slide":1,"text":"20-minute talk / 10-minute Q&A","textPreview":"20-minute talk / 10-minute Q&A","textChars":30,"textLines":1,"bbox":[68,585,520,34]}
+{"kind":"textbox","id":"sh/fu94fe98","slide":1,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"notes","id":"nt/y90nupkv","slide":1,"text":"Slide 1: Encoding NP-Complete Problems as Bullet-Hell Game Gimmicks\n\nPresenter script:\nToday I will talk about a research project that connects computational complexity with game design. The basic idea is to take NP-complete problems, especially 3SAT and Hamilton Path, and express them as playable bullet-hell gimmicks in an I Wanna-style engine built with Siv3D. I already have provisional gimmicks for both problems, and the 3SAT gimmick has also been used in an actual stage context. The goal of this talk is to explain what has been built, why it is interesting as research, and what should be evaluated next.\n\nJapanese translation:\n今日は、計算複雑性とゲームデザインをつなぐ研究について発表します。基本的なアイデアは、3SATやHamilton PathのようなNP完全問題を、Siv3D製のアイワナ風エンジン上でプレイ可能な弾幕ギミックとして表現することです。現時点で両方の仮ギミックは用意できており、3SATについては実際のステージでの使用例もあります。この発表では、何を作ったのか、なぜ研究として面白いのか、次に何を評価すべきかを説明します。"}
+{"kind":"slide","id":"sl/hwbqtkby","slide":2,"title":"The research question is broader than difficulty","textShapes":7}
+{"kind":"textbox","id":"sh/mxgjm5s7","slide":2,"text":"The research question is broader than difficulty","textPreview":"The research question is broader than difficulty","textChars":48,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/9072xkry","slide":2,"text":"The goal is to connect formal problem structure with playable level structure.","textPreview":"The goal is to connect formal problem structure with playable level structure.","textChars":78,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/ozy1ofad","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/b29kza94","slide":2,"bbox":[92,224,10,10]}
+{"kind":"textbox","id":"sh/a10jqpsj","slide":2,"text":"Can a Boolean formula or graph instance be transformed into a playable gimmick?","textPreview":"Can a Boolean formula or graph instance be transformed into a playable gimmick?","textChars":79,"textLines":1,"bbox":[116,214,1016,66]}
+{"kind":"shape","id":"sh/x4r21kru","slide":2,"bbox":[92,290,10,10]}
+{"kind":"textbox","id":"sh/w3i1sfa9","slide":2,"text":"Does stage clearability correspond to the existence of a valid solution?","textPreview":"Does stage clearability correspond to the existence of a valid solution?","textChars":72,"textLines":1,"bbox":[116,280,1016,66]}
+{"kind":"shape","id":"sh/r65knqtk","slide":2,"bbox":[92,356,10,10]}
+{"kind":"textbox","id":"sh/q5wjelsz","slide":2,"text":"Can the player experience search, constraint satisfaction, and backtracking as game actions?","textPreview":"Can the player experience search, constraint satisfaction, and backtracking as game actions?","textChars":92,"textLines":1,"bbox":[116,346,1016,66]}
+{"kind":"shape","id":"sh/ove9o7yd","slide":2,"bbox":[92,422,10,10]}
+{"kind":"textbox","id":"sh/9wnqhczy","slide":2,"text":"Can the same engine support both prototype demonstrations and practical stage design?","textPreview":"Can the same engine support both prototype demonstrations and practical stage design?","textChars":85,"textLines":1,"bbox":[116,412,1016,66]}
+{"kind":"notes","id":"nt/hwbqtkby","slide":2,"text":"Slide 2: The research question is broader than difficulty\n\nPresenter script:\nA common first impression is that this project is about making very difficult stages. But the research question is broader than that. I want to ask whether a formal problem instance can be transformed into a playable gimmick, whether clearability corresponds to the existence of a solution, and whether the player can experience search and constraint satisfaction through movement. In other words, the stage is not only hard; it is hard for a reason that comes from the original problem structure.\n\nJapanese translation:\nこの研究は、単に難しいステージを作ることだけが目的ではありません。研究の問いはもっと広く、形式的な問題インスタンスをプレイ可能なギミックに変換できるか、ステージのクリア可能性が解の存在と対応するか、そしてプレイヤーが移動を通して探索や制約充足を体験できるか、という点にあります。つまり、ステージが難しいだけでなく、その難しさが元の問題構造に由来していることが重要です。"}
+{"kind":"slide","id":"sl/ofy9wn61","slide":3,"title":"Two completed prototypes give the research a concrete base","textShapes":9}
+{"kind":"textbox","id":"sh/by1svqlc","slide":3,"text":"Two completed prototypes give the research a concrete base","textPreview":"Two completed prototypes give the research a concrete base","textChars":58,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/cza94vmx","slide":3,"text":"Both reductions currently exist as provisional gimmicks; 3SAT also has an in-stage usage example.","textPreview":"Both reductions currently exist as provisional gimmicks; 3SAT also has an in-stage usage example.","textChars":97,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/d0jax03i","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/298ryl4v","slide":3,"bbox":[72,202,350,310]}
+{"kind":"shape","id":"sh/3ah8rqlg","slide":3,"bbox":[466,202,350,310]}
+{"kind":"shape","id":"sh/obq90bml","slide":3,"bbox":[860,202,350,310]}
+{"kind":"textbox","id":"sh/pcjqtg36","slide":3,"text":"3SAT gimmick","textPreview":"3SAT gimmick","textChars":12,"textLines":1,"bbox":[104,238,280,38]}
+{"kind":"textbox","id":"sh/m5cra54z","slide":3,"text":"A route-choice structure represents variable assignments. Clause sections test whether at least one literal is satisfied.","textPreview":"A route-choice structure represents variable assignments. Clause sections test whether at least one literal is satisfied.","textChars":121,"textLines":1,"bbox":[104,304,272,134]}
+{"kind":"textbox","id":"sh/n6ls3alk","slide":3,"text":"Hamilton Path gimmick","textPreview":"Hamilton Path gimmick","textChars":21,"textLines":1,"bbox":[498,238,280,74]}
+{"kind":"textbox","id":"sh/n2l4fq98","slide":3,"text":"Graph traversal is mapped to player movement while enforcing edge validity and one-time vertex visits.","textPreview":"Graph traversal is mapped to player movement while enforcing edge validity and one-time vertex visits.","textChars":102,"textLines":1,"bbox":[498,334,272,110]}
+{"kind":"textbox","id":"sh/m1c3mlsn","slide":3,"text":"Practical 3SAT example","textPreview":"Practical 3SAT example","textChars":22,"textLines":1,"bbox":[892,238,280,74]}
+{"kind":"textbox","id":"sh/943mhgre","slide":3,"text":"The 3SAT mechanism has moved beyond a toy prototype and has been used in an actual stage context.","textPreview":"The 3SAT mechanism has moved beyond a toy prototype and has been used in an actual stage context.","textChars":97,"textLines":1,"bbox":[892,334,272,110]}
+{"kind":"notes","id":"nt/ofy9wn61","slide":3,"text":"Slide 3: Two completed prototypes give the research a concrete base\n\nPresenter script:\nThe current work has three important pieces of evidence. First, the 3SAT prototype maps variable choices and clause checks into a route-based gimmick. Second, the Hamilton Path prototype maps graph traversal into movement constraints. Third, the 3SAT mechanism is not only a small isolated demo; it has already been used in a practical stage context. This gives the research a concrete starting point for both theoretical discussion and playability evaluation.\n\nJapanese translation:\n現状の成果には重要な要素が3つあります。1つ目は、3SATの仮ギミックで、変数選択と節の判定をルート選択型のギミックに対応させています。2つ目はHamilton Pathの仮ギミックで、グラフの走査を移動制約として表現しています。3つ目は、3SATの仕組みが単なる小さなデモではなく、実際のステージ文脈でも使われていることです。これにより、理論的な議論とプレイ性の評価の両方に進める具体的な土台があります。"}
+{"kind":"slide","id":"sl/jyx0ra1s","slide":4,"title":"3SAT becomes a sequence of commitments and checks","textShapes":10}
+{"kind":"textbox","id":"sh/e9sj2tsv","slide":4,"text":"3SAT becomes a sequence of commitments and checks","textPreview":"3SAT becomes a sequence of commitments and checks","textChars":49,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/1cj2d8b6","slide":4,"text":"The player chooses truth values, then the stage tests clause satisfaction.","textPreview":"The player chooses truth values, then the stage tests clause satisfaction.","textChars":74,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/0ba143al","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/rm1k7yt4","slide":4,"bbox":[96,224,470,92]}
+{"kind":"textbox","id":"sh/ql8jytsj","slide":4,"text":"TRUE","textPreview":"TRUE","textChars":4,"textLines":1,"bbox":[114,242,90,34]}
+{"kind":"textbox","id":"sh/doj29oba","slide":4,"text":"Upper route commits the variable to true","textPreview":"Upper route commits the variable to true","textChars":40,"textLines":1,"bbox":[222,244,322,52]}
+{"kind":"shape","id":"sh/sna103ap","slide":4,"bbox":[96,348,470,92]}
+{"kind":"textbox","id":"sh/3ihk3et8","slide":4,"text":"FALSE","textPreview":"FALSE","textChars":5,"textLines":1,"bbox":[114,366,90,34]}
+{"kind":"textbox","id":"sh/ih8ju9sn","slide":4,"text":"Lower route commits the variable to false","textPreview":"Lower route commits the variable to false","textChars":41,"textLines":1,"bbox":[222,368,322,52]}
+{"kind":"shape","id":"sh/kbm987y5","slide":4,"bbox":[590,286,110,0]}
+{"kind":"shape","id":"sh/5cva1cfq","slide":4,"bbox":[590,410,110,0]}
+{"kind":"shape","id":"sh/i94r6xgz","slide":4,"bbox":[730,228,420,220]}
+{"kind":"textbox","id":"sh/jadsz2xk","slide":4,"text":"Clause gate","textPreview":"Clause gate","textChars":11,"textLines":1,"bbox":[770,262,320,42]}
+{"kind":"textbox","id":"sh/w72947yt","slide":4,"text":"(x1 OR not x2 OR x3)","textPreview":"(x1 OR not x2 OR x3)","textChars":20,"textLines":1,"bbox":[770,324,320,36]}
+{"kind":"textbox","id":"sh/x8vaxsfe","slide":4,"text":"Pass if at least one selected literal opens the path.","textPreview":"Pass if at least one selected literal opens the path.","textChars":53,"textLines":1,"bbox":[770,386,322,48]}
+{"kind":"notes","id":"nt/jyx0ra1s","slide":4,"text":"Slide 4: 3SAT becomes a sequence of commitments and checks\n\nPresenter script:\nFor 3SAT, the player first makes commitments. For example, taking one route can mean assigning a variable to true, while another route can mean assigning it to false. After these choices, the stage tests clauses. A clause gate is passable if at least one of its literals is satisfied by the earlier choices. This makes the formula structure visible as a sequence of decisions followed by checks.\n\nJapanese translation:\n3SATでは、プレイヤーはまず真偽値の選択を行います。たとえば、あるルートを通ることが変数をTrueにすることを意味し、別のルートを通ることがFalseにすることを意味します。その後、ステージ内で節の判定を行います。節ゲートは、先ほどの選択によって少なくとも1つのリテラルが満たされていれば通過可能になります。このように、論理式の構造を「選択」と「判定」の連続として見える形にします。"}
+{"kind":"slide","id":"sl/i107q5of","slide":5,"title":"A 3SAT stage can preserve the logical meaning of the formula","textShapes":18}
+{"kind":"textbox","id":"sh/qd0bahob","slide":5,"text":"A 3SAT stage can preserve the logical meaning of the formula","textPreview":"A 3SAT stage can preserve the logical meaning of the formula","textChars":60,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/dgbulwnm","slide":5,"text":"The important claim is correspondence, not just visual analogy.","textPreview":"The important claim is correspondence, not just visual analogy.","textChars":63,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/cf2tcr61","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/z2tcnm5s","slide":5,"bbox":[84,190,266.4,73.6]}
+{"kind":"textbox","id":"sh/yhkbe1o7","slide":5,"text":"Formula element","textPreview":"Formula element","textChars":15,"textLines":1,"bbox":[96,200,242.4,57.6]}
+{"kind":"shape","id":"sh/l4bupwny","slide":5,"bbox":[350.4,190,344.1,73.6]}
+{"kind":"textbox","id":"sh/032tgr6d","slide":5,"text":"Game element","textPreview":"Game element","textChars":12,"textLines":1,"bbox":[362.4,200,320.1,57.6]}
+{"kind":"shape","id":"sh/n6dcr65o","slide":5,"bbox":[694.5,190,499.5,73.6]}
+{"kind":"textbox","id":"sh/m5kbi1oj","slide":5,"text":"Why it matters","textPreview":"Why it matters","textChars":14,"textLines":1,"bbox":[706.5,200,475.5,57.6]}
+{"kind":"shape","id":"sh/w32dkbuh","slide":5,"bbox":[84,263.6,266.4,73.6]}
+{"kind":"textbox","id":"sh/x4vedgvm","slide":5,"text":"Variable","textPreview":"Variable","textChars":8,"textLines":1,"bbox":[96,273.6,242.4,57.6]}
+{"kind":"shape","id":"sh/ahkvi1cb","slide":5,"bbox":[350.4,263.6,344.1,73.6]}
+{"kind":"textbox","id":"sh/v2twb6dw","slide":5,"text":"A forced route choice","textPreview":"A forced route choice","textChars":21,"textLines":1,"bbox":[362.4,273.6,320.1,57.6]}
+{"kind":"shape","id":"sh/k7mxovud","slide":5,"bbox":[694.5,263.6,499.5,73.6]}
+{"kind":"textbox","id":"sh/58vehgvy","slide":5,"text":"The player commits to one truth value","textPreview":"The player commits to one truth value","textChars":37,"textLines":1,"bbox":[706.5,273.6,475.5,57.6]}
+{"kind":"shape","id":"sh/i54fmlc7","slide":5,"bbox":[84,337.2,266.4,73.6]}
+{"kind":"textbox","id":"sh/j6dwfqds","slide":5,"text":"Literal","textPreview":"Literal","textChars":7,"textLines":1,"bbox":[96,347.2,242.4,57.6]}
+{"kind":"shape","id":"sh/sb6xsvu9","slide":5,"bbox":[350.4,337.2,344.1,73.6]}
+{"kind":"textbox","id":"sh/tcfel0vu","slide":5,"text":"A condition tied to a route","textPreview":"A condition tied to a route","textChars":27,"textLines":1,"bbox":[362.4,347.2,320.1,57.6]}
+{"kind":"shape","id":"sh/hgrmpwj2","slide":5,"bbox":[694.5,337.2,499.5,73.6]}
+{"kind":"textbox","id":"sh/gfi5grih","slide":5,"text":"Positive and negated choices can be distinguished","textPreview":"Positive and negated choices can be distinguished","textChars":49,"textLines":1,"bbox":[706.5,347.2,475.5,57.6]}
+{"kind":"shape","id":"sh/fe94nm1w","slide":5,"bbox":[84,410.8,266.4,73.6]}
+{"kind":"textbox","id":"sh/ud0ne10b","slide":5,"text":"Clause","textPreview":"Clause","textChars":6,"textLines":1,"bbox":[96,420.8,242.4,57.6]}
+{"kind":"shape","id":"sh/pkr6tgjy","slide":5,"bbox":[350.4,410.8,344.1,73.6]}
+{"kind":"textbox","id":"sh/4ji5kbid","slide":5,"text":"A pass/fail gate","textPreview":"A pass/fail gate","textChars":16,"textLines":1,"bbox":[362.4,420.8,320.1,57.6]}
+{"kind":"shape","id":"sh/3i94r61s","slide":5,"bbox":[694.5,410.8,499.5,73.6]}
+{"kind":"textbox","id":"sh/2h0ni107","slide":5,"text":"At least one satisfied literal opens progression","textPreview":"At least one satisfied literal opens progression","textChars":48,"textLines":1,"bbox":[706.5,420.8,475.5,57.6]}
+{"kind":"shape","id":"sh/5o7mhcju","slide":5,"bbox":[84,484.4,266.4,73.6]}
+{"kind":"textbox","id":"sh/kny587i9","slide":5,"text":"Satisfying assignment","textPreview":"Satisfying assignment","textChars":21,"textLines":1,"bbox":[96,494.4,242.4,57.6]}
+{"kind":"shape","id":"sh/atcjidg7","slide":5,"bbox":[350.4,484.4,344.1,73.6]}
+{"kind":"textbox","id":"sh/vu5kbihc","slide":5,"text":"A complete clear route","textPreview":"A complete clear route","textChars":22,"textLines":1,"bbox":[362.4,494.4,320.1,57.6]}
+{"kind":"shape","id":"sh/wve1knyx","slide":5,"bbox":[694.5,484.4,499.5,73.6]}
+{"kind":"textbox","id":"sh/xwn2dszi","slide":5,"text":"Clearability mirrors satisfiability","textPreview":"Clearability mirrors satisfiability","textChars":35,"textLines":1,"bbox":[706.5,494.4,475.5,57.6]}
+{"kind":"notes","id":"nt/i107q5of","slide":5,"text":"Slide 5: A 3SAT stage can preserve the logical meaning of the formula\n\nPresenter script:\nThe key point is correspondence. Variables, literals, clauses, and satisfying assignments each have a game-side meaning. If the mapping is designed correctly, a satisfying assignment should correspond to a complete clear route. This is what makes the stage a research object rather than only a themed level. The question becomes whether the game construction preserves the logic of the original formula.\n\nJapanese translation:\nここで重要なのは対応関係です。変数、リテラル、節、充足割当のそれぞれにゲーム上の意味があります。対応が正しく設計されていれば、充足割当は完全なクリアルートに対応するはずです。これにより、ステージは単なるテーマ付きのステージではなく、研究対象になります。問題は、ゲーム内の構成が元の論理式の意味を保っているかどうかです。"}
+{"kind":"slide","id":"sl/x8f69ofe","slide":6,"title":"The existing 3SAT use case turns the prototype into evidence","textShapes":11}
+{"kind":"textbox","id":"sh/lkrqp4ra","slide":6,"text":"The existing 3SAT use case turns the prototype into evidence","textPreview":"The existing 3SAT use case turns the prototype into evidence","textChars":60,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/yhg7epsj","slide":6,"text":"A practical stage example lets the study discuss playability, not just construction.","textPreview":"A practical stage example lets the study discuss playability, not just construction.","textChars":84,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/zi98nu94","slide":6,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/87ipkzal","slide":6,"bbox":[82,204,510,322]}
+{"kind":"textbox","id":"sh/98rqt4r6","slide":6,"text":"What the example can show","textPreview":"What the example can show","textChars":25,"textLines":1,"bbox":[120,242,420,40]}
+{"kind":"shape","id":"sh/ml07i9sv","slide":6,"bbox":[122,328,10,10]}
+{"kind":"textbox","id":"sh/7m98ru9g","slide":6,"text":"Players can read the choice structure during play","textPreview":"Players can read the choice structure during play","textChars":49,"textLines":1,"bbox":[146,318,376,62]}
+{"kind":"shape","id":"sh/oryp8fah","slide":6,"bbox":[122,390,10,10]}
+{"kind":"textbox","id":"sh/pc76hkr2","slide":6,"text":"The constraint checks can be embedded into action timing","textPreview":"The constraint checks can be embedded into action timing","textChars":56,"textLines":1,"bbox":[146,380,376,62]}
+{"kind":"shape","id":"sh/h4bupgn6","slide":6,"bbox":[122,452,10,10]}
+{"kind":"textbox","id":"sh/w32twb6l","slide":6,"text":"The mechanism can coexist with ordinary I Wanna hazards","textPreview":"The mechanism can coexist with ordinary I Wanna hazards","textChars":55,"textLines":1,"bbox":[146,442,376,62]}
+{"kind":"shape","id":"sh/v2tcn650","slide":6,"bbox":[666,204,510,322]}
+{"kind":"textbox","id":"sh/u1kbu1ov","slide":6,"text":"What should be measured next","textPreview":"What should be measured next","textChars":28,"textLines":1,"bbox":[704,242,420,40]}
+{"kind":"shape","id":"sh/5svutgni","slide":6,"bbox":[706,328,10,10]}
+{"kind":"textbox","id":"sh/47mt0b6x","slide":6,"text":"Time to infer the rule","textPreview":"Time to infer the rule","textChars":22,"textLines":1,"bbox":[730,318,376,62]}
+{"kind":"shape","id":"sh/j6dcr65c","slide":6,"bbox":[706,390,10,10]}
+{"kind":"textbox","id":"sh/i54bylor","slide":6,"text":"Failure patterns and backtracking behavior","textPreview":"Failure patterns and backtracking behavior","textChars":42,"textLines":1,"bbox":[730,380,376,62]}
+{"kind":"shape","id":"sh/twfux0ne","slide":6,"bbox":[706,452,10,10]}
+{"kind":"textbox","id":"sh/svmt4v6t","slide":6,"text":"Whether solving feels strategic or arbitrary","textPreview":"Whether solving feels strategic or arbitrary","textChars":44,"textLines":1,"bbox":[730,442,376,62]}
+{"kind":"notes","id":"nt/x8f69ofe","slide":6,"text":"Slide 6: The existing 3SAT use case turns the prototype into evidence\n\nPresenter script:\nThe practical 3SAT use case is especially important because it lets us discuss playability. A prototype can show that a construction is possible, but an actual stage can show whether players can read it, whether the timing and hazards still work, and whether the mechanism feels strategic rather than arbitrary. For the next research step, I want to measure how players infer the rule, where they fail, and whether their retries resemble problem-solving behavior.\n\nJapanese translation:\n3SATの実戦使用例は、プレイ性を議論できる点で特に重要です。プロトタイプは構成が可能であることを示せますが、実際のステージでは、プレイヤーが仕組みを読み取れるか、タイミングや弾幕として成立するか、そして理不尽ではなく戦略的に感じられるかを確認できます。次の研究段階では、プレイヤーがルールをどう推測するか、どこで失敗するか、リトライが問題解決行動に近いかを測りたいです。"}
+{"kind":"slide","id":"sl/gnmp4jqx","slide":7,"title":"Hamilton Path maps graph traversal to route planning","textShapes":10}
+{"kind":"textbox","id":"sh/batcbq94","slide":7,"text":"Hamilton Path maps graph traversal to route planning","textPreview":"Hamilton Path maps graph traversal to route planning","textChars":52,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/cb2tkvap","slide":7,"text":"The player must visit every vertex once while following only valid edges.","textPreview":"The player must visit every vertex once while following only valid edges.","textChars":73,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/dcbud0ra","slide":7,"text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/ydkbm5sv","slide":7,"bbox":[278,302,172,-82]}
+{"kind":"shape","id":"sh/zedcfa9g","slide":7,"bbox":[278,302,172,88]}
+{"kind":"shape","id":"sh/kzmdova1","slide":7,"bbox":[506,220,190,80]}
+{"kind":"shape","id":"sh/l0vuh0rm","slide":7,"bbox":[506,390,190,-90]}
+{"kind":"shape","id":"sh/eh0ba1sr","slide":7,"bbox":[752,300,172,-50]}
+{"kind":"shape","id":"sh/fi9c369c","slide":7,"bbox":[752,300,172,104]}
+{"kind":"textbox","id":"sh/baxkjqlk","slide":7,"text":"A","textPreview":"A","textChars":1,"textLines":1,"bbox":[222,274,56,56]}
+{"kind":"textbox","id":"sh/a9ojq5kz","slide":7,"text":"B","textPreview":"B","textChars":1,"textLines":1,"bbox":[450,192,56,56]}
+{"kind":"textbox","id":"sh/xcz2l03q","slide":7,"text":"C","textPreview":"C","textChars":1,"textLines":1,"bbox":[450,362,56,56]}
+{"kind":"textbox","id":"sh/cbq1sv25","slide":7,"text":"D","textPreview":"D","textChars":1,"textLines":1,"bbox":[696,272,56,56]}
+{"kind":"textbox","id":"sh/n6x0fqlo","slide":7,"text":"E","textPreview":"E","textChars":1,"textLines":1,"bbox":[924,222,56,56]}
+{"kind":"textbox","id":"sh/25ojml43","slide":7,"text":"F","textPreview":"F","textChars":1,"textLines":1,"bbox":[924,376,56,56]}
+{"kind":"textbox","id":"sh/p8fih03e","slide":7,"text":"A valid clear route is a Hamilton path: each vertex appears exactly once.","textPreview":"A valid clear route is a Hamilton path: each vertex appears exactly once.","textChars":73,"textLines":1,"bbox":[164,556,900,42]}
+{"kind":"notes","id":"nt/gnmp4jqx","slide":7,"text":"Slide 7: Hamilton Path maps graph traversal to route planning\n\nPresenter script:\nHamilton Path gives a different kind of structure. Instead of assigning truth values, the player chooses a path through vertices. The rule is that every vertex must be visited exactly once, and movement should follow only valid edges. In game terms, the player is planning a route through rooms, nodes, or sections while avoiding illegal transitions and repeated visits.\n\nJapanese translation:\nHamilton Pathは3SATとは異なる構造を持っています。真偽値を割り当てるのではなく、プレイヤーは頂点を通る経路を選びます。ルールは、すべての頂点をちょうど一度ずつ訪れ、存在する辺に沿ってのみ移動することです。ゲーム上では、プレイヤーが部屋やノード、区間を通るルートを計画し、不正な移動や再訪問を避ける形になります。"}
+{"kind":"slide","id":"sl/fu1gfa1s","slide":8,"title":"The Hamilton Path gimmick has two core enforcement problems","textShapes":7}
+{"kind":"textbox","id":"sh/elkf2pg7","slide":8,"text":"The Hamilton Path gimmick has two core enforcement problems","textPreview":"The Hamilton Path gimmick has two core enforcement problems","textChars":59,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/18byd4zy","slide":8,"text":"The stage must prevent illegal edges and repeated vertex visits.","textPreview":"The stage must prevent illegal edges and repeated vertex visits.","textChars":64,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/g72x4zyd","slide":8,"text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/ri9g7uhw","slide":8,"bbox":[90,214,500,270]}
+{"kind":"shape","id":"sh/6h0fypgb","slide":8,"bbox":[690,214,500,270]}
+{"kind":"textbox","id":"sh/tkby9kzm","slide":8,"text":"Edge validity","textPreview":"Edge validity","textChars":13,"textLines":1,"bbox":[130,252,360,42]}
+{"kind":"textbox","id":"sh/sjix0zy1","slide":8,"text":"Movement options should exist only where the original graph has an edge. Non-edges must be blocked by geometry, hazards, or state.","textPreview":"Movement options should exist only where the original graph has an edge. Non-edges must be blocked by geometry, hazards, or state.","textChars":130,"textLines":1,"bbox":[130,320,390,120]}
+{"kind":"textbox","id":"sh/je9g3ahk","slide":8,"text":"Visit uniqueness","textPreview":"Visit uniqueness","textChars":16,"textLines":1,"bbox":[730,252,360,42]}
+{"kind":"textbox","id":"sh/id0fu50z","slide":8,"text":"After a vertex is used, the corresponding route should become unavailable or fatal, forcing a one-time visit constraint.","textPreview":"After a vertex is used, the corresponding route should become unavailable or fatal, forcing a one-time visit constraint.","textChars":120,"textLines":1,"bbox":[730,320,390,120]}
+{"kind":"notes","id":"nt/fu1gfa1s","slide":8,"text":"Slide 8: The Hamilton Path gimmick has two core enforcement problems\n\nPresenter script:\nFor Hamilton Path, two enforcement problems are central. First, the stage must represent edge validity. If two vertices are not connected in the graph, the player should not be able to move between them safely. Second, the stage must represent visit uniqueness. Once a vertex has been used, returning to it should be blocked or punished. These two constraints are what make the game route correspond to a Hamilton path.\n\nJapanese translation:\nHamilton Pathでは、中心となる強制条件が2つあります。1つ目は辺の有効性です。グラフ上でつながっていない2つの頂点間は、安全に移動できないようにする必要があります。2つ目は訪問の一意性です。一度使った頂点に戻ることは、ブロックされるか失敗につながるべきです。この2つの制約によって、ゲーム内のルートがHamilton Pathに対応します。"}
+{"kind":"slide","id":"sl/udsvah03","slide":9,"title":"Both gimmicks express search through player movement","textShapes":18}
+{"kind":"textbox","id":"sh/eponml43","slide":9,"text":"Both gimmicks express search through player movement","textPreview":"Both gimmicks express search through player movement","textChars":52,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/1cfmhgne","slide":9,"text":"This shared structure is the basis for comparing them as research objects.","textPreview":"This shared structure is the basis for comparing them as research objects.","textChars":74,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/0b65obm9","slide":9,"text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/nex4jq5k","slide":9,"bbox":[76,184,225.6,77.6]}
+{"kind":"textbox","id":"sh/mdonql4z","slide":9,"text":"Aspect","textPreview":"Aspect","textChars":6,"textLines":1,"bbox":[88,194,201.6,61.6]}
+{"kind":"shape","id":"sh/9gzml0nq","slide":9,"bbox":[301.6,184,428.64,77.6]}
+{"kind":"textbox","id":"sh/ofq5svm5","slide":9,"text":"3SAT","textPreview":"3SAT","textChars":4,"textLines":1,"bbox":[313.6,194,404.64,61.6]}
+{"kind":"shape","id":"sh/bih4na5w","slide":9,"bbox":[730.24,184,473.76,77.6]}
+{"kind":"textbox","id":"sh/ah8nu54b","slide":9,"text":"Hamilton Path","textPreview":"Hamilton Path","textChars":13,"textLines":1,"bbox":[742.24,194,449.76,61.6]}
+{"kind":"shape","id":"sh/oza1gfyh","slide":9,"bbox":[76,261.6,225.6,77.6]}
+{"kind":"textbox","id":"sh/p0ji9kf2","slide":9,"text":"Choice unit","textPreview":"Choice unit","textChars":11,"textLines":1,"bbox":[88,271.6,201.6,61.6]}
+{"kind":"shape","id":"sh/2xsjepgb","slide":9,"bbox":[301.6,261.6,428.64,77.6]}
+{"kind":"textbox","id":"sh/3y107axw","slide":9,"text":"Truth assignment","textPreview":"Truth assignment","textChars":16,"textLines":1,"bbox":[313.6,271.6,404.64,61.6]}
+{"kind":"shape","id":"sh/cnu1kzyd","slide":9,"bbox":[730.24,261.6,473.76,77.6]}
+{"kind":"textbox","id":"sh/do3id4fy","slide":9,"text":"Next vertex","textPreview":"Next vertex","textChars":11,"textLines":1,"bbox":[742.24,271.6,449.76,61.6]}
+{"kind":"shape","id":"sh/qlcjipgn","slide":9,"bbox":[76,339.2,225.6,77.6]}
+{"kind":"textbox","id":"sh/bml0buxs","slide":9,"text":"Constraint","textPreview":"Constraint","textChars":10,"textLines":1,"bbox":[88,349.2,201.6,61.6]}
+{"kind":"shape","id":"sh/0ru1ozyp","slide":9,"bbox":[301.6,339.2,428.64,77.6]}
+{"kind":"textbox","id":"sh/lsn2h4fa","slide":9,"text":"Every clause must be satisfied","textPreview":"Every clause must be satisfied","textChars":30,"textLines":1,"bbox":[313.6,349.2,404.64,61.6]}
+{"kind":"shape","id":"sh/98ji147e","slide":9,"bbox":[730.24,339.2,473.76,77.6]}
+{"kind":"textbox","id":"sh/87a18zqt","slide":9,"text":"Every vertex must be visited once","textPreview":"Every vertex must be visited once","textChars":33,"textLines":1,"bbox":[742.24,349.2,449.76,61.6]}
+{"kind":"shape","id":"sh/76h0zup8","slide":9,"bbox":[76,416.8,225.6,77.6]}
+{"kind":"textbox","id":"sh/ml8j6p8n","slide":9,"text":"Failure mode","textPreview":"Failure mode","textChars":12,"textLines":1,"bbox":[88,426.8,201.6,61.6]}
+{"kind":"shape","id":"sh/hcji5o7a","slide":9,"bbox":[301.6,416.8,428.64,77.6]}
+{"kind":"textbox","id":"sh/wba1cjqp","slide":9,"text":"An unsatisfied clause blocks progress","textPreview":"An unsatisfied clause blocks progress","textChars":37,"textLines":1,"bbox":[313.6,426.8,404.64,61.6]}
+{"kind":"shape","id":"sh/va103ep4","slide":9,"bbox":[730.24,416.8,473.76,77.6]}
+{"kind":"textbox","id":"sh/u9sja98z","slide":9,"text":"A repeated vertex or missing edge blocks progress","textPreview":"A repeated vertex or missing edge blocks progress","textChars":49,"textLines":1,"bbox":[742.24,426.8,449.76,61.6]}
+{"kind":"shape","id":"sh/xgzitk76","slide":9,"bbox":[76,494.4,225.6,77.6]}
+{"kind":"textbox","id":"sh/cf6h0fql","slide":9,"text":"Player experience","textPreview":"Player experience","textChars":17,"textLines":1,"bbox":[88,504.4,201.6,61.6]}
+{"kind":"shape","id":"sh/2l4faloj","slide":9,"bbox":[301.6,494.4,428.64,77.6]}
+{"kind":"textbox","id":"sh/nmdg3q54","slide":9,"text":"Commit, test, revise","textPreview":"Commit, test, revise","textChars":20,"textLines":1,"bbox":[313.6,504.4,404.64,61.6]}
+{"kind":"shape","id":"sh/onmxcv69","slide":9,"bbox":[730.24,494.4,473.76,77.6]}
+{"kind":"textbox","id":"sh/pofy50nu","slide":9,"text":"Plan, traverse, avoid reuse","textPreview":"Plan, traverse, avoid reuse","textChars":27,"textLines":1,"bbox":[742.24,504.4,449.76,61.6]}
+{"kind":"notes","id":"nt/udsvah03","slide":9,"text":"Slide 9: Both gimmicks express search through player movement\n\nPresenter script:\nComparing the two gimmicks is useful because they express different problems through the same medium: player movement. In 3SAT, the choice unit is a truth assignment; in Hamilton Path, it is the next vertex. In 3SAT, failure comes from an unsatisfied clause; in Hamilton Path, failure comes from a missing edge or repeated vertex. This comparison can help clarify what kinds of computational structures are natural for an action game.\n\nJapanese translation:\n2つのギミックを比較することは有用です。どちらも異なる問題を、プレイヤーの移動という同じ媒体で表現しているからです。3SATでは選択単位が真偽値割当であり、Hamilton Pathでは次に訪れる頂点です。3SATでは未充足の節が失敗につながり、Hamilton Pathでは存在しない辺や頂点の再訪問が失敗につながります。この比較によって、どのような計算構造がアクションゲームに自然に向いているかを考えられます。"}
+{"kind":"slide","id":"sl/m90b6t0r","slide":10,"title":"The research contribution can be framed at three levels","textShapes":9}
+{"kind":"textbox","id":"sh/q9sn69kb","slide":10,"text":"The research contribution can be framed at three levels","textPreview":"The research contribution can be framed at three levels","textChars":55,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/xc3mho32","slide":10,"text":"This keeps the talk balanced between theory, implementation, and game design.","textPreview":"This keeps the talk balanced between theory, implementation, and game design.","textChars":77,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/cbu58j2h","slide":10,"text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/zelojyl8","slide":10,"bbox":[72,226,330,250]}
+{"kind":"shape","id":"sh/ydcnatkn","slide":10,"bbox":[474,226,330,250]}
+{"kind":"shape","id":"sh/l036l83y","slide":10,"bbox":[876,226,330,250]}
+{"kind":"textbox","id":"sh/kzu5c32t","slide":10,"text":"Computational","textPreview":"Computational","textChars":13,"textLines":1,"bbox":[104,260,260,36]}
+{"kind":"textbox","id":"sh/725onyl4","slide":10,"text":"Clearability can be related to satisfiability or path existence.","textPreview":"Clearability can be related to satisfiability or path existence.","textChars":64,"textLines":1,"bbox":[104,334,248,86]}
+{"kind":"textbox","id":"sh/m1cnetkj","slide":10,"text":"Educational","textPreview":"Educational","textChars":11,"textLines":1,"bbox":[506,260,260,36]}
+{"kind":"textbox","id":"sh/s7yt4b21","slide":10,"text":"Abstract NP-complete problems become visible and playable.","textPreview":"Abstract NP-complete problems become visible and playable.","textChars":58,"textLines":1,"bbox":[506,334,248,86]}
+{"kind":"textbox","id":"sh/d87uxg3m","slide":10,"text":"Design","textPreview":"Design","textChars":6,"textLines":1,"bbox":[908,260,260,36]}
+{"kind":"textbox","id":"sh/q5gb21kb","slide":10,"text":"Problem instances can inspire systematic stage-generation rules.","textPreview":"Problem instances can inspire systematic stage-generation rules.","textChars":64,"textLines":1,"bbox":[908,334,248,86]}
+{"kind":"notes","id":"nt/m90b6t0r","slide":10,"text":"Slide 10: The research contribution can be framed at three levels\n\nPresenter script:\nI think the contribution can be framed at three levels. At the computational level, the project studies whether clearability can correspond to a formal solution. At the educational level, it makes abstract NP-complete problems visible and playable. At the design level, it suggests that problem instances could become a source of systematic stage design or even stage generation.\n\nJapanese translation:\nこの研究の貢献は3つのレベルで説明できます。計算理論のレベルでは、クリア可能性が形式的な解と対応するかを調べます。教育的なレベルでは、抽象的なNP完全問題を見える形、プレイできる形にします。ゲームデザインのレベルでは、問題インスタンスを体系的なステージ設計、あるいは自動生成の素材として使える可能性を示します。"}
+{"kind":"slide","id":"sl/jetc3ut0","slide":11,"title":"Evaluation should separate correctness from playability","textShapes":18}
+{"kind":"textbox","id":"sh/a90z21on","slide":11,"text":"Evaluation should separate correctness from playability","textPreview":"Evaluation should separate correctness from playability","textChars":55,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/xcryxg7y","slide":11,"text":"A stage can be logically faithful and still fail as a game experience.","textPreview":"A stage can be logically faithful and still fail as a game experience.","textChars":70,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/wbih4b6d","slide":11,"text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/n69grmpw","slide":11,"bbox":[66,188,252.56,78]}
+{"kind":"textbox","id":"sh/250zy18b","slide":11,"text":"Criterion","textPreview":"Criterion","textChars":9,"textLines":1,"bbox":[78,198,228.56,62]}
+{"kind":"shape","id":"sh/98rytw72","slide":11,"bbox":[318.56,188,413.28,78]}
+{"kind":"textbox","id":"sh/o7ih0r6h","slide":11,"text":"Question to answer","textPreview":"Question to answer","textChars":18,"textLines":1,"bbox":[330.56,198,389.28,62]}
+{"kind":"shape","id":"sh/72t03qp0","slide":11,"bbox":[731.84,188,482.16,78]}
+{"kind":"textbox","id":"sh/61kzalof","slide":11,"text":"Possible evidence","textPreview":"Possible evidence","textChars":17,"textLines":1,"bbox":[743.84,198,458.16,62]}
+{"kind":"shape","id":"sh/ofqtgnyt","slide":11,"bbox":[66,266,252.56,78]}
+{"kind":"textbox","id":"sh/9gza9sze","slide":11,"text":"Formal correspondence","textPreview":"Formal correspondence","textChars":21,"textLines":1,"bbox":[78,276,228.56,62]}
+{"kind":"shape","id":"sh/mdobedg3","slide":11,"bbox":[318.56,266,413.28,78]}
+{"kind":"textbox","id":"sh/nehs7iho","slide":11,"text":"Does a solution exist iff the stage is clearable?","textPreview":"Does a solution exist iff the stage is clearable?","textChars":49,"textLines":1,"bbox":[330.56,276,389.28,62]}
+{"kind":"shape","id":"sh/0b6tc3yx","slide":11,"bbox":[731.84,266,482.16,78]}
+{"kind":"textbox","id":"sh/1cfa58zi","slide":11,"text":"Small proofs and generated test cases","textPreview":"Small proofs and generated test cases","textChars":37,"textLines":1,"bbox":[743.84,276,458.16,62]}
+{"kind":"shape","id":"sh/epobatgr","slide":11,"bbox":[66,344,252.56,78]}
+{"kind":"textbox","id":"sh/zaxs3yhc","slide":11,"text":"Readability","textPreview":"Readability","textChars":11,"textLines":1,"bbox":[78,354,228.56,62]}
+{"kind":"shape","id":"sh/cn6t83y1","slide":11,"bbox":[318.56,344,413.28,78]}
+{"kind":"textbox","id":"sh/dofa18z6","slide":11,"text":"Can players infer what each route means?","textPreview":"Can players infer what each route means?","textChars":40,"textLines":1,"bbox":[330.56,354,389.28,62]}
+{"kind":"shape","id":"sh/tsnip0ny","slide":11,"bbox":[731.84,344,482.16,78]}
+{"kind":"textbox","id":"sh/87ehgv6d","slide":11,"text":"Observation and post-play explanation","textPreview":"Observation and post-play explanation","textChars":37,"textLines":1,"bbox":[743.84,354,458.16,62]}
+{"kind":"shape","id":"sh/7650nq5s","slide":11,"bbox":[66,422,252.56,78]}
+{"kind":"textbox","id":"sh/65wzelo7","slide":11,"text":"Difficulty quality","textPreview":"Difficulty quality","textChars":18,"textLines":1,"bbox":[78,432,228.56,62]}
+{"kind":"shape","id":"sh/l43ilgn2","slide":11,"bbox":[318.56,422,413.28,78]}
+{"kind":"textbox","id":"sh/k3uhcb6h","slide":11,"text":"Is the challenge strategic rather than obscure?","textPreview":"Is the challenge strategic rather than obscure?","textChars":47,"textLines":1,"bbox":[330.56,432,389.28,62]}
+{"kind":"shape","id":"sh/j2lgjq5w","slide":11,"bbox":[731.84,422,482.16,78]}
+{"kind":"textbox","id":"sh/y1czalob","slide":11,"text":"Failure logs and retry behavior","textPreview":"Failure logs and retry behavior","textChars":31,"textLines":1,"bbox":[743.84,432,458.16,62]}
+{"kind":"shape","id":"sh/p07ixkn6","slide":11,"bbox":[66,500,252.56,78]}
+{"kind":"textbox","id":"sh/4zyhofml","slide":11,"text":"Scalability","textPreview":"Scalability","textChars":11,"textLines":1,"bbox":[78,510,228.56,62]}
+{"kind":"shape","id":"sh/m58fih43","slide":11,"bbox":[318.56,500,413.28,78]}
+{"kind":"textbox","id":"sh/n61wbmlo","slide":11,"text":"What instance sizes remain playable?","textPreview":"What instance sizes remain playable?","textChars":36,"textLines":1,"bbox":[330.56,510,389.28,62]}
+{"kind":"shape","id":"sh/o7axk7m9","slide":11,"bbox":[731.84,500,482.16,78]}
+{"kind":"textbox","id":"sh/98jedc3u","slide":11,"text":"Stage size, object count, completion time","textPreview":"Stage size, object count, completion time","textChars":41,"textLines":1,"bbox":[743.84,510,458.16,62]}
+{"kind":"notes","id":"nt/jetc3ut0","slide":11,"text":"Slide 11: Evaluation should separate correctness from playability\n\nPresenter script:\nFor evaluation, I want to separate correctness from playability. Correctness asks whether the construction really preserves the problem: a solution exists if and only if the stage can be cleared. Playability asks whether players can understand and enjoy the result. Both matter. A stage can be formally correct but unreadable, or fun but not faithful to the original problem. The research should evaluate both sides explicitly.\n\nJapanese translation:\n評価では、正しさとプレイ性を分けて考えたいです。正しさとは、その構成が本当に元の問題を保っているか、つまり解が存在する場合に限りステージがクリア可能かということです。プレイ性とは、プレイヤーが理解し、楽しめるかということです。どちらも重要です。形式的には正しいが読みにくいステージもあり得ますし、楽しいけれど元の問題に忠実でないステージもあり得ます。そのため、両方を明示的に評価する必要があります。"}
+{"kind":"slide","id":"sl/8f2psfyx","slide":12,"title":"Next: turn examples into a repeatable method","textShapes":15}
+{"kind":"textbox","id":"sh/edk3ed4j","slide":12,"text":"Next: turn examples into a repeatable method","textPreview":"Next: turn examples into a repeatable method","textChars":44,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/1gbm9s3a","slide":12,"text":"The prototypes are ready enough to support a research plan.","textPreview":"The prototypes are ready enough to support a research plan.","textChars":59,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/0f2lgnmp","slide":12,"text":"12","textPreview":"12","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/ra943il8","slide":12,"bbox":[240,354,140,0]}
+{"kind":"textbox","id":"sh/q903ad4n","slide":12,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[124,326,56,56]}
+{"kind":"textbox","id":"sh/dcbm583y","slide":12,"text":"Define","textPreview":"Define","textChars":6,"textLines":1,"bbox":[86,418,132,32]}
+{"kind":"textbox","id":"sh/sb2lcnmd","slide":12,"text":"Formalize the mapping from problem instances to stage components.","textPreview":"Formalize the mapping from problem instances to stage components.","textChars":65,"textLines":1,"bbox":[38,464,228,92]}
+{"kind":"shape","id":"sh/b6d4f2lc","slide":12,"bbox":[530,354,140,0]}
+{"kind":"textbox","id":"sh/a543mx4r","slide":12,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[414,326,56,56]}
+{"kind":"textbox","id":"sh/wvupgz6t","slide":12,"text":"Generate","textPreview":"Generate","textChars":8,"textLines":1,"bbox":[376,418,132,32]}
+{"kind":"textbox","id":"sh/xw3q94ne","slide":12,"text":"Build tools that produce candidate stages from formulas or graphs.","textPreview":"Build tools that produce candidate stages from formulas or graphs.","textChars":66,"textLines":1,"bbox":[328,464,228,92]}
+{"kind":"shape","id":"sh/atc7epon","slide":12,"bbox":[820,354,140,0]}
+{"kind":"textbox","id":"sh/bulo7u58","slide":12,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[704,326,56,56]}
+{"kind":"textbox","id":"sh/orapcf6h","slide":12,"text":"Validate","textPreview":"Validate","textChars":8,"textLines":1,"bbox":[666,418,132,32]}
+{"kind":"textbox","id":"sh/9sj65kn2","slide":12,"text":"Check correspondence between solution existence and clearability.","textPreview":"Check correspondence between solution existence and clearability.","textChars":65,"textLines":1,"bbox":[618,464,228,92]}
+{"kind":"textbox","id":"sh/mps7a5or","slide":12,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[994,326,56,56]}
+{"kind":"textbox","id":"sh/nq1o3a5w","slide":12,"text":"Test","textPreview":"Test","textChars":4,"textLines":1,"bbox":[956,418,132,32]}
+{"kind":"textbox","id":"sh/0nap8f6l","slide":12,"text":"Study whether players understand and enjoy the resulting challenges.","textPreview":"Study whether players understand and enjoy the resulting challenges.","textChars":68,"textLines":1,"bbox":[908,464,228,92]}
+{"kind":"notes","id":"nt/8f2psfyx","slide":12,"text":"Slide 12: Next: turn examples into a repeatable method\n\nPresenter script:\nThe next step is to move from individual examples to a repeatable method. First, I want to formalize the mapping from problem instances to stage components. Then I want to generate candidate stages from formulas or graphs, validate whether the correspondence holds, and finally test whether players can understand and enjoy the resulting challenges. This would turn the current prototypes into a more systematic research project.\n\nJapanese translation:\n次の段階では、個別の例から再現可能な方法へ進めたいです。まず、問題インスタンスからステージ部品への対応を形式化します。次に、論理式やグラフから候補ステージを生成し、その対応が成り立つかを検証します。最後に、プレイヤーがそのチャレンジを理解し、楽しめるかを調べます。これにより、現在のプロトタイプをより体系的な研究へ発展させられます。"}
+{"kind":"slide","id":"sl/hgzapcr6","slide":13,"title":"Discussion","textShapes":8}
+{"kind":"textbox","id":"sh/dsr6t8bu","slide":13,"text":"Discussion","textPreview":"Discussion","textChars":10,"textLines":1,"bbox":[64,72,760,76]}
+{"kind":"textbox","id":"sh/q50nydsj","slide":13,"text":"Key takeaway","textPreview":"Key takeaway","textChars":12,"textLines":1,"bbox":[66,200,220,34]}
+{"kind":"textbox","id":"sh/bq9orito","slide":13,"text":"The prototypes suggest that NP-complete problems can become playable constraint systems, not just metaphors for difficulty.","textPreview":"The prototypes suggest that NP-complete problems can become playable constraint systems, not just metaphors for difficulty.","textChars":123,"textLines":1,"bbox":[66,246,980,92]}
+{"kind":"textbox","id":"sh/o3i5w3ad","slide":13,"text":"Questions to invite","textPreview":"Questions to invite","textChars":19,"textLines":1,"bbox":[66,426,260,34]}
+{"kind":"shape","id":"sh/p4r6p8by","slide":13,"bbox":[68,490,10,10]}
+{"kind":"textbox","id":"sh/21gnuts7","slide":13,"text":"What level of formal proof is needed for a game-based reduction?","textPreview":"What level of formal proof is needed for a game-based reduction?","textChars":64,"textLines":1,"bbox":[92,480,956,50]}
+{"kind":"shape","id":"sh/32ponyts","slide":13,"bbox":[68,540,10,10]}
+{"kind":"textbox","id":"sh/gzy5s3a1","slide":13,"text":"How should unsatisfiable or impossible instances be presented to players?","textPreview":"How should unsatisfiable or impossible instances be presented to players?","textChars":73,"textLines":1,"bbox":[92,530,956,50]}
+{"kind":"shape","id":"sh/1076lobm","slide":13,"bbox":[68,590,10,10]}
+{"kind":"textbox","id":"sh/hcfy9k3u","slide":13,"text":"Where is the boundary between mathematical structure and game-design fun?","textPreview":"Where is the boundary between mathematical structure and game-design fun?","textChars":73,"textLines":1,"bbox":[92,580,956,50]}
+{"kind":"textbox","id":"sh/gb6x0zm9","slide":13,"text":"13","textPreview":"13","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"notes","id":"nt/hgzapcr6","slide":13,"text":"Slide 13: Discussion\n\nPresenter script:\nTo close, the main takeaway is that these prototypes suggest a way to treat NP-complete problems as playable constraint systems, not only as metaphors for difficulty. I would like to discuss how much formal proof is needed, how impossible instances should be presented to players, and where the boundary lies between mathematical structure and game-design fun.\n\nJapanese translation:\n最後に、この研究の要点は、NP完全問題を単なる難しさの比喩ではなく、プレイ可能な制約システムとして扱える可能性を示していることです。議論したい点として、どの程度の形式的証明が必要か、解のないインスタンスをプレイヤーにどう提示すべきか、数学的構造とゲームとしての面白さの境界はどこにあるのか、という問題があります。"}
