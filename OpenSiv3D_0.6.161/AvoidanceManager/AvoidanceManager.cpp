@@ -296,6 +296,8 @@ namespace Iwanna {
 		const double screenShakeY = getScreenShakeOffset();
 		{
 			const Transformer2D screenShakeTransformer{ Mat3x2::Translate(0.0, screenShakeY) };
+			// Cherry ごとではなく、描画パス全体で一度だけ設定する。
+			const ScopedRenderStates2D nearestSampler{ SamplerState::ClampNearest };
 
 			//背景描画
 			Rect(-16, -16, 832, 640).draw(backgroundColor);

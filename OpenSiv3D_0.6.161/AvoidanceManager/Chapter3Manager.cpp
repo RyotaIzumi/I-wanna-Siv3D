@@ -168,12 +168,19 @@ namespace {
 	struct CogController {
 		Vec2 center = Vec2{ 400,304 };
 		double angle = 0.0;
+		double cosAngle = 1.0;
+		double sinAngle = 0.0;
 		Iwanna::EasingValue rotation;
 
 		void update() {
 			if (rotation.isActive()) {
 				angle = rotation.update();
 			}
+
+			// 同じ歯車に属する全 Cherry で共通の値なので、1 フレームに一度だけ計算する。
+			const double rad = Math::ToRadians(angle);
+			cosAngle = Math::Cos(rad);
+			sinAngle = Math::Sin(rad);
 		}
 
 		void rotateRight(double degrees = 90.0, int32 stepCount = 50, int32 easingType = 2) {
@@ -389,12 +396,9 @@ namespace {
 		const std::shared_ptr<CogController>& controller) {
 
 		return [localOffset, controller](Iwanna::Cherry& self, int32) {
-			const double rad = Math::ToRadians(controller->angle);
-			const double cosA = Math::Cos(rad);
-			const double sinA = Math::Sin(rad);
 			const Vec2 rotated{
-				localOffset.x * cosA - localOffset.y * sinA,
-				localOffset.x * sinA + localOffset.y * cosA
+				localOffset.x * controller->cosAngle - localOffset.y * controller->sinAngle,
+				localOffset.x * controller->sinAngle + localOffset.y * controller->cosAngle
 			};
 
 			self.pos = controller->center + rotated;

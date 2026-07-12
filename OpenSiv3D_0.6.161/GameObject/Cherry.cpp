@@ -80,7 +80,6 @@ namespace Iwanna {
 	}
 
 	void Cherry::draw() const {
-		const ScopedRenderStates2D rs{ SamplerState::ClampNearest };
 		ColorF drawColor = color;
 		drawColor.a *= alpha;
 		TextureAsset(textureName).scaled(scale).drawAt(pos.x,pos.y-1, drawColor);

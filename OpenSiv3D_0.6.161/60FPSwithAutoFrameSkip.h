@@ -113,12 +113,13 @@ public:
 				auto nanosecound = chrono::duration_cast<std::chrono::nanoseconds>(durtion).count();
 				return nanosecound;
 			};
-		/// @brief フレームスキップ確認、１フレーム時間を超えたら描画せずに次のループへ
-		/// @return true
+		// 前フレームが重くても System::Update() は必ず呼ぶ。
+		// ここで true だけを返すと、ゲーム処理がフレーム時間を超え続ける環境では
+		// ウィンドウイベント処理と描画が永久に行われず、フリーズしたように見える。
 		if (elapset() > 1000 * 1000 * 1000 / (long long)FPS)
 		{
 			start = chrono::high_resolution_clock::now();      // 計測スタート時刻を保存
-			return true;
+			return System::Update();
 		}
 		long long sleepTime = elapset() / (long long)(1000000.0 - 100.0) / (long long)2.0; // -100.0 は微調整
 		System::Sleep((int32)sleepTime);
