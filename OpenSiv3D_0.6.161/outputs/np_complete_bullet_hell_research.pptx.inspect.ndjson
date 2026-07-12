@@ -1,0 +1,259 @@
+{"kind":"deck","id":"pr/zoq0kq","name":"Deck"}
+{"kind":"layout","layoutId":"d9a3c2c0-3a7f-4070-9d12-2bc440470227","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"723c66b7-5501-4bb3-8c98-c86e3f343e6b","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/wttn3g","slide":1,"title":"Encoding NP-Complete Problems as Bullet-Hell Game Gimmicks","textShapes":7}
+{"kind":"textbox","id":"sh/jmhc7mp0","slide":1,"text":"Encoding NP-Complete Problems as Bullet-Hell Game Gimmicks","textPreview":"Encoding NP-Complete Problems as Bullet-Hell Game Gimmicks","textChars":58,"textLines":1,"bbox":[64,92,960,176]}
+{"kind":"textbox","id":"sh/4nqdgrql","slide":1,"text":"A research presentation using an I Wanna-style engine built with Siv3D","textPreview":"A research presentation using an I Wanna-style engine built with Siv3D","textChars":70,"textLines":1,"bbox":[68,296,820,54]}
+{"kind":"shape","id":"sh/58zu9w76","slide":1,"bbox":[910,100,260,420]}
+{"kind":"textbox","id":"sh/uhovax8j","slide":1,"text":"3SAT","textPreview":"3SAT","textChars":4,"textLines":1,"bbox":[950,152,180,52]}
+{"kind":"textbox","id":"sh/vihc32p4","slide":1,"text":"+","textPreview":"+","textChars":1,"textLines":1,"bbox":[1014,244,60,48]}
+{"kind":"textbox","id":"sh/wjqdc7qp","slide":1,"text":"Hamilton\nPath","textPreview":"Hamilton | Path","textChars":13,"textLines":2,"bbox":[950,326,190,100]}
+{"kind":"textbox","id":"sh/hkzu5c7a","slide":1,"text":"20-minute talk / 10-minute Q&A","textPreview":"20-minute talk / 10-minute Q&A","textChars":30,"textLines":1,"bbox":[68,585,520,34]}
+{"kind":"textbox","id":"sh/edsvm18n","slide":1,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"notes","id":"nt/wttn3g","slide":1,"text":""}
+{"kind":"slide","id":"sl/q2pwmq","slide":2,"title":"The research question is broader than difficulty","textShapes":7}
+{"kind":"textbox","id":"sh/2xkn2lkv","slide":2,"text":"The research question is broader than difficulty","textPreview":"The research question is broader than difficulty","textChars":48,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/p0b6x0j6","slide":2,"text":"The goal is to connect formal problem structure with playable level structure.","textPreview":"The goal is to connect formal problem structure with playable level structure.","textChars":78,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/oz254v21","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/fa94r614","slide":2,"bbox":[92,224,10,10]}
+{"kind":"textbox","id":"sh/e90ny1kj","slide":2,"text":"Can a Boolean formula or graph instance be transformed into a playable gimmick?","textPreview":"Can a Boolean formula or graph instance be transformed into a playable gimmick?","textChars":79,"textLines":1,"bbox":[116,214,1016,66]}
+{"kind":"shape","id":"sh/1wbmtgja","slide":2,"bbox":[92,290,10,10]}
+{"kind":"textbox","id":"sh/0vi50b2p","slide":2,"text":"Does stage clearability correspond to the existence of a valid solution?","textPreview":"Does stage clearability correspond to the existence of a valid solution?","textChars":72,"textLines":1,"bbox":[116,280,1016,66]}
+{"kind":"shape","id":"sh/r694n618","slide":2,"bbox":[92,356,10,10]}
+{"kind":"textbox","id":"sh/650nu1kn","slide":2,"text":"Can the player experience search, constraint satisfaction, and backtracking as game actions?","textPreview":"Can the player experience search, constraint satisfaction, and backtracking as game actions?","textChars":92,"textLines":1,"bbox":[116,346,1016,66]}
+{"kind":"shape","id":"sh/c7utkbil","slide":2,"bbox":[92,422,10,10]}
+{"kind":"textbox","id":"sh/d83udgj6","slide":2,"text":"Can the same engine support both prototype demonstrations and practical stage design?","textPreview":"Can the same engine support both prototype demonstrations and practical stage design?","textChars":85,"textLines":1,"bbox":[116,412,1016,66]}
+{"kind":"notes","id":"nt/q2pwmq","slide":2,"text":""}
+{"kind":"slide","id":"sl/bms00l","slide":3,"title":"Two completed prototypes give the research a concrete base","textShapes":9}
+{"kind":"textbox","id":"sh/ozm9orel","slide":3,"text":"Two completed prototypes give the research a concrete base","textPreview":"Two completed prototypes give the research a concrete base","textChars":58,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/nyd8fmd0","slide":3,"text":"Both reductions currently exist as provisional gimmicks; 3SAT also has an in-stage usage example.","textPreview":"Both reductions currently exist as provisional gimmicks; 3SAT also has an in-stage usage example.","textChars":97,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/2x4rmhwv","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/xofalwvi","slide":3,"bbox":[72,202,350,310]}
+{"kind":"shape","id":"sh/c369srex","slide":3,"bbox":[466,202,350,310]}
+{"kind":"shape","id":"sh/b2xsjmdc","slide":3,"bbox":[860,202,350,310]}
+{"kind":"textbox","id":"sh/a1orqhwr","slide":3,"text":"3SAT gimmick","textPreview":"3SAT gimmick","textChars":12,"textLines":1,"bbox":[104,238,280,38]}
+{"kind":"textbox","id":"sh/lszapgve","slide":3,"text":"A route-choice structure represents variable assignments. Clause sections test whether at least one literal is satisfied.","textPreview":"A route-choice structure represents variable assignments. Clause sections test whether at least one literal is satisfied.","textChars":121,"textLines":1,"bbox":[104,304,272,134]}
+{"kind":"textbox","id":"sh/kr69wbet","slide":3,"text":"Hamilton Path gimmick","textPreview":"Hamilton Path gimmick","textChars":21,"textLines":1,"bbox":[498,238,280,74]}
+{"kind":"textbox","id":"sh/ytgrydsj","slide":3,"text":"Graph traversal is mapped to player movement while enforcing edge validity and one-time vertex visits.","textPreview":"Graph traversal is mapped to player movement while enforcing edge validity and one-time vertex visits.","textChars":102,"textLines":1,"bbox":[498,334,272,110]}
+{"kind":"textbox","id":"sh/zup87y94","slide":3,"text":"Practical 3SAT example","textPreview":"Practical 3SAT example","textChars":22,"textLines":1,"bbox":[892,238,280,74]}
+{"kind":"textbox","id":"sh/0vy903a9","slide":3,"text":"The 3SAT mechanism has moved beyond a toy prototype and has been used in an actual stage context.","textPreview":"The 3SAT mechanism has moved beyond a toy prototype and has been used in an actual stage context.","textChars":97,"textLines":1,"bbox":[892,334,272,110]}
+{"kind":"notes","id":"nt/bms00l","slide":3,"text":""}
+{"kind":"slide","id":"sl/6tstpa","slide":4,"title":"3SAT becomes a sequence of commitments and checks","textShapes":10}
+{"kind":"textbox","id":"sh/s7ml4bih","slide":4,"text":"3SAT becomes a sequence of commitments and checks","textPreview":"3SAT becomes a sequence of commitments and checks","textChars":49,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/r6dkbq1c","slide":4,"text":"The player chooses truth values, then the stage tests clause satisfaction.","textPreview":"The player chooses truth values, then the stage tests clause satisfaction.","textChars":74,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/65432l0r","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/54v29gj6","slide":4,"bbox":[96,224,470,92]}
+{"kind":"textbox","id":"sh/43ml0bil","slide":4,"text":"TRUE","textPreview":"TRUE","textChars":4,"textLines":1,"bbox":[114,242,90,34]}
+{"kind":"textbox","id":"sh/j2dk7610","slide":4,"text":"Upper route commits the variable to true","textPreview":"Upper route commits the variable to true","textChars":40,"textLines":1,"bbox":[222,244,322,52]}
+{"kind":"shape","id":"sh/i143y10f","slide":4,"bbox":[96,348,470,92]}
+{"kind":"textbox","id":"sh/h0b25wju","slide":4,"text":"FALSE","textPreview":"FALSE","textChars":5,"textLines":1,"bbox":[114,366,90,34]}
+{"kind":"textbox","id":"sh/wz2lwrip","slide":4,"text":"Lower route commits the variable to false","textPreview":"Lower route commits the variable to false","textChars":41,"textLines":1,"bbox":[222,368,322,52]}
+{"kind":"shape","id":"sh/ud8japg3","slide":4,"bbox":[590,286,110,0]}
+{"kind":"shape","id":"sh/veh0jaxo","slide":4,"bbox":[590,410,110,0]}
+{"kind":"shape","id":"sh/gfq1cfy9","slide":4,"bbox":[730,228,420,220]}
+{"kind":"textbox","id":"sh/hgzilkfu","slide":4,"text":"Clause gate","textPreview":"Clause gate","textChars":11,"textLines":1,"bbox":[770,262,320,42]}
+{"kind":"textbox","id":"sh/6poj65g7","slide":4,"text":"(x1 OR not x2 OR x3)","textPreview":"(x1 OR not x2 OR x3)","textChars":20,"textLines":1,"bbox":[770,324,320,36]}
+{"kind":"textbox","id":"sh/7qh0faxs","slide":4,"text":"Pass if at least one selected literal opens the path.","textPreview":"Pass if at least one selected literal opens the path.","textChars":53,"textLines":1,"bbox":[770,386,322,48]}
+{"kind":"notes","id":"nt/6tstpa","slide":4,"text":""}
+{"kind":"slide","id":"sl/odatvj","slide":5,"title":"A 3SAT stage can preserve the logical meaning of the formula","textShapes":18}
+{"kind":"textbox","id":"sh/oze5snep","slide":5,"text":"A 3SAT stage can preserve the logical meaning of the formula","textPreview":"A 3SAT stage can preserve the logical meaning of the formula","textChars":60,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/ny54jix4","slide":5,"text":"The important claim is correspondence, not just visual analogy.","textPreview":"The important claim is correspondence, not just visual analogy.","textChars":63,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/2xw3qdwj","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/x47mpsf6","slide":5,"bbox":[84,190,266.4,73.6]}
+{"kind":"textbox","id":"sh/c3y5wnel","slide":5,"text":"Formula element","textPreview":"Formula element","textChars":15,"textLines":1,"bbox":[96,200,242.4,57.6]}
+{"kind":"shape","id":"sh/b254n2x0","slide":5,"bbox":[350.4,190,344.1,73.6]}
+{"kind":"textbox","id":"sh/a1wnuxwf","slide":5,"text":"Game element","textPreview":"Game element","textChars":12,"textLines":1,"bbox":[362.4,200,320.1,57.6]}
+{"kind":"shape","id":"sh/d83md8f2","slide":5,"bbox":[694.5,190,499.5,73.6]}
+{"kind":"textbox","id":"sh/s7ulk3eh","slide":5,"text":"Why it matters","textPreview":"Why it matters","textChars":14,"textLines":1,"bbox":[706.5,200,475.5,57.6]}
+{"kind":"shape","id":"sh/atofu5ob","slide":5,"bbox":[84,263.6,266.4,73.6]}
+{"kind":"textbox","id":"sh/buxg3a5w","slide":5,"text":"Variable","textPreview":"Variable","textChars":8,"textLines":1,"bbox":[96,273.6,242.4,57.6]}
+{"kind":"shape","id":"sh/wv6xwf6h","slide":5,"bbox":[350.4,263.6,344.1,73.6]}
+{"kind":"textbox","id":"sh/xwzy5kn2","slide":5,"text":"A forced route choice","textPreview":"A forced route choice","textChars":21,"textLines":1,"bbox":[362.4,273.6,320.1,57.6]}
+{"kind":"shape","id":"sh/yx8fypon","slide":5,"bbox":[694.5,263.6,499.5,73.6]}
+{"kind":"textbox","id":"sh/jyhg7u58","slide":5,"text":"The player commits to one truth value","textPreview":"The player commits to one truth value","textChars":37,"textLines":1,"bbox":[706.5,273.6,475.5,57.6]}
+{"kind":"shape","id":"sh/kzqx0zmd","slide":5,"bbox":[84,337.2,266.4,73.6]}
+{"kind":"textbox","id":"sh/lkzy94ny","slide":5,"text":"Literal","textPreview":"Literal","textChars":7,"textLines":1,"bbox":[96,347.2,242.4,57.6]}
+{"kind":"shape","id":"sh/6l8f294j","slide":5,"bbox":[350.4,337.2,344.1,73.6]}
+{"kind":"textbox","id":"sh/7mhgbu54","slide":5,"text":"A condition tied to a route","textPreview":"A condition tied to a route","textChars":27,"textLines":1,"bbox":[362.4,347.2,320.1,57.6]}
+{"kind":"shape","id":"sh/3q1wjelc","slide":5,"bbox":[694.5,337.2,499.5,73.6]}
+{"kind":"textbox","id":"sh/ipsfq9kr","slide":5,"text":"Positive and negated choices can be distinguished","textPreview":"Positive and negated choices can be distinguished","textChars":49,"textLines":1,"bbox":[706.5,347.2,475.5,57.6]}
+{"kind":"shape","id":"sh/5sjel43i","slide":5,"bbox":[84,410.8,266.4,73.6]}
+{"kind":"textbox","id":"sh/4raxsz2x","slide":5,"text":"Clause","textPreview":"Clause","textChars":6,"textLines":1,"bbox":[96,420.8,242.4,57.6]}
+{"kind":"shape","id":"sh/vmhwful0","slide":5,"bbox":[350.4,410.8,344.1,73.6]}
+{"kind":"textbox","id":"sh/u18fmpkf","slide":5,"text":"A pass/fail gate","textPreview":"A pass/fail gate","textChars":16,"textLines":1,"bbox":[362.4,420.8,320.1,57.6]}
+{"kind":"shape","id":"sh/hojeh436","slide":5,"bbox":[694.5,410.8,499.5,73.6]}
+{"kind":"textbox","id":"sh/gnaxoz2l","slide":5,"text":"At least one satisfied literal opens progression","textPreview":"At least one satisfied literal opens progression","textChars":48,"textLines":1,"bbox":[706.5,420.8,475.5,57.6]}
+{"kind":"shape","id":"sh/7yhwbul4","slide":5,"bbox":[84,484.4,266.4,73.6]}
+{"kind":"textbox","id":"sh/6x8vipkj","slide":5,"text":"Satisfying assignment","textPreview":"Satisfying assignment","textChars":21,"textLines":1,"bbox":[96,494.4,242.4,57.6]}
+{"kind":"shape","id":"sh/w3mtsvih","slide":5,"bbox":[350.4,484.4,344.1,73.6]}
+{"kind":"textbox","id":"sh/x4fulgj2","slide":5,"text":"A complete clear route","textPreview":"A complete clear route","textChars":22,"textLines":1,"bbox":[362.4,494.4,320.1,57.6]}
+{"kind":"shape","id":"sh/a14bql0b","slide":5,"bbox":[694.5,484.4,499.5,73.6]}
+{"kind":"textbox","id":"sh/b2dcjq1w","slide":5,"text":"Clearability mirrors satisfiability","textPreview":"Clearability mirrors satisfiability","textChars":35,"textLines":1,"bbox":[706.5,494.4,475.5,57.6]}
+{"kind":"notes","id":"nt/odatvj","slide":5,"text":""}
+{"kind":"slide","id":"sl/ax3p4r","slide":6,"title":"The existing 3SAT use case turns the prototype into evidence","textShapes":11}
+{"kind":"textbox","id":"sh/adg7uh4z","slide":6,"text":"The existing 3SAT use case turns the prototype into evidence","textPreview":"The existing 3SAT use case turns the prototype into evidence","textChars":60,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/xg76pcnq","slide":6,"text":"A practical stage example lets the study discuss playability, not just construction.","textPreview":"A practical stage example lets the study discuss playability, not just construction.","textChars":84,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/wfypw7m5","slide":6,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/jiporm5w","slide":6,"bbox":[82,204,510,322]}
+{"kind":"textbox","id":"sh/yhg7yh4b","slide":6,"text":"What the example can show","textPreview":"What the example can show","textChars":25,"textLines":1,"bbox":[120,242,420,40]}
+{"kind":"shape","id":"sh/lkr6twnm","slide":6,"bbox":[122,328,10,10]}
+{"kind":"textbox","id":"sh/kjyp0rm1","slide":6,"text":"Players can read the choice structure during play","textPreview":"Players can read the choice structure during play","textChars":49,"textLines":1,"bbox":[146,318,376,62]}
+{"kind":"shape","id":"sh/7m9ov65s","slide":6,"bbox":[122,390,10,10]}
+{"kind":"textbox","id":"sh/6l072147","slide":6,"text":"The constraint checks can be embedded into action timing","textPreview":"The constraint checks can be embedded into action timing","textChars":56,"textLines":1,"bbox":[146,380,376,62]}
+{"kind":"shape","id":"sh/gnq9wz21","slide":6,"bbox":[122,452,10,10]}
+{"kind":"textbox","id":"sh/1ozap4jm","slide":6,"text":"The mechanism can coexist with ordinary I Wanna hazards","textPreview":"The mechanism can coexist with ordinary I Wanna hazards","textChars":55,"textLines":1,"bbox":[146,442,376,62]}
+{"kind":"shape","id":"sh/el8rupkv","slide":6,"bbox":[666,204,510,322]}
+{"kind":"textbox","id":"sh/fmhsnu1g","slide":6,"text":"What should be measured next","textPreview":"What should be measured next","textChars":28,"textLines":1,"bbox":[704,242,420,40]}
+{"kind":"shape","id":"sh/orat0z2x","slide":6,"bbox":[706,328,10,10]}
+{"kind":"textbox","id":"sh/pcjat4ji","slide":6,"text":"Time to infer the rule","textPreview":"Time to infer the rule","textChars":22,"textLines":1,"bbox":[730,318,376,62]}
+{"kind":"shape","id":"sh/2p8rypkr","slide":6,"bbox":[706,390,10,10]}
+{"kind":"textbox","id":"sh/3qhsru1c","slide":6,"text":"Failure patterns and backtracking behavior","textPreview":"Failure patterns and backtracking behavior","textChars":42,"textLines":1,"bbox":[730,380,376,62]}
+{"kind":"shape","id":"sh/cfat4j29","slide":6,"bbox":[706,452,10,10]}
+{"kind":"textbox","id":"sh/dgjaxoje","slide":6,"text":"Whether solving feels strategic or arbitrary","textPreview":"Whether solving feels strategic or arbitrary","textChars":44,"textLines":1,"bbox":[730,442,376,62]}
+{"kind":"notes","id":"nt/ax3p4r","slide":6,"text":""}
+{"kind":"slide","id":"sl/ni5q37","slide":7,"title":"Hamilton Path maps graph traversal to route planning","textShapes":10}
+{"kind":"textbox","id":"sh/h8fetg32","slide":7,"text":"Hamilton Path maps graph traversal to route planning","textPreview":"Hamilton Path maps graph traversal to route planning","textChars":52,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/ulofi14b","slide":7,"text":"The player must visit every vertex once while following only valid edges.","textPreview":"The player must visit every vertex once while following only valid edges.","textChars":73,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/vmxwr6lw","slide":7,"text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/8j6xgrm5","slide":7,"bbox":[278,302,172,-82]}
+{"kind":"shape","id":"sh/tkfepw3q","slide":7,"bbox":[278,302,172,88]}
+{"kind":"shape","id":"sh/6hofeh4f","slide":7,"bbox":[506,220,190,80]}
+{"kind":"shape","id":"sh/7ixwnml0","slide":7,"bbox":[506,390,190,-90]}
+{"kind":"shape","id":"sh/sfqxsv2p","slide":7,"bbox":[752,300,172,-50]}
+{"kind":"shape","id":"sh/dgjy103a","slide":7,"bbox":[752,300,172,104]}
+{"kind":"textbox","id":"sh/pcfyxwre","slide":7,"text":"A","textPreview":"A","textChars":1,"textLines":1,"bbox":[222,274,56,56]}
+{"kind":"textbox","id":"sh/ob6horat","slide":7,"text":"B","textPreview":"B","textChars":1,"textLines":1,"bbox":[450,192,56,56]}
+{"kind":"textbox","id":"sh/naxgvm98","slide":7,"text":"C","textPreview":"C","textChars":1,"textLines":1,"bbox":[450,362,56,56]}
+{"kind":"textbox","id":"sh/29ozmhsn","slide":7,"text":"D","textPreview":"D","textChars":1,"textLines":1,"bbox":[696,272,56,56]}
+{"kind":"textbox","id":"sh/1ovytcr2","slide":7,"text":"E","textPreview":"E","textChars":1,"textLines":1,"bbox":[924,222,56,56]}
+{"kind":"textbox","id":"sh/0nmhkrah","slide":7,"text":"F","textPreview":"F","textChars":1,"textLines":1,"bbox":[924,376,56,56]}
+{"kind":"textbox","id":"sh/fmdgrm9w","slide":7,"text":"A valid clear route is a Hamilton path: each vertex appears exactly once.","textPreview":"A valid clear route is a Hamilton path: each vertex appears exactly once.","textChars":73,"textLines":1,"bbox":[164,556,900,42]}
+{"kind":"notes","id":"nt/ni5q37","slide":7,"text":""}
+{"kind":"slide","id":"sl/j68gkw","slide":8,"title":"The Hamilton Path gimmick has two core enforcement problems","textShapes":7}
+{"kind":"textbox","id":"sh/fqt036po","slide":8,"text":"The Hamilton Path gimmick has two core enforcement problems","textPreview":"The Hamilton Path gimmick has two core enforcement problems","textChars":59,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/0rm1wbq9","slide":8,"text":"The stage must prevent illegal edges and repeated vertex visits.","textPreview":"The stage must prevent illegal edges and repeated vertex visits.","textChars":64,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/1svi5g7u","slide":8,"text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/mt4jyl8f","slide":8,"bbox":[90,214,500,270]}
+{"kind":"shape","id":"sh/nud07qpk","slide":8,"bbox":[690,214,500,270]}
+{"kind":"textbox","id":"sh/ovm10bq5","slide":8,"text":"Edge validity","textPreview":"Edge validity","textChars":13,"textLines":1,"bbox":[130,252,360,42]}
+{"kind":"textbox","id":"sh/9wv29g7q","slide":8,"text":"Movement options should exist only where the original graph has an edge. Non-edges must be blocked by geometry, hazards, or state.","textPreview":"Movement options should exist only where the original graph has an edge. Non-edges must be blocked by geometry, hazards, or state.","textChars":130,"textLines":1,"bbox":[130,320,390,120]}
+{"kind":"textbox","id":"sh/ah4j2l8b","slide":8,"text":"Visit uniqueness","textPreview":"Visit uniqueness","textChars":16,"textLines":1,"bbox":[730,252,360,42]}
+{"kind":"textbox","id":"sh/bidkbqpw","slide":8,"text":"After a vertex is used, the corresponding route should become unavailable or fatal, forcing a one-time visit constraint.","textPreview":"After a vertex is used, the corresponding route should become unavailable or fatal, forcing a one-time visit constraint.","textChars":120,"textLines":1,"bbox":[730,320,390,120]}
+{"kind":"notes","id":"nt/j68gkw","slide":8,"text":""}
+{"kind":"slide","id":"sl/gz2hh6","slide":9,"title":"Both gimmicks express search through player movement","textShapes":18}
+{"kind":"textbox","id":"sh/10fuhkji","slide":9,"text":"Both gimmicks express search through player movement","textPreview":"Both gimmicks express search through player movement","textChars":52,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/exob6p07","slide":9,"text":"This shared structure is the basis for comparing them as research objects.","textPreview":"This shared structure is the basis for comparing them as research objects.","textChars":74,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/zyxcfu1s","slide":9,"text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/cvmt4fi1","slide":9,"bbox":[76,184,225.6,77.6]}
+{"kind":"textbox","id":"sh/dwvadkjm","slide":9,"text":"Aspect","textPreview":"Aspect","textChars":6,"textLines":1,"bbox":[88,194,201.6,61.6]}
+{"kind":"shape","id":"sh/q94b250v","slide":9,"bbox":[301.6,184,428.64,77.6]}
+{"kind":"textbox","id":"sh/radsba1g","slide":9,"text":"3SAT","textPreview":"3SAT","textChars":4,"textLines":1,"bbox":[313.6,194,404.64,61.6]}
+{"kind":"shape","id":"sh/47mt0vi5","slide":9,"bbox":[730.24,184,473.76,77.6]}
+{"kind":"textbox","id":"sh/p8va90ja","slide":9,"text":"Hamilton Path","textPreview":"Hamilton Path","textChars":13,"textLines":1,"bbox":[742.24,194,449.76,61.6]}
+{"kind":"shape","id":"sh/94r2p432","slide":9,"bbox":[76,261.6,225.6,77.6]}
+{"kind":"textbox","id":"sh/o3ilgzmh","slide":9,"text":"Choice unit","textPreview":"Choice unit","textChars":11,"textLines":1,"bbox":[88,271.6,201.6,61.6]}
+{"kind":"shape","id":"sh/nipknulw","slide":9,"bbox":[301.6,261.6,428.64,77.6]}
+{"kind":"textbox","id":"sh/mhg3ep4b","slide":9,"text":"Truth assignment","textPreview":"Truth assignment","textChars":16,"textLines":1,"bbox":[313.6,271.6,404.64,61.6]}
+{"kind":"shape","id":"sh/1g72lk3q","slide":9,"bbox":[730.24,261.6,473.76,77.6]}
+{"kind":"textbox","id":"sh/0fylcfm5","slide":9,"text":"Next vertex","textPreview":"Next vertex","textChars":11,"textLines":1,"bbox":[742.24,271.6,449.76,61.6]}
+{"kind":"shape","id":"sh/zepkjulk","slide":9,"bbox":[76,339.2,225.6,77.6]}
+{"kind":"textbox","id":"sh/edg3ap4f","slide":9,"text":"Constraint","textPreview":"Constraint","textChars":10,"textLines":1,"bbox":[88,349.2,201.6,61.6]}
+{"kind":"shape","id":"sh/dc72hk3u","slide":9,"bbox":[301.6,339.2,428.64,77.6]}
+{"kind":"textbox","id":"sh/cby18fm9","slide":9,"text":"Every clause must be satisfied","textPreview":"Every clause must be satisfied","textChars":30,"textLines":1,"bbox":[313.6,349.2,404.64,61.6]}
+{"kind":"shape","id":"sh/4vil4fu5","slide":9,"bbox":[730.24,339.2,473.76,77.6]}
+{"kind":"textbox","id":"sh/5wb2xkbq","slide":9,"text":"Every vertex must be visited once","textPreview":"Every vertex must be visited once","textChars":33,"textLines":1,"bbox":[742.24,349.2,449.76,61.6]}
+{"kind":"shape","id":"sh/it0325cz","slide":9,"bbox":[76,416.8,225.6,77.6]}
+{"kind":"textbox","id":"sh/ju9kvatk","slide":9,"text":"Failure mode","textPreview":"Failure mode","textChars":12,"textLines":1,"bbox":[88,426.8,201.6,61.6]}
+{"kind":"shape","id":"sh/wril0fut","slide":9,"bbox":[301.6,416.8,428.64,77.6]}
+{"kind":"textbox","id":"sh/hsr2t0be","slide":9,"text":"An unsatisfied clause blocks progress","textPreview":"An unsatisfied clause blocks progress","textChars":37,"textLines":1,"bbox":[313.6,426.8,404.64,61.6]}
+{"kind":"shape","id":"sh/up03y5c3","slide":9,"bbox":[730.24,416.8,473.76,77.6]}
+{"kind":"textbox","id":"sh/vq9krat8","slide":9,"text":"A repeated vertex or missing edge blocks progress","textPreview":"A repeated vertex or missing edge blocks progress","textChars":49,"textLines":1,"bbox":[742.24,426.8,449.76,61.6]}
+{"kind":"shape","id":"sh/0n2lczud","slide":9,"bbox":[76,494.4,225.6,77.6]}
+{"kind":"textbox","id":"sh/1ovm54by","slide":9,"text":"Player experience","textPreview":"Player experience","textChars":17,"textLines":1,"bbox":[88,504.4,201.6,61.6]}
+{"kind":"shape","id":"sh/bixovyd0","slide":9,"bbox":[301.6,494.4,428.64,77.6]}
+{"kind":"textbox","id":"sh/ahon2twf","slide":9,"text":"Commit, test, revise","textPreview":"Commit, test, revise","textChars":20,"textLines":1,"bbox":[313.6,504.4,404.64,61.6]}
+{"kind":"shape","id":"sh/xkf6x8v6","slide":9,"bbox":[730.24,494.4,473.76,77.6]}
+{"kind":"textbox","id":"sh/cj6543el","slide":9,"text":"Plan, traverse, avoid reuse","textPreview":"Plan, traverse, avoid reuse","textChars":27,"textLines":1,"bbox":[742.24,504.4,449.76,61.6]}
+{"kind":"notes","id":"nt/gz2hh6","slide":9,"text":""}
+{"kind":"slide","id":"sl/pvmjzq","slide":10,"title":"The research contribution can be framed at three levels","textShapes":9}
+{"kind":"textbox","id":"sh/6hkv2lo3","slide":10,"text":"The research contribution can be framed at three levels","textPreview":"The research contribution can be framed at three levels","textChars":55,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/tkbex07e","slide":10,"text":"This keeps the talk balanced between theory, implementation, and game design.","textPreview":"This keeps the talk balanced between theory, implementation, and game design.","textChars":77,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/8j2d4v6t","slide":10,"text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/je9wrqpc","slide":10,"bbox":[72,226,330,250]}
+{"kind":"shape","id":"sh/yd0vyl8r","slide":10,"bbox":[474,226,330,250]}
+{"kind":"shape","id":"sh/lgbet07i","slide":10,"bbox":[876,226,330,250]}
+{"kind":"textbox","id":"sh/kf2d0v6x","slide":10,"text":"Computational","textPreview":"Computational","textChars":13,"textLines":1,"bbox":[104,260,260,36]}
+{"kind":"textbox","id":"sh/3adw3apg","slide":10,"text":"Clearability can be related to satisfiability or path existence.","textPreview":"Clearability can be related to satisfiability or path existence.","textChars":64,"textLines":1,"bbox":[104,334,248,86]}
+{"kind":"textbox","id":"sh/i94fapov","slide":10,"text":"Educational","textPreview":"Educational","textChars":11,"textLines":1,"bbox":[506,260,260,36]}
+{"kind":"textbox","id":"sh/grqpw765","slide":10,"text":"Abstract NP-complete problems become visible and playable.","textPreview":"Abstract NP-complete problems become visible and playable.","textChars":58,"textLines":1,"bbox":[506,334,248,86]}
+{"kind":"textbox","id":"sh/1sz6pc7q","slide":10,"text":"Design","textPreview":"Design","textChars":6,"textLines":1,"bbox":[908,260,260,36]}
+{"kind":"textbox","id":"sh/ep87uhoz","slide":10,"text":"Problem instances can inspire systematic stage-generation rules.","textPreview":"Problem instances can inspire systematic stage-generation rules.","textChars":64,"textLines":1,"bbox":[908,334,248,86]}
+{"kind":"notes","id":"nt/pvmjzq","slide":10,"text":""}
+{"kind":"slide","id":"sl/1aemll","slide":11,"title":"Evaluation should separate correctness from playability","textShapes":18}
+{"kind":"textbox","id":"sh/2hsrat4b","slide":11,"text":"Evaluation should separate correctness from playability","textPreview":"Evaluation should separate correctness from playability","textChars":55,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/pkjqlo32","slide":11,"text":"A stage can be logically faithful and still fail as a game experience.","textPreview":"A stage can be logically faithful and still fail as a game experience.","textChars":70,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/4ja9c3mh","slide":11,"text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/fuh8fe5k","slide":11,"bbox":[66,188,252.56,78]}
+{"kind":"textbox","id":"sh/ut8r694f","slide":11,"text":"Criterion","textPreview":"Criterion","textChars":9,"textLines":1,"bbox":[78,198,228.56,62]}
+{"kind":"shape","id":"sh/hgzqho3q","slide":11,"bbox":[318.56,188,413.28,78]}
+{"kind":"textbox","id":"sh/gvq98jm5","slide":11,"text":"Question to answer","textPreview":"Question to answer","textChars":18,"textLines":1,"bbox":[330.56,198,389.28,62]}
+{"kind":"shape","id":"sh/zql8ril4","slide":11,"bbox":[731.84,188,482.16,78]}
+{"kind":"textbox","id":"sh/ypcrid4j","slide":11,"text":"Possible evidence","textPreview":"Possible evidence","textChars":17,"textLines":1,"bbox":[743.84,198,458.16,62]}
+{"kind":"shape","id":"sh/ov610zat","slide":11,"bbox":[66,266,252.56,78]}
+{"kind":"textbox","id":"sh/pwf294re","slide":11,"text":"Formal correspondence","textPreview":"Formal correspondence","textChars":21,"textLines":1,"bbox":[78,276,228.56,62]}
+{"kind":"shape","id":"sh/2tojy9sn","slide":11,"bbox":[318.56,266,413.28,78]}
+{"kind":"textbox","id":"sh/nuxk7u98","slide":11,"text":"Does a solution exist iff the stage is clearable?","textPreview":"Does a solution exist iff the stage is clearable?","textChars":49,"textLines":1,"bbox":[330.56,276,389.28,62]}
+{"kind":"shape","id":"sh/0rm1wzax","slide":11,"bbox":[731.84,266,482.16,78]}
+{"kind":"textbox","id":"sh/1sv254r2","slide":11,"text":"Small proofs and generated test cases","textPreview":"Small proofs and generated test cases","textChars":37,"textLines":1,"bbox":[743.84,276,458.16,62]}
+{"kind":"shape","id":"sh/ep4jupsr","slide":11,"bbox":[66,344,252.56,78]}
+{"kind":"textbox","id":"sh/fqd03u9c","slide":11,"text":"Readability","textPreview":"Readability","textChars":11,"textLines":1,"bbox":[78,354,228.56,62]}
+{"kind":"shape","id":"sh/snm1sfal","slide":11,"bbox":[318.56,344,413.28,78]}
+{"kind":"textbox","id":"sh/dovi1kb6","slide":11,"text":"Can players infer what each route means?","textPreview":"Can players infer what each route means?","textChars":40,"textLines":1,"bbox":[330.56,354,389.28,62]}
+{"kind":"shape","id":"sh/983q9czy","slide":11,"bbox":[731.84,344,482.16,78]}
+{"kind":"textbox","id":"sh/87upg7yd","slide":11,"text":"Observation and post-play explanation","textPreview":"Observation and post-play explanation","textChars":37,"textLines":1,"bbox":[743.84,354,458.16,62]}
+{"kind":"shape","id":"sh/76l87mhs","slide":11,"bbox":[66,422,252.56,78]}
+{"kind":"textbox","id":"sh/m5c7ehg7","slide":11,"text":"Difficulty quality","textPreview":"Difficulty quality","textChars":18,"textLines":1,"bbox":[78,432,228.56,62]}
+{"kind":"shape","id":"sh/l43q5czm","slide":11,"bbox":[318.56,422,413.28,78]}
+{"kind":"textbox","id":"sh/kjapc7y1","slide":11,"text":"Is the challenge strategic rather than obscure?","textPreview":"Is the challenge strategic rather than obscure?","textChars":47,"textLines":1,"bbox":[330.56,432,389.28,62]}
+{"kind":"shape","id":"sh/zi1832hg","slide":11,"bbox":[731.84,422,482.16,78]}
+{"kind":"textbox","id":"sh/yhs7axgb","slide":11,"text":"Failure logs and retry behavior","textPreview":"Failure logs and retry behavior","textChars":31,"textLines":1,"bbox":[743.84,432,458.16,62]}
+{"kind":"shape","id":"sh/50nqhwzq","slide":11,"bbox":[66,500,252.56,78]}
+{"kind":"textbox","id":"sh/4ze9oryl","slide":11,"text":"Scalability","textPreview":"Scalability","textChars":11,"textLines":1,"bbox":[78,510,228.56,62]}
+{"kind":"shape","id":"sh/2l8nitw3","slide":11,"bbox":[318.56,500,413.28,78]}
+{"kind":"textbox","id":"sh/nmhobyx8","slide":11,"text":"What instance sizes remain playable?","textPreview":"What instance sizes remain playable?","textChars":36,"textLines":1,"bbox":[330.56,510,389.28,62]}
+{"kind":"shape","id":"sh/onq5k3et","slide":11,"bbox":[731.84,500,482.16,78]}
+{"kind":"textbox","id":"sh/poz6d8fe","slide":11,"text":"Stage size, object count, completion time","textPreview":"Stage size, object count, completion time","textChars":41,"textLines":1,"bbox":[743.84,510,458.16,62]}
+{"kind":"notes","id":"nt/1aemll","slide":11,"text":""}
+{"kind":"slide","id":"sl/2m5ljs","slide":12,"title":"Next: turn examples into a repeatable method","textShapes":15}
+{"kind":"textbox","id":"sh/falwfy1g","slide":12,"text":"Next: turn examples into a repeatable method","textPreview":"Next: turn examples into a repeatable method","textChars":44,"textLines":1,"bbox":[64,42,1040,104]}
+{"kind":"textbox","id":"sh/gbedoji1","slide":12,"text":"The prototypes are ready enough to support a research plan.","textPreview":"The prototypes are ready enough to support a research plan.","textChars":59,"textLines":1,"bbox":[66,150,1020,44]}
+{"kind":"textbox","id":"sh/1cnehojm","slide":12,"text":"12","textPreview":"12","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"shape","id":"sh/2dwvqt07","slide":12,"bbox":[240,354,140,0]}
+{"kind":"textbox","id":"sh/3e5wjy1s","slide":12,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[124,326,56,56]}
+{"kind":"textbox","id":"sh/ofeds3id","slide":12,"text":"Define","textPreview":"Define","textChars":6,"textLines":1,"bbox":[86,418,132,32]}
+{"kind":"textbox","id":"sh/pgnel8jy","slide":12,"text":"Formalize the mapping from problem instances to stage components.","textPreview":"Formalize the mapping from problem instances to stage components.","textChars":65,"textLines":1,"bbox":[38,464,228,92]}
+{"kind":"shape","id":"sh/qhwvud03","slide":12,"bbox":[530,354,140,0]}
+{"kind":"textbox","id":"sh/bi5wni1o","slide":12,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[414,326,56,56]}
+{"kind":"textbox","id":"sh/j6twjyho","slide":12,"text":"Generate","textPreview":"Generate","textChars":8,"textLines":1,"bbox":[376,418,132,32]}
+{"kind":"textbox","id":"sh/i5kfqd03","slide":12,"text":"Build tools that produce candidate stages from formulas or graphs.","textPreview":"Build tools that produce candidate stages from formulas or graphs.","textChars":66,"textLines":1,"bbox":[328,464,228,92]}
+{"kind":"shape","id":"sh/58bel8zu","slide":12,"bbox":[820,354,140,0]}
+{"kind":"textbox","id":"sh/472xs3i9","slide":12,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[704,326,56,56]}
+{"kind":"textbox","id":"sh/vitwfyhc","slide":12,"text":"Validate","textPreview":"Validate","textChars":8,"textLines":1,"bbox":[666,418,132,32]}
+{"kind":"textbox","id":"sh/ah0fmt07","slide":12,"text":"Check correspondence between solution existence and clearability.","textPreview":"Check correspondence between solution existence and clearability.","textChars":65,"textLines":1,"bbox":[618,464,228,92]}
+{"kind":"textbox","id":"sh/x4beh8zi","slide":12,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[994,326,56,56]}
+{"kind":"textbox","id":"sh/w32xo3ix","slide":12,"text":"Test","textPreview":"Test","textChars":4,"textLines":1,"bbox":[956,418,132,32]}
+{"kind":"textbox","id":"sh/fedwrihw","slide":12,"text":"Study whether players understand and enjoy the resulting challenges.","textPreview":"Study whether players understand and enjoy the resulting challenges.","textChars":68,"textLines":1,"bbox":[908,464,228,92]}
+{"kind":"notes","id":"nt/2m5ljs","slide":12,"text":""}
+{"kind":"slide","id":"sl/wxqhet","slide":13,"title":"Discussion","textShapes":8}
+{"kind":"textbox","id":"sh/7ipwvyxk","slide":13,"text":"Discussion","textPreview":"Discussion","textChars":10,"textLines":1,"bbox":[64,72,760,76]}
+{"kind":"textbox","id":"sh/8jyd43y5","slide":13,"text":"Key takeaway","textPreview":"Key takeaway","textChars":12,"textLines":1,"bbox":[66,200,220,34]}
+{"kind":"textbox","id":"sh/947ex8fq","slide":13,"text":"The prototypes suggest that NP-complete problems can become playable constraint systems, not just metaphors for difficulty.","textPreview":"The prototypes suggest that NP-complete problems can become playable constraint systems, not just metaphors for difficulty.","textChars":123,"textLines":1,"bbox":[66,246,980,92]}
+{"kind":"textbox","id":"sh/u50v6dgv","slide":13,"text":"Questions to invite","textPreview":"Questions to invite","textChars":19,"textLines":1,"bbox":[66,426,260,34]}
+{"kind":"shape","id":"sh/v69wzyxg","slide":13,"bbox":[68,490,10,10]}
+{"kind":"textbox","id":"sh/w7id83y1","slide":13,"text":"What level of formal proof is needed for a game-based reduction?","textPreview":"What level of formal proof is needed for a game-based reduction?","textChars":64,"textLines":1,"bbox":[92,480,956,50]}
+{"kind":"shape","id":"sh/h8re18fm","slide":13,"bbox":[68,540,10,10]}
+{"kind":"textbox","id":"sh/a9wvu9gr","slide":13,"text":"How should unsatisfiable or impossible instances be presented to players?","textPreview":"How should unsatisfiable or impossible instances be presented to players?","textChars":73,"textLines":1,"bbox":[92,530,956,50]}
+{"kind":"shape","id":"sh/ba5cnexc","slide":13,"bbox":[68,590,10,10]}
+{"kind":"textbox","id":"sh/rmd43u9g","slide":13,"text":"Where is the boundary between mathematical structure and game-design fun?","textPreview":"Where is the boundary between mathematical structure and game-design fun?","textChars":73,"textLines":1,"bbox":[92,580,956,50]}
+{"kind":"textbox","id":"sh/ql4napsv","slide":13,"text":"13","textPreview":"13","textChars":2,"textLines":1,"bbox":[1186,652,48,28]}
+{"kind":"notes","id":"nt/wxqhet","slide":13,"text":""}
