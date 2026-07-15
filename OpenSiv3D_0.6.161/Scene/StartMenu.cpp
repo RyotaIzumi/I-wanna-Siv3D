@@ -2,7 +2,7 @@
 
 namespace Iwanna {
 	StartMenu::StartMenu(const InitData& data) : IScene(data) {
-
+		selectedChapter = getData().game.getLastSelectedChapter();
 	}
 
 	void StartMenu::update() {

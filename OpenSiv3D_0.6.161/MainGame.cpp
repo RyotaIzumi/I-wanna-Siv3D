@@ -5,8 +5,13 @@ namespace Iwanna {
 	}
 
 	void MainGame::startGame(int32 chapter) {
-		avoidanceManager.setUpObjects(chapter);
-		playBgm(chapter);
+		lastSelectedChapter = Clamp(chapter, 1, 6);
+		avoidanceManager.setUpObjects(lastSelectedChapter);
+		playBgm(lastSelectedChapter);
+	}
+
+	int32 MainGame::getLastSelectedChapter() const {
+		return lastSelectedChapter;
 	}
 
 	void MainGame::updateGame() {
