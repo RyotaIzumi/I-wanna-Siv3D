@@ -50,6 +50,12 @@ namespace Iwanna {
 		ChapterSettings settings;
 
 		switch (chapter) {
+		case 1:
+			settings.playerPos = Vec2{ 400,300 };
+			settings.mikuPos = Vec2{ 1800,352 };
+			settings.backgroundColor = ColorF(0.0, 1.0);
+			settings.isInfiniteJumpMode = true;
+			break;
 		case 2:
 			settings.playerPos = Vec2{ 400,300 };
 
@@ -69,7 +75,6 @@ namespace Iwanna {
 			settings.backgroundColor = ColorF(0.5, 1.0);
 			settings.isInfiniteJumpMode = true;
 			break;
-		case 1:
 		case 4:
 		case 5:
 			addPeripheryBlockSettings(settings.blocks);
@@ -332,6 +337,8 @@ namespace Iwanna {
 			}
 
 			drawChapter2SniperSight();
+			drawChapter1OpeningFade();
+			drawChapter1SniperSights();
 		}
 
 		const double fadeAlpha = getChapterTransitionFadeAlpha();

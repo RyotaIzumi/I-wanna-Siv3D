@@ -82,7 +82,7 @@ namespace Iwanna {
 	void Cherry::draw() const {
 		ColorF drawColor = color;
 		drawColor.a *= alpha;
-		TextureAsset(textureName).scaled(scale).drawAt(pos.x,pos.y-1, drawColor);
+		TextureAsset(textureName).scaled(scale).rotated(textureAngle).drawAt(pos.x,pos.y-1, drawColor);
 		//hitBox->draw(Palette::Blue);//判定の可視化
 	}
 

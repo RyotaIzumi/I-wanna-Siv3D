@@ -122,6 +122,8 @@ namespace Iwanna {
 		double getScreenShakeOffset() const;
 		double getChapterTransitionFadeAlpha() const;
 		void requestChapterTransitionFade(int32 durationStep = 40);
+		void drawChapter1OpeningFade() const;
+		void drawChapter1SniperSights() const;
 		void drawChapter2SatBarrageMasks() const;
 		void drawChapter2SniperSight() const;
 	public:

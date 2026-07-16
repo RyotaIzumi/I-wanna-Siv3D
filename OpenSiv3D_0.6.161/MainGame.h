@@ -11,12 +11,12 @@ namespace Iwanna {
 		Audio audio;
 
 		AvoidanceManager avoidanceManager;
-		int32 lastSelectedChapter = 2;
+		int32 lastSelectedChapter = 1;
 
 	public:
 		MainGame();
 
-		void startGame(int32 chapter = 2);
+		void startGame(int32 chapter = 1);
 		int32 getLastSelectedChapter() const;
 		void updateGame();
 		void debugGame();
