@@ -77,7 +77,7 @@ namespace {
 
 	struct Chapter1GiantGreenCherrySettings {
 		String textureName = U"sprCherryAllWhite";
-		ColorF color = ColorF{ 0.0, 0.85, 0.2, 1.0 };
+		ColorF color = ColorF{ 0.0, 0.85, 0.2, 0.52 };
 		Vec2 center = Vec2{ Global::windowWidth / 2.0, Global::windowHeight / 2.0 };
 		double scale = 31.0;
 		double depth = Iwanna::DrawDepth::Block - 1.0;
@@ -88,13 +88,20 @@ namespace {
 
 	struct Chapter1GreenRadarLineSettings {
 		String textureName = U"sprCherryAllWhite";
-		ColorF color = ColorF{ 1.0, 1.0, 1.0, 1.0 };
+		ColorF color = ColorF{ 0.0, 0.65, 0.18, 0.9 };
+		ColorF centerColor = ColorF{ 1.0, 1.0, 1.0, 1.0 };
 		Vec2 center = Vec2{ Global::windowWidth / 2.0, Global::windowHeight / 2.0 };
 		double radius = 290.0;
 		Array<double> innerRadiusRates = { 0.38, 0.68 };
 		double spacing = 4.5;
 		double scale = 0.2;
+		double centerScale = 0.75;
+		int32 crossAppearStep = 318;
+		int32 firstCircleAppearStep = 340;
+		int32 remainingCircleAppearStep = 362;
+		int32 appearDurationStep = 15;
 		double depth = Iwanna::DrawDepth::Block - 0.9;
+		double centerDepth = Iwanna::DrawDepth::Block - 0.78;
 		bool canPlayerKill = false;
 	};
 
@@ -108,11 +115,11 @@ namespace {
 		int32 startStep = 380;
 		int32 oneRoundEndStep = 500;
 		int32 trailEndStep = 839;
-		int32 trailIntervalStep = 3;
+		int32 trailIntervalStep = 1;
 		int32 trailFadeOutStep = 45;
 		double radius = 290.0;
 		double sweepSpacing = 4.5;
-		double trailSpacing = 8.0;
+		double trailSpacing = 4.0;
 		double sweepScale = 0.24;
 		double trailScale = 0.2;
 		double sweepDepth = Iwanna::DrawDepth::Block - 0.82;
@@ -171,7 +178,7 @@ namespace {
 		double activeAlpha = 1.0;
 		int32 transitionStep = 6;
 		double deleteMargin = 160.0;
-		int32 fadeOutStep = 20;
+		int32 fadeOutStep = 50;
 		double bounceMinSpeed = 4.0;
 		double bounceMaxSpeed = 9.0;
 		double bounceGravity = 0.32;
@@ -535,6 +542,29 @@ namespace {
 			if (settings.trailFadeOutStep <= age) {
 				self.isDelete = true;
 			}
+		};
+	}
+
+	Iwanna::Cherry::Behavior makeChapter1GreenRadarLineAppearanceBehavior(
+		int32 appearStep,
+		double targetScale,
+		double targetAlpha) {
+
+		return [appearStep, targetScale, targetAlpha](Iwanna::Cherry& self, int32 age) {
+			const auto& settings = chapter1GreenRadarLineSettings;
+			self.canPlayerKill = false;
+
+			if (age < appearStep) {
+				self.setScale(0.0);
+				self.alpha = 0.0;
+				return;
+			}
+
+			const int32 appearAge = age - appearStep;
+			const double t = appearAge / static_cast<double>(Max(settings.appearDurationStep, 1));
+			const double rate = Iwanna::applyEasing(Iwanna::EasingMoveType::EaseOut, t);
+			self.setScale(targetScale * rate);
+			self.alpha = targetAlpha * rate;
 		};
 	}
 
@@ -1116,7 +1146,8 @@ namespace {
 
 	void createChapter1GreenRadarCircle(
 		Iwanna::AvoidanceManager& manager,
-		double radius) {
+		double radius,
+		int32 appearStep) {
 
 		const auto& settings = chapter1GreenRadarLineSettings;
 		const double circumference = 2.0 * Math::Pi * radius;
@@ -1128,11 +1159,16 @@ namespace {
 			manager.createCherry(pos, Iwanna::Cherry::Settings{
 				.textureName = settings.textureName,
 				.color = settings.color,
+				.behavior = makeChapter1GreenRadarLineAppearanceBehavior(
+					appearStep,
+					settings.scale,
+					settings.color.a),
 				.canDeleteOutOfScreen = false,
 				.canPlayerKill = settings.canPlayerKill,
 				.depth = settings.depth,
-				.scale = settings.scale,
-				.alpha = settings.color.a,
+				.scale = 0.0,
+				.alpha = 0.0,
+				.manualCanPlayerKillControl = true,
 			});
 		}
 	}
@@ -1140,7 +1176,8 @@ namespace {
 	void createChapter1GreenRadarLine(
 		Iwanna::AvoidanceManager& manager,
 		const Vec2& start,
-		const Vec2& end) {
+		const Vec2& end,
+		int32 appearStep) {
 
 		const auto& settings = chapter1GreenRadarLineSettings;
 		const double length = start.distanceFrom(end);
@@ -1152,30 +1189,55 @@ namespace {
 			manager.createCherry(pos, Iwanna::Cherry::Settings{
 				.textureName = settings.textureName,
 				.color = settings.color,
+				.behavior = makeChapter1GreenRadarLineAppearanceBehavior(
+					appearStep,
+					settings.scale,
+					settings.color.a),
 				.canDeleteOutOfScreen = false,
 				.canPlayerKill = settings.canPlayerKill,
 				.depth = settings.depth,
-				.scale = settings.scale,
-				.alpha = settings.color.a,
+				.scale = 0.0,
+				.alpha = 0.0,
+				.manualCanPlayerKillControl = true,
 			});
 		}
 	}
 
 	void createChapter1GreenRadarLines(Iwanna::AvoidanceManager& manager) {
 		const auto& settings = chapter1GreenRadarLineSettings;
-		createChapter1GreenRadarCircle(manager, settings.radius);
-		for (const double radiusRate : settings.innerRadiusRates) {
-			createChapter1GreenRadarCircle(manager, settings.radius * radiusRate);
+		for (int32 i = 0; i < static_cast<int32>(settings.innerRadiusRates.size()); ++i) {
+			const int32 appearStep = (i == 0)
+				? settings.firstCircleAppearStep
+				: settings.remainingCircleAppearStep;
+			createChapter1GreenRadarCircle(manager, settings.radius * settings.innerRadiusRates[i], appearStep);
 		}
+		createChapter1GreenRadarCircle(manager, settings.radius, settings.remainingCircleAppearStep);
 
 		createChapter1GreenRadarLine(
 			manager,
 			settings.center + Vec2{ -settings.radius, 0.0 },
-			settings.center + Vec2{ settings.radius, 0.0 });
+			settings.center + Vec2{ settings.radius, 0.0 },
+			settings.crossAppearStep);
 		createChapter1GreenRadarLine(
 			manager,
 			settings.center + Vec2{ 0.0, -settings.radius },
-			settings.center + Vec2{ 0.0, settings.radius });
+			settings.center + Vec2{ 0.0, settings.radius },
+			settings.crossAppearStep);
+
+		manager.createCherry(settings.center, Iwanna::Cherry::Settings{
+			.textureName = settings.textureName,
+			.color = settings.centerColor,
+			.behavior = makeChapter1GreenRadarLineAppearanceBehavior(
+				settings.crossAppearStep,
+				settings.centerScale,
+				settings.centerColor.a),
+			.canDeleteOutOfScreen = false,
+			.canPlayerKill = settings.canPlayerKill,
+			.depth = settings.centerDepth,
+			.scale = 0.0,
+			.alpha = 0.0,
+			.manualCanPlayerKillControl = true,
+		});
 	}
 
 	void createChapter1GreenRadarSweepLine(Iwanna::AvoidanceManager& manager) {
