@@ -286,8 +286,10 @@ namespace Iwanna {
 		ClearPrint();
 		Print << U" Avoidance Step : " << step;
 		Print << U" Chapter : " << activeChapter;
-		/*
+		
 		Print << U" Cherries Num : " << gameObjects.cherries.size();
+
+		/*
 		Print << U" Player Pos : " << player->pos;
 		Print << U" Player Muteki : " << player->getIsMuteki();
 		Print << U" Bullets Num : " << gameObjects.bullets.size();
@@ -325,6 +327,8 @@ namespace Iwanna {
 			}
 
 			drawChapter2SatBarrageMasks();
+			drawChapter1OpeningFade();
+			drawChapter1SniperSights();
 
 			for (auto* obj : sortedDrawList) {
 				if (chapter2SatBarrageFrontDepth <= obj->getDepth()) {
@@ -337,8 +341,6 @@ namespace Iwanna {
 			}
 
 			drawChapter2SniperSight();
-			drawChapter1OpeningFade();
-			drawChapter1SniperSights();
 		}
 
 		const double fadeAlpha = getChapterTransitionFadeAlpha();
