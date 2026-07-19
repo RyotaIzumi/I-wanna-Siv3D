@@ -156,6 +156,9 @@
     <ClCompile Include="MainGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SaveData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Scene\Loading.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -916,6 +919,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MainGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sprite\SpriteAsset.h">

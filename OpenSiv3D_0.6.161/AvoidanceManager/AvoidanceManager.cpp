@@ -409,6 +409,10 @@ namespace Iwanna {
 		step = newStep;
 	}
 
+	int32 AvoidanceManager::getActiveChapter() const {
+		return activeChapter;
+	}
+
 	std::shared_ptr<Player> AvoidanceManager::getPlayer() {
 		return gameObjects.player;
 	}

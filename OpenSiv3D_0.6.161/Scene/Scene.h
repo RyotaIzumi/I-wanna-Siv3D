@@ -41,6 +41,15 @@ namespace Iwanna {
 	class StartMenu : public App::Scene {
 	private:
 		int32 selectedChapter = 1;
+		int32 cameraPage = 0;
+		double cameraX = 0.0;
+		double cameraStartX = 0.0;
+		double cameraTargetX = 0.0;
+		double cameraMoveTimerSec = 0.0;
+		bool isCameraMoving = false;
+
+		void updateCameraMove();
+		void requestCameraMove(int32 direction);
 	public:
 		StartMenu(const InitData& data);
 
