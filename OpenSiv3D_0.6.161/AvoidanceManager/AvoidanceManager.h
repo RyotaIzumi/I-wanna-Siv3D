@@ -122,6 +122,9 @@ namespace Iwanna {
 		double getScreenShakeOffset() const;
 		double getChapterTransitionFadeAlpha() const;
 		void requestChapterTransitionFade(int32 durationStep = 40);
+		void drawChapter1OpeningFade() const;
+		void drawChapter1EndingFade() const;
+		void drawChapter1SniperSights() const;
 		void drawChapter2SatBarrageMasks() const;
 		void drawChapter2SniperSight() const;
 	public:
@@ -164,6 +167,9 @@ namespace Iwanna {
 		void createChapter2CherryRods(const Chapter2CherryRodSettings& settings = Chapter2CherryRodSettings{});
 		void requestChapter2CherryRodMove(int32 staggerColumnCount, int32 intervalStep);
 		void startChapter2CherryRodWave(const Chapter2CherryRodWaveSettings& settings = Chapter2CherryRodWaveSettings{});
+		void requestChapter1RedSightRadialBarrageState(bool isAttackState);
+		void requestChapter1BlueSightRadialBarrageState(bool isAttackState);
+		void requestChapter1GreenSightRadialBarrageState(bool isAttackState);
 		void requestChapter2MikuHandBarrageState(bool isAttackState);
 		void createCherrySpread(Vec2 pos, int32 num, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
 	};

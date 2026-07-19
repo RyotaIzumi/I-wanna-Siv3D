@@ -50,6 +50,12 @@ namespace Iwanna {
 		ChapterSettings settings;
 
 		switch (chapter) {
+		case 1:
+			settings.playerPos = Vec2{ 400,300 };
+			settings.mikuPos = Vec2{ 1800,352 };
+			settings.backgroundColor = ColorF(0.0, 1.0);
+			settings.isInfiniteJumpMode = true;
+			break;
 		case 2:
 			settings.playerPos = Vec2{ 400,300 };
 
@@ -69,7 +75,6 @@ namespace Iwanna {
 			settings.backgroundColor = ColorF(0.5, 1.0);
 			settings.isInfiniteJumpMode = true;
 			break;
-		case 1:
 		case 4:
 		case 5:
 			addPeripheryBlockSettings(settings.blocks);
@@ -281,8 +286,10 @@ namespace Iwanna {
 		ClearPrint();
 		Print << U" Avoidance Step : " << step;
 		Print << U" Chapter : " << activeChapter;
-		/*
+		
 		Print << U" Cherries Num : " << gameObjects.cherries.size();
+
+		/*
 		Print << U" Player Pos : " << player->pos;
 		Print << U" Player Muteki : " << player->getIsMuteki();
 		Print << U" Bullets Num : " << gameObjects.bullets.size();
@@ -320,6 +327,8 @@ namespace Iwanna {
 			}
 
 			drawChapter2SatBarrageMasks();
+			drawChapter1OpeningFade();
+			drawChapter1SniperSights();
 
 			for (auto* obj : sortedDrawList) {
 				if (chapter2SatBarrageFrontDepth <= obj->getDepth()) {
@@ -332,6 +341,7 @@ namespace Iwanna {
 			}
 
 			drawChapter2SniperSight();
+			drawChapter1EndingFade();
 		}
 
 		const double fadeAlpha = getChapterTransitionFadeAlpha();
@@ -482,7 +492,7 @@ namespace Iwanna {
 		for (const auto& blood : gameObjects.bloods) sortedDrawList << blood.get();
 		for (const auto& bullet : gameObjects.bullets) sortedDrawList << bullet.get();
 
-		sortedDrawList.sort_by([](const GameObject* a, const GameObject* b) {
+		std::stable_sort(sortedDrawList.begin(), sortedDrawList.end(), [](const GameObject* a, const GameObject* b) {
 			return a->getDepth() < b->getDepth();
 		});
 		drawListDirty = false;

@@ -40,7 +40,7 @@ namespace Iwanna {
 
 	class StartMenu : public App::Scene {
 	private:
-		int32 selectedChapter = 2;
+		int32 selectedChapter = 1;
 	public:
 		StartMenu(const InitData& data);
 

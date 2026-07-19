@@ -12,7 +12,7 @@ namespace Iwanna {
 	void Miku::update() {
 	}
 	void Miku::draw() const {
-		//TextureAsset(U"sprMiku").drawAt(pos.x - 7,pos.y - 4);
+		TextureAsset(U"sprMiku").drawAt(pos.x - 7,pos.y - 4);
 		//hitBox->draw(ColorF(Palette::White,0.7));
 	}
 	void Miku::onCollision(GameObject& other) {
