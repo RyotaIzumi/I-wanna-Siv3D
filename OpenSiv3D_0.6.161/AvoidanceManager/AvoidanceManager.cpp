@@ -341,6 +341,7 @@ namespace Iwanna {
 			}
 
 			drawChapter2SniperSight();
+			drawChapter1EndingFade();
 		}
 
 		const double fadeAlpha = getChapterTransitionFadeAlpha();
@@ -491,7 +492,7 @@ namespace Iwanna {
 		for (const auto& blood : gameObjects.bloods) sortedDrawList << blood.get();
 		for (const auto& bullet : gameObjects.bullets) sortedDrawList << bullet.get();
 
-		sortedDrawList.sort_by([](const GameObject* a, const GameObject* b) {
+		std::stable_sort(sortedDrawList.begin(), sortedDrawList.end(), [](const GameObject* a, const GameObject* b) {
 			return a->getDepth() < b->getDepth();
 		});
 		drawListDirty = false;
