@@ -1,109 +1,159 @@
 ﻿#include "AvoidanceManager.h"
 
 namespace {
-	struct Chapter4OpeningAppleSettings {
-		String textureName = U"sprCherryWhite";
-		ColorF color = Palette::White;
-		int32 moveTime = 8;
-		int32 spreadMoveTime = 14;
-		int32 fadeInTime = 8;
-		Array<int32> spreadStartSteps = { 15, 30, 35 };
-		int32 targetPointCount = 24;
-		double spreadRadius = 112.0;
-		int32 flashStep = 50;
-		int32 symbolClearFlashStep = 163;
-		int32 flashDurationStep = 10;
-		int32 ringCount = 12;
-		int32 ringShrinkStep = 35;
-		double ringStartRadius = 360.0;
-		double ringTargetRadius = 100.0;
-		double ringRotationDegrees = 180.0;
-		double ringScale = 2;
-		int32 cameraZoomStep = 45;
-		double cameraTargetScale = 2.5;
-		int32 redLineStep = 100;
-		int32 redLineFadeOutStep = 18;
-		double redLineSpacing = 16.0;
-		double redLineScale = 1.0;
-		double secondRedLineLength = 180.0;
-		double secondRedLineSpacing = 20.0;
-		double secondRedLineScale = 1.0;
-		double secondRedLineOffscreenMargin = 40.0;
-		double secondRedLineLeftX = 270.0;
-		double secondRedLineRightX = 560.0;
-		double secondRedLineTopY = 138.0;
-		double secondRedLineBottomY = 528.0;
-		double secondRedLineBlowMinSpeed = 5.5;
-		double secondRedLineBlowMaxSpeed = 7.0;
-		double secondRedLineBlowGravity = 0.25;
-		double secondRedLineBlowMinRotationSpeed = 0.08;
-		double secondRedLineBlowMaxRotationSpeed = 0.18;
-		int32 radialDecorRingCount = 3;
-		int32 radialDecorCherryCount = 36;
-		double radialDecorBaseSpeed = 5.6;
-		double radialDecorSpeedStep = 2.2;
-		double radialDecorScale = 1.0;
-		double radialDecorAlpha = 0.42;
-		double radialDecorDepth = Iwanna::DrawDepth::Block - 0.5;
-		int32 sightBarrageStep = 235;
-		int32 sightFadeInStep = 30;
-		int32 sightOuterCount = 36;
-		int32 sightFocusStep = 360;
-		int32 sightReverseStopStep = 404;
-		int32 sightCrossAttackStep = 405;
-		int32 sightCrossReturnFadeStep = 12;
-		int32 sightShrinkStep = sightFocusStep - sightBarrageStep;
-		double sightStartRadius = 1220.0;
-		double sightRadius = 72.0;
-		double sightCrossExtend = 12.0;
-		double sightCrossSpacing = 2.0;
-		double sightOuterScale = 0.5;
-		double sightCrossScale = 0.2;
-		double sightCenterScale = 0.55;
-		double sightCrossAlpha = 0.65;
-		double sightCandidateMinY = 208.0;
-		double sightCandidateMaxX = 500.0;
-		double sightRotationSpeed = 4.0;
-		double sightMaskDepth = Iwanna::DrawDepth::Cherry + 3.0;
-		double sightMaskExtraRadius = 0.0;
-		double sightDepth = Iwanna::DrawDepth::Cherry + 4.0;
-		int32 secondAppleFlowStep = 118;
-		double secondAppleVerticalSpacing = 128.0;
-		int32 symbolExpansionStep = 10;
-		int32 symbolFadeOutStep = 15;
-		int32 symbolCircleCount = 36;
-		double symbolRadius = 56.0;
-		double symbolLineLength = 132.0;
-		double symbolLineSpacing = 12.0;
-		double symbolScale = 0.75;
-		int32 largeAppleMoveEndStep = 205;
-		double largeAppleMoveDistance = 250.0;
-		double largeAppleAlpha = 0.5;
-		double largeAppleScale = 5.0;
-		int32 largeAppleActivateStep = 210;
-		int32 largeAppleFadeInStep = 10;
-		int32 largeAppleDashStep = 225;
-		int32 largeAppleDashMoveStep = 10;
-		int32 largeAppleTrailIntervalStep = 1;
-		int32 largeAppleTrailFadeOutStep = 10;
-		double largeAppleTrailAlpha = 0.32;
-		double largeAppleDashShakeAmplitude = 6.0;
-		int32 largeAppleDashShakeDurationStep = 18;
-		double largeAppleDashShakeFrequency = 0.85;
-		int32 largeAppleFallStep = 240;
-		double largeAppleFallMinHorizontalSpeed = 0.6;
-		double largeAppleFallMaxHorizontalSpeed = 1.8;
-		double largeAppleFallMinDownSpeed = 0.4;
-		double largeAppleFallMaxDownSpeed = 1.2;
-		double largeAppleFallGravity = 0.45;
-		double largeAppleFallMinRotationSpeed = 0.08;
-		double largeAppleFallMaxRotationSpeed = 0.18;
-		ColorF largeAppleFallColor = Palette::Gray;
-		double scale = 2.0;
-		double depth = Iwanna::DrawDepth::Player + 11.0;
+	struct Chapter4Settings {
+		struct Common {
+			// 白りんご系で共通して使う見た目と基準レイヤー。
+			String whiteAppleTexture = U"sprCherryWhite";
+			ColorF whiteAppleColor = Palette::White;
+			double whiteAppleScale = 2.0;
+			double appleDepth = Iwanna::DrawDepth::Player + 11.0;
+		} common;
+
+		struct Timeline {
+			// Chapter4開始stepからの相対step。演出の発火タイミングをまとめる。
+			int32 firstFlashStep = 50;
+			int32 redLineStep = 100;
+			int32 secondAppleFlowStep = 118;
+			int32 symbolClearFlashStep = 163;
+		} timeline;
+
+		struct OpeningApples {
+			// 開幕と2回目に生成する3つの白りんごの移動。
+			int32 moveTime = 8;
+			int32 spreadMoveTime = 14;
+			int32 fadeInTime = 8;
+			Array<int32> spreadStartSteps = { 15, 30, 35 };
+			int32 targetPointCount = 24;
+			double firstSpreadRadius = 112.0;
+			double secondVerticalSpacing = 128.0;
+		} opening;
+
+		struct Flash {
+			// 画面全体の白フラッシュ。
+			int32 durationStep = 8;
+		} flash;
+
+		struct WhiteRing {
+			// 1回目フラッシュ後の白りんごリング。
+			int32 count = 12;
+			int32 shrinkStep = 35;
+			double startRadius = 360.0;
+			double targetRadius = 100.0;
+			double rotationDegrees = 180.0;
+			double scale = 2.0;
+		} ring;
+
+		struct Camera {
+			// 1回目リング演出と照準演出で使うカメラ倍率。
+			int32 openingZoomStep = 45;
+			double targetScale = 2.5;
+		} camera;
+
+		struct RedLine {
+			// step1920付近で中心から伸びる赤りんご線。
+			int32 fadeOutStep = 18;
+			double spacing = 16.0;
+			double scale = 1.0;
+		} redLine;
+
+		struct SecondRedLine {
+			// 2回目フラッシュ後、画面外から入ってくる4本の赤りんご線。
+			double spacing = 20.0;
+			double scale = 1.0;
+			double offscreenMargin = 40.0;
+			double leftX = 272.0;
+			double rightX = 528.0;
+			double topY = 138.0;
+			double bottomY = 528.0;
+			double blowMinSpeed = 5.5;
+			double blowMaxSpeed = 7.0;
+			double blowGravity = 0.25;
+			double blowMinRotationSpeed = 0.08;
+			double blowMaxRotationSpeed = 0.18;
+		} secondRedLine;
+
+		struct RadialDecor {
+			// 判定なしのカラフル放射状りんご。
+			int32 ringCount = 3;
+			int32 cherryCount = 36;
+			double baseSpeed = 5.6;
+			double speedStep = 2.2;
+			double scale = 1.0;
+			double alpha = 0.42;
+			double depth = Iwanna::DrawDepth::Block - 0.5;
+		} radialDecor;
+
+		struct Sight {
+			// 照準型弾幕。stepはChapter4開始stepからの相対値。
+			int32 barrageStep = 235;
+			int32 fadeInStep = 30;
+			int32 outerCount = 36;
+			int32 focusStep = 365;
+			int32 reverseStopStep = 409;
+			int32 crossAttackStep = 410;
+			int32 crossReturnFadeStep = 12;
+			int32 shrinkStep = focusStep - barrageStep;
+			double startRadius = 1220.0;
+			double radius = 72.0;
+			double crossExtend = 12.0;
+			double crossSpacing = 2.0;
+			double outerScale = 0.5;
+			double crossScale = 0.2;
+			double centerScale = 0.55;
+			double crossAlpha = 0.65;
+			double candidateMinY = 208.0;
+			double candidateMaxX = 500.0;
+			double rotationSpeed = 4.0;
+			double reverseRotationSpeed = Random<double>(8.0, 12.0);
+			int32 maskFadeInStep = 12;
+			double maskInnerRadius = 74.0;
+			int32 innerMaskFadeInStep = 20;
+			int32 cameraZoomOutStep = 85;
+			double cameraZoomOutTargetScale = 0.5;
+			double depth = Iwanna::DrawDepth::Cherry + 4.0;
+		} sight;
+
+		struct Symbol {
+			// 2回目の3りんご移動時に出す〇/×。
+			int32 expansionStep = 10;
+			int32 fadeOutStep = 15;
+			int32 circleCount = 36;
+			double radius = 56.0;
+			double lineLength = 132.0;
+			double lineSpacing = 12.0;
+			double scale = 0.75;
+		} symbol;
+
+		struct LargeApple {
+			// 2回目フラッシュ後の巨大白りんご。
+			int32 moveEndStep = 205;
+			double moveDistance = 250.0;
+			double alpha = 0.5;
+			double scale = 5.0;
+			int32 activateStep = 210;
+			int32 fadeInStep = 10;
+			int32 dashStep = 225;
+			int32 dashMoveStep = 10;
+			int32 trailIntervalStep = 1;
+			int32 trailFadeOutStep = 10;
+			double trailAlpha = 0.32;
+			double dashShakeAmplitude = 6.0;
+			int32 dashShakeDurationStep = 18;
+			double dashShakeFrequency = 0.85;
+			int32 fallStep = 240;
+			double fallMinHorizontalSpeed = 0.6;
+			double fallMaxHorizontalSpeed = 1.8;
+			double fallMinDownSpeed = 0.4;
+			double fallMaxDownSpeed = 1.2;
+			double fallGravity = 0.45;
+			double fallMinRotationSpeed = 0.08;
+			double fallMaxRotationSpeed = 0.18;
+			ColorF fallColor = Palette::Gray;
+		} largeApple;
 	};
 
-	const Chapter4OpeningAppleSettings chapter4OpeningAppleSettings{};
+	const Chapter4Settings chapter4Settings{};
 	Array<std::shared_ptr<Iwanna::Cherry>> chapter4OpeningApples;
 	Array<std::shared_ptr<Iwanna::Cherry>> chapter4OpeningWhiteRingApples;
 	Array<std::shared_ptr<Iwanna::Cherry>> chapter4OpeningSymbolApples;
@@ -117,6 +167,7 @@ namespace {
 	int32 chapter4SightCameraStartStep = -1;
 	Vec2 chapter4SightCameraTargetCenter{ Global::windowWidth / 2.0, Global::windowHeight / 2.0 };
 	bool chapter4SightOuterMaskVisible = false;
+	int32 chapter4SightOuterMaskStartStep = -1;
 	double chapter4OpeningBaseAngle = -90.0;
 	double chapter4OpeningRingRotationDirection = 1.0;
 
@@ -129,12 +180,12 @@ namespace {
 	}
 
 	Array<Vec2> getChapter4SecondAppleSpreadTargets() {
-		const auto& settings = chapter4OpeningAppleSettings;
+		const auto& settings = chapter4Settings;
 		const Vec2 center{ Global::windowWidth / 2.0, Global::windowHeight / 2.0 };
 		return {
-			center + Vec2{ 0.0, -settings.secondAppleVerticalSpacing },
+			center + Vec2{ 0.0, -settings.opening.secondVerticalSpacing },
 			center,
-			center + Vec2{ 0.0, settings.secondAppleVerticalSpacing },
+			center + Vec2{ 0.0, settings.opening.secondVerticalSpacing },
 		};
 	}
 
@@ -269,10 +320,10 @@ namespace {
 		bool isCrossSource) {
 
 		return [startPos, moveDirection, moveDistance, alpha, moveStep, isCrossSource](Iwanna::Cherry& self, int32 age) {
-			const auto& settings = chapter4OpeningAppleSettings;
-			const int32 activateStep = settings.largeAppleActivateStep - settings.symbolClearFlashStep;
-			const int32 dashStep = settings.largeAppleDashStep - settings.symbolClearFlashStep;
-			const int32 dashMoveStep = Max(settings.largeAppleDashMoveStep, 1);
+			const auto& settings = chapter4Settings;
+			const int32 activateStep = settings.largeApple.activateStep - settings.timeline.symbolClearFlashStep;
+			const int32 dashStep = settings.largeApple.dashStep - settings.timeline.symbolClearFlashStep;
+			const int32 dashMoveStep = Max(settings.largeApple.dashMoveStep, 1);
 			const double firstMoveT = Min(age, moveStep) / static_cast<double>(Max(moveStep, 1));
 			const double firstMoveEased = Iwanna::applyEasing(Iwanna::EasingMoveType::EaseOut, firstMoveT);
 			const Vec2 firstMovePos = startPos + Vec2{ moveDirection * moveDistance * firstMoveEased, 0.0 };
@@ -292,7 +343,7 @@ namespace {
 			self.canPlayerKill = isCrossSource && (activateStep <= age);
 
 			if (isCrossSource && activateStep <= age) {
-				const double fadeT = (age - activateStep) / static_cast<double>(Max(settings.largeAppleFadeInStep, 1));
+				const double fadeT = (age - activateStep) / static_cast<double>(Max(settings.largeApple.fadeInStep, 1));
 				const double fadeEased = Iwanna::applyEasing(Iwanna::EasingMoveType::EaseInOut, fadeT);
 				self.alpha = alpha + (1.0 - alpha) * fadeEased;
 			}
@@ -304,12 +355,12 @@ namespace {
 
 	Iwanna::Cherry::Behavior makeChapter4LargeAppleTrailBehavior(double initialAlpha) {
 		return [initialAlpha](Iwanna::Cherry& self, int32 age) {
-			const auto& settings = chapter4OpeningAppleSettings;
-			const double t = age / static_cast<double>(Max(settings.largeAppleTrailFadeOutStep, 1));
+			const auto& settings = chapter4Settings;
+			const double t = age / static_cast<double>(Max(settings.largeApple.trailFadeOutStep, 1));
 			self.canPlayerKill = false;
 			self.alpha = initialAlpha * (1.0 - Iwanna::applyEasing(Iwanna::EasingMoveType::EaseInOut, t));
 
-			if (settings.largeAppleTrailFadeOutStep <= age) {
+			if (settings.largeApple.trailFadeOutStep <= age) {
 				self.isDelete = true;
 			}
 		};
@@ -406,10 +457,10 @@ namespace {
 		int32 startDelayStep = 0,
 		bool fadeOut = true) {
 
-		const auto& settings = chapter4OpeningAppleSettings;
+		const auto& settings = chapter4Settings;
 		Iwanna::Cherry::Settings cherrySettings{
-			.textureName = settings.textureName,
-			.color = settings.color,
+			.textureName = settings.common.whiteAppleTexture,
+			.color = settings.common.whiteAppleColor,
 			.behavior = makeChapter4SymbolBurstBehavior(
 				startPos,
 				targetPos,
@@ -418,14 +469,14 @@ namespace {
 				moveTime,
 				spreadStartStep,
 				spreadMoveTime,
-				settings.symbolExpansionStep,
-				settings.symbolFadeOutStep,
+				settings.symbol.expansionStep,
+				settings.symbol.fadeOutStep,
 				startDelayStep,
 				fadeOut),
 			.canDeleteOutOfScreen = false,
 			.canPlayerKill = false,
-			.depth = settings.depth + 0.2,
-			.scale = settings.symbolScale,
+			.depth = settings.common.appleDepth + 0.2,
+			.scale = settings.symbol.scale,
 			.canPlayerKillBeforeFullAlpha = false,
 			.manualCanPlayerKillControl = true,
 		};
@@ -436,22 +487,22 @@ namespace {
 	}
 
 	void createChapter4CircleBurst(Iwanna::AvoidanceManager& manager, const Vec2& center, int32 startDelayStep = 0, bool fadeOut = true) {
-		const auto& settings = chapter4OpeningAppleSettings;
-		const int32 count = Max(settings.symbolCircleCount, 1);
+		const auto& settings = chapter4Settings;
+		const int32 count = Max(settings.symbol.circleCount, 1);
 
 		for (int32 i = 0; i < count; ++i) {
 			const double angle = 360.0 * i / count;
 			createChapter4SymbolBurstCherry(manager, center, center, center, Vec2{
-				Math::Cos(Math::ToRadians(angle)) * settings.symbolRadius,
-				Math::Sin(Math::ToRadians(angle)) * settings.symbolRadius,
+				Math::Cos(Math::ToRadians(angle)) * settings.symbol.radius,
+				Math::Sin(Math::ToRadians(angle)) * settings.symbol.radius,
 			}, 1, 0, 1, startDelayStep, fadeOut);
 		}
 	}
 
 	void createChapter4CrossBurst(Iwanna::AvoidanceManager& manager, const Vec2& center, int32 startDelayStep = 0, bool fadeOut = true) {
-		const auto& settings = chapter4OpeningAppleSettings;
-		const int32 count = Max(static_cast<int32>(std::ceil(settings.symbolLineLength / settings.symbolLineSpacing)) + 1, 2);
-		const double halfLength = settings.symbolLineLength / 2.0;
+		const auto& settings = chapter4Settings;
+		const int32 count = Max(static_cast<int32>(std::ceil(settings.symbol.lineLength / settings.symbol.lineSpacing)) + 1, 2);
+		const double halfLength = settings.symbol.lineLength / 2.0;
 
 		for (const double lineAngle : { 45.0, 135.0 }) {
 			const Vec2 direction{
@@ -460,7 +511,7 @@ namespace {
 			};
 
 			for (int32 i = 0; i < count; ++i) {
-				const double offset = -halfLength + settings.symbolLineLength * i / static_cast<double>(count - 1);
+				const double offset = -halfLength + settings.symbol.lineLength * i / static_cast<double>(count - 1);
 				createChapter4SymbolBurstCherry(manager, center, center, center, direction * offset, 1, 0, 1, startDelayStep, fadeOut);
 			}
 		}
@@ -473,8 +524,8 @@ namespace {
 		const Vec2& spreadTargetPos,
 		int32 startDelayStep) {
 
-		const auto& settings = chapter4OpeningAppleSettings;
-		const int32 count = Max(settings.symbolCircleCount, 1);
+		const auto& settings = chapter4Settings;
+		const int32 count = Max(settings.symbol.circleCount, 1);
 
 		for (int32 i = 0; i < count; ++i) {
 			const double angle = 360.0 * i / count;
@@ -484,12 +535,12 @@ namespace {
 				targetPos,
 				spreadTargetPos,
 				Vec2{
-					Math::Cos(Math::ToRadians(angle)) * settings.symbolRadius,
-					Math::Sin(Math::ToRadians(angle)) * settings.symbolRadius,
+					Math::Cos(Math::ToRadians(angle)) * settings.symbol.radius,
+					Math::Sin(Math::ToRadians(angle)) * settings.symbol.radius,
 				},
-				settings.moveTime,
+				settings.opening.moveTime,
 				startDelayStep,
-				settings.spreadMoveTime,
+				settings.opening.spreadMoveTime,
 				startDelayStep,
 				false);
 		}
@@ -502,9 +553,9 @@ namespace {
 		const Vec2& spreadTargetPos,
 		int32 startDelayStep) {
 
-		const auto& settings = chapter4OpeningAppleSettings;
-		const int32 count = Max(static_cast<int32>(std::ceil(settings.symbolLineLength / settings.symbolLineSpacing)) + 1, 2);
-		const double halfLength = settings.symbolLineLength / 2.0;
+		const auto& settings = chapter4Settings;
+		const int32 count = Max(static_cast<int32>(std::ceil(settings.symbol.lineLength / settings.symbol.lineSpacing)) + 1, 2);
+		const double halfLength = settings.symbol.lineLength / 2.0;
 
 		for (const double lineAngle : { 45.0, 135.0 }) {
 			const Vec2 direction{
@@ -513,16 +564,16 @@ namespace {
 			};
 
 			for (int32 i = 0; i < count; ++i) {
-				const double offset = -halfLength + settings.symbolLineLength * i / static_cast<double>(count - 1);
+				const double offset = -halfLength + settings.symbol.lineLength * i / static_cast<double>(count - 1);
 				createChapter4SymbolBurstCherry(
 					manager,
 					startPos,
 					targetPos,
 					spreadTargetPos,
 					direction * offset,
-					settings.moveTime,
+					settings.opening.moveTime,
 					startDelayStep,
-					settings.spreadMoveTime,
+					settings.opening.spreadMoveTime,
 					startDelayStep,
 					false);
 			}
@@ -544,13 +595,13 @@ namespace {
 		const Array<std::pair<Vec2, Vec2>>& appleRoutes,
 		const Array<Vec2>& spreadTargets) {
 
-		const auto& settings = chapter4OpeningAppleSettings;
+		const auto& settings = chapter4Settings;
 		const int32 circleIndex = Random(static_cast<int32>(appleRoutes.size()) - 1);
 		chapter4OpeningSymbolIsCircle.clear();
 
 		for (int32 i = 0; i < static_cast<int32>(appleRoutes.size()); ++i) {
 			const Vec2 center = appleRoutes[i].second;
-			const int32 startDelayStep = settings.spreadStartSteps[i];
+			const int32 startDelayStep = settings.opening.spreadStartSteps[i];
 			const bool isCircle = (i == circleIndex);
 			chapter4OpeningSymbolIsCircle << isCircle;
 
@@ -564,32 +615,32 @@ namespace {
 	}
 
 	void createChapter4OpeningWhiteRing(Iwanna::AvoidanceManager& manager) {
-		const auto& settings = chapter4OpeningAppleSettings;
+		const auto& settings = chapter4Settings;
 		const Vec2 center{ Global::windowWidth / 2.0, Global::windowHeight / 2.0 };
-		const int32 ringCount = Max(settings.ringCount, 1);
+		const int32 ringCount = Max(settings.ring.count, 1);
 		chapter4OpeningRingRotationDirection = (Random(0, 1) == 0) ? -1.0 : 1.0;
 
 		for (int32 i = 0; i < ringCount; ++i) {
 			const double angle = chapter4OpeningBaseAngle + 360.0 * i / ringCount;
 			const Vec2 startPos = center + Vec2{
-				Math::Cos(Math::ToRadians(angle)) * settings.ringStartRadius,
-				Math::Sin(Math::ToRadians(angle)) * settings.ringStartRadius,
+				Math::Cos(Math::ToRadians(angle)) * settings.ring.startRadius,
+				Math::Sin(Math::ToRadians(angle)) * settings.ring.startRadius,
 			};
 
 			Iwanna::Cherry::Settings cherrySettings{
-				.textureName = settings.textureName,
-				.color = settings.color,
+				.textureName = settings.common.whiteAppleTexture,
+				.color = settings.common.whiteAppleColor,
 				.behavior = makeChapter4OpeningRingBehavior(
 					angle,
-					settings.ringStartRadius,
-					settings.ringTargetRadius,
+					settings.ring.startRadius,
+					settings.ring.targetRadius,
 					chapter4OpeningRingRotationDirection,
-					settings.ringRotationDegrees,
-					settings.ringShrinkStep),
+					settings.ring.rotationDegrees,
+					settings.ring.shrinkStep),
 				.canDeleteOutOfScreen = false,
 				.canPlayerKill = true,
-				.depth = settings.depth,
-				.scale = settings.ringScale,
+				.depth = settings.common.appleDepth,
+				.scale = settings.ring.scale,
 				.canPlayerKillBeforeFullAlpha = true,
 				.manualCanPlayerKillControl = true,
 			};
@@ -641,17 +692,17 @@ namespace {
 	}
 
 	void createChapter4LargeAppleTrail(Iwanna::AvoidanceManager& manager, const Iwanna::Cherry& source) {
-		const auto& settings = chapter4OpeningAppleSettings;
+		const auto& settings = chapter4Settings;
 		auto trail = std::make_shared<Iwanna::Cherry>();
 		trail->reset(source.pos, Iwanna::Cherry::Settings{
-			.textureName = settings.textureName,
-			.color = settings.color,
-			.behavior = makeChapter4LargeAppleTrailBehavior(settings.largeAppleTrailAlpha),
+			.textureName = settings.common.whiteAppleTexture,
+			.color = settings.common.whiteAppleColor,
+			.behavior = makeChapter4LargeAppleTrailBehavior(settings.largeApple.trailAlpha),
 			.canDeleteOutOfScreen = false,
 			.canPlayerKill = false,
-			.depth = settings.depth,
-			.scale = settings.largeAppleScale,
-			.alpha = settings.largeAppleTrailAlpha,
+			.depth = settings.common.appleDepth,
+			.scale = settings.largeApple.scale,
+			.alpha = settings.largeApple.trailAlpha,
 			.canPlayerKillBeforeFullAlpha = false,
 			.manualCanPlayerKillControl = true,
 		});
@@ -668,8 +719,8 @@ namespace {
 	}
 
 	void createChapter4SecondRedLineApples(Iwanna::AvoidanceManager& manager) {
-		const auto& settings = chapter4OpeningAppleSettings;
-		const int32 moveStep = Max(settings.largeAppleMoveEndStep - settings.symbolClearFlashStep, 1);
+		const auto& settings = chapter4Settings;
+		const int32 moveStep = Max(settings.largeApple.moveEndStep - settings.timeline.symbolClearFlashStep, 1);
 
 		struct RedLineRoute {
 			Vec2 begin;
@@ -679,24 +730,24 @@ namespace {
 
 		const Array<RedLineRoute> routes = {
 			{
-				Vec2{ 0.0, settings.secondRedLineTopY },
-				Vec2{ Global::windowWidth, settings.secondRedLineTopY },
-				Vec2{ 0.0, -(Global::windowHeight + settings.secondRedLineOffscreenMargin) },
+				Vec2{ 0.0, settings.secondRedLine.topY },
+				Vec2{ Global::windowWidth, settings.secondRedLine.topY },
+				Vec2{ 0.0, -(Global::windowHeight + settings.secondRedLine.offscreenMargin) },
 			},
 			{
-				Vec2{ 0.0, settings.secondRedLineBottomY },
-				Vec2{ Global::windowWidth, settings.secondRedLineBottomY },
-				Vec2{ 0.0, Global::windowHeight + settings.secondRedLineOffscreenMargin },
+				Vec2{ 0.0, settings.secondRedLine.bottomY },
+				Vec2{ Global::windowWidth, settings.secondRedLine.bottomY },
+				Vec2{ 0.0, Global::windowHeight + settings.secondRedLine.offscreenMargin },
 			},
 			{
-				Vec2{ settings.secondRedLineLeftX, 0.0 },
-				Vec2{ settings.secondRedLineLeftX, Global::windowHeight },
-				Vec2{ -(Global::windowWidth + settings.secondRedLineOffscreenMargin), 0.0 },
+				Vec2{ settings.secondRedLine.leftX, 0.0 },
+				Vec2{ settings.secondRedLine.leftX, Global::windowHeight },
+				Vec2{ -(Global::windowWidth + settings.secondRedLine.offscreenMargin), 0.0 },
 			},
 			{
-				Vec2{ settings.secondRedLineRightX, 0.0 },
-				Vec2{ settings.secondRedLineRightX, Global::windowHeight },
-				Vec2{ Global::windowWidth + settings.secondRedLineOffscreenMargin, 0.0 },
+				Vec2{ settings.secondRedLine.rightX, 0.0 },
+				Vec2{ settings.secondRedLine.rightX, Global::windowHeight },
+				Vec2{ Global::windowWidth + settings.secondRedLine.offscreenMargin, 0.0 },
 			},
 		};
 
@@ -704,7 +755,7 @@ namespace {
 
 		for (const auto& route : routes) {
 			const double lineLength = route.begin.distanceFrom(route.end);
-			const int32 count = Max(static_cast<int32>(std::ceil(lineLength / settings.secondRedLineSpacing)) + 1, 2);
+			const int32 count = Max(static_cast<int32>(std::ceil(lineLength / settings.secondRedLine.spacing)) + 1, 2);
 
 			for (int32 i = 0; i < count; ++i) {
 				const double rate = i / static_cast<double>(count - 1);
@@ -718,8 +769,8 @@ namespace {
 					.behavior = makeChapter4SecondRedLineMoveInBehavior(startPos, targetPos, moveStep),
 					.canDeleteOutOfScreen = false,
 					.canPlayerKill = true,
-					.depth = settings.depth + 0.3,
-					.scale = settings.secondRedLineScale,
+					.depth = settings.common.appleDepth + 0.3,
+					.scale = settings.secondRedLine.scale,
 					.canPlayerKillBeforeFullAlpha = true,
 					.manualCanPlayerKillControl = true,
 				});
@@ -730,7 +781,7 @@ namespace {
 	}
 
 	void startChapter4SecondRedLineBlow() {
-		const auto& settings = chapter4OpeningAppleSettings;
+		const auto& settings = chapter4Settings;
 		const Vec2 screenCenter{ Global::windowWidth / 2.0, Global::windowHeight / 2.0 };
 
 		for (const auto& apple : chapter4SecondRedLineApples) {
@@ -748,18 +799,18 @@ namespace {
 			}
 
 			const double speed = Random(
-				settings.secondRedLineBlowMinSpeed,
-				settings.secondRedLineBlowMaxSpeed);
+				settings.secondRedLine.blowMinSpeed,
+				settings.secondRedLine.blowMaxSpeed);
 			const double rotationSign = (Random(0, 1) == 0) ? -1.0 : 1.0;
 			const double rotationSpeed = rotationSign * Random(
-				settings.secondRedLineBlowMinRotationSpeed,
-				settings.secondRedLineBlowMaxRotationSpeed);
+				settings.secondRedLine.blowMinRotationSpeed,
+				settings.secondRedLine.blowMaxRotationSpeed);
 
 			apple->setBehavior(makeChapter4SecondRedLineBlowBehavior(
 				apple->pos,
 				apple->getAge(),
 				direction * speed,
-				settings.secondRedLineBlowGravity,
+				settings.secondRedLine.blowGravity,
 				rotationSpeed));
 		}
 	}
@@ -779,14 +830,14 @@ namespace {
 	}
 
 	void createChapter4RadialDecorationBarrage(Iwanna::AvoidanceManager& manager) {
-		const auto& settings = chapter4OpeningAppleSettings;
+		const auto& settings = chapter4Settings;
 		const Vec2 center{ Global::windowWidth / 2.0, Global::windowHeight / 2.0 };
-		const int32 ringCount = Max(settings.radialDecorRingCount, 1);
-		const int32 cherryCount = Max(settings.radialDecorCherryCount, 1);
+		const int32 ringCount = Max(settings.radialDecor.ringCount, 1);
+		const int32 cherryCount = Max(settings.radialDecor.cherryCount, 1);
 
 		for (int32 ring = 0; ring < ringCount; ++ring) {
-			const double minSpeed = settings.radialDecorBaseSpeed + settings.radialDecorSpeedStep * ring;
-			const double maxSpeed = minSpeed + settings.radialDecorSpeedStep;
+			const double minSpeed = settings.radialDecor.baseSpeed + settings.radialDecor.speedStep * ring;
+			const double maxSpeed = minSpeed + settings.radialDecor.speedStep;
 			const double angleOffset = Math::ToDegrees(Math::Pi / cherryCount) * ring;
 
 			for (int32 i = 0; i < cherryCount; ++i) {
@@ -797,9 +848,9 @@ namespace {
 					.color = color,
 					.canDeleteOutOfScreen = true,
 					.canPlayerKill = false,
-					.depth = settings.radialDecorDepth,
-					.scale = settings.radialDecorScale,
-					.alpha = settings.radialDecorAlpha,
+					.depth = settings.radialDecor.depth,
+					.scale = settings.radialDecor.scale,
+					.alpha = settings.radialDecor.alpha,
 					.canPlayerKillBeforeFullAlpha = false,
 				});
 				apple->speed = Random(minSpeed, maxSpeed);
@@ -840,8 +891,8 @@ namespace {
 			}
 
 			const Vec2 candidate = block->pos + Vec2{ blockSize / 2.0, -blockSize / 2.0 };
-			const auto& settings = chapter4OpeningAppleSettings;
-			if (settings.sightCandidateMaxX < candidate.x || candidate.y < settings.sightCandidateMinY) {
+			const auto& settings = chapter4Settings;
+			if (settings.sight.candidateMaxX < candidate.x || candidate.y < settings.sight.candidateMinY) {
 				continue;
 			}
 
@@ -860,14 +911,20 @@ namespace {
 		};
 	}
 
-	double getChapter4SightRotation(double baseSpeed, int32 age, int32 reverseStartAge, int32 reverseDuration) {
+	double getChapter4SightRotation(
+		double baseSpeed,
+		double reverseSpeed,
+		int32 age,
+		int32 reverseStartAge,
+		int32 reverseDuration) {
+
 		if (age <= reverseStartAge) {
 			return baseSpeed * age;
 		}
 
 		const double t = Clamp((age - reverseStartAge) / static_cast<double>(Max(reverseDuration, 1)), 0.0, 1.0);
 		const double reverseEaseOutDistance = t - t * t + t * t * t / 3.0;
-		return baseSpeed * reverseStartAge - baseSpeed * reverseDuration * reverseEaseOutDistance;
+		return baseSpeed * reverseStartAge - reverseSpeed * reverseDuration * reverseEaseOutDistance;
 	}
 
 	Iwanna::Cherry::Behavior makeChapter4SightBarrageBehavior(
@@ -880,22 +937,28 @@ namespace {
 		bool isCross,
 		double rotationDirection) {
 
-		const auto& settings = chapter4OpeningAppleSettings;
-		const double targetRadius = Max(settings.sightRadius, 1.0);
-		const double startRate = Max(settings.sightStartRadius / targetRadius, 1.0);
-		const int32 shrinkStep = Max(settings.sightShrinkStep, 1);
-		const int32 fadeStep = Max(settings.sightFadeInStep, 1);
-		const double rotationSpeed = Math::ToRadians(settings.sightRotationSpeed) * rotationDirection;
-		const int32 reverseStartAge = Max(settings.sightFocusStep - settings.sightBarrageStep, 0);
-		const int32 reverseDuration = Max(settings.sightReverseStopStep - settings.sightFocusStep, 1);
-		const int32 crossAttackAge = Max(settings.sightCrossAttackStep - settings.sightBarrageStep, 0);
-		const int32 crossReturnFadeStep = Max(settings.sightCrossReturnFadeStep, 1);
+		const auto& settings = chapter4Settings;
+		const double targetRadius = Max(settings.sight.radius, 1.0);
+		const double startRate = Max(settings.sight.startRadius / targetRadius, 1.0);
+		const int32 shrinkStep = Max(settings.sight.shrinkStep, 1);
+		const int32 fadeStep = Max(settings.sight.fadeInStep, 1);
+		const double rotationSpeed = Math::ToRadians(settings.sight.rotationSpeed) * rotationDirection;
+		const double reverseRotationSpeed = Math::ToRadians(settings.sight.reverseRotationSpeed) * rotationDirection;
+		const int32 reverseStartAge = Max(settings.sight.focusStep - settings.sight.barrageStep - 1, 0);
+		const int32 reverseDuration = Max(settings.sight.reverseStopStep - settings.sight.focusStep, 1);
+		const int32 crossAttackAge = Max(settings.sight.crossAttackStep - settings.sight.barrageStep, 0);
+		const int32 crossReturnFadeStep = Max(settings.sight.crossReturnFadeStep, 1);
 
-		return [center, targetOffset, baseScale, targetAlpha, canKill, shouldScaleVisual, isCross, startRate, shrinkStep, fadeStep, rotationSpeed, reverseStartAge, reverseDuration, crossAttackAge, crossReturnFadeStep](Iwanna::Cherry& self, int32 age) {
+		return [center, targetOffset, baseScale, targetAlpha, canKill, shouldScaleVisual, isCross, startRate, shrinkStep, fadeStep, rotationSpeed, reverseRotationSpeed, reverseStartAge, reverseDuration, crossAttackAge, crossReturnFadeStep](Iwanna::Cherry& self, int32 age) {
 			const double shrinkT = Clamp(age / static_cast<double>(shrinkStep), 0.0, 1.0);
 			const double shrinkRate = startRate + (1.0 - startRate)
 				* Iwanna::applyEasing(Iwanna::EasingMoveType::EaseIn, shrinkT);
-			const double rotation = getChapter4SightRotation(rotationSpeed, age, reverseStartAge, reverseDuration);
+			const double rotation = getChapter4SightRotation(
+				rotationSpeed,
+				reverseRotationSpeed,
+				age,
+				reverseStartAge,
+				reverseDuration);
 			const Vec2 rotatedOffset = rotateChapter4SightOffset(targetOffset * shrinkRate, rotation);
 			const double fadeRate = Iwanna::applyEasing(
 				Iwanna::EasingMoveType::EaseInOut,
@@ -937,8 +1000,8 @@ namespace {
 		bool isCross,
 		double rotationDirection) {
 
-		const auto& settings = chapter4OpeningAppleSettings;
-		manager.createCherry(center + targetOffset * (settings.sightStartRadius / Max(settings.sightRadius, 1.0)), Iwanna::Cherry::Settings{
+		const auto& settings = chapter4Settings;
+		manager.createCherry(center + targetOffset * (settings.sight.startRadius / Max(settings.sight.radius, 1.0)), Iwanna::Cherry::Settings{
 			.textureName = U"sprCherryAllWhite",
 			.color = color,
 			.behavior = makeChapter4SightBarrageBehavior(
@@ -952,7 +1015,7 @@ namespace {
 				rotationDirection),
 			.canDeleteOutOfScreen = false,
 			.canPlayerKill = canKill,
-			.depth = settings.sightDepth,
+			.depth = settings.sight.depth,
 			.scale = scale,
 			.alpha = 0.0,
 			.canPlayerKillBeforeFullAlpha = canKill,
@@ -961,42 +1024,42 @@ namespace {
 	}
 
 	void createChapter4SightBarrage(Iwanna::AvoidanceManager& manager, int32 currentStep) {
-		const auto& settings = chapter4OpeningAppleSettings;
+		const auto& settings = chapter4Settings;
 		const auto candidates = getChapter4SightCandidateCenters(manager);
 		if (candidates.isEmpty()) {
 			return;
 		}
 
 		const Vec2 center = candidates[Random(static_cast<int32>(candidates.size()) - 1)];
-		const double lineRadius = settings.sightRadius + settings.sightCrossExtend;
+		const double lineRadius = settings.sight.radius + settings.sight.crossExtend;
 		const ColorF outerColor{ 1.0, 1.0, 1.0, 1.0 };
-		const ColorF crossColor{ 1.0, 1.0, 1.0, settings.sightCrossAlpha };
+		const ColorF crossColor{ 1.0, 1.0, 1.0, settings.sight.crossAlpha };
 		const ColorF centerColor{ 1.0, 0.0, 0.0, 1.0 };
 		const double rotationDirection = (Random(0, 1) == 0) ? -1.0 : 1.0;
 		chapter4SightCameraZoomEnabled = true;
 		chapter4SightCameraStartStep = currentStep;
 		chapter4SightCameraTargetCenter = center;
 
-		for (int32 i = 0; i < settings.sightOuterCount; ++i) {
-			const double angle = Math::TwoPi * i / Max(settings.sightOuterCount, 1);
+		for (int32 i = 0; i < settings.sight.outerCount; ++i) {
+			const double angle = Math::TwoPi * i / Max(settings.sight.outerCount, 1);
 			const Vec2 targetOffset{
-				Math::Cos(angle) * settings.sightRadius,
-				Math::Sin(angle) * settings.sightRadius,
+				Math::Cos(angle) * settings.sight.radius,
+				Math::Sin(angle) * settings.sight.radius,
 			};
 			createChapter4SightBarrageCherry(
 				manager,
 				center,
 				targetOffset,
 				outerColor,
-				settings.sightOuterScale,
+				settings.sight.outerScale,
 				true,
 				true,
 				false,
 				rotationDirection);
 		}
 
-		for (double offset = -lineRadius; offset <= lineRadius; offset += settings.sightCrossSpacing) {
-			if (Abs(offset) <= settings.sightCrossSpacing * 0.5) {
+		for (double offset = -lineRadius; offset <= lineRadius; offset += settings.sight.crossSpacing) {
+			if (Abs(offset) <= settings.sight.crossSpacing * 0.5) {
 				continue;
 			}
 
@@ -1005,7 +1068,7 @@ namespace {
 				center,
 				Vec2{ offset, 0.0 },
 				crossColor,
-				settings.sightCrossScale,
+				settings.sight.crossScale,
 				false,
 				false,
 				true,
@@ -1015,7 +1078,7 @@ namespace {
 				center,
 				Vec2{ 0.0, offset },
 				crossColor,
-				settings.sightCrossScale,
+				settings.sight.crossScale,
 				false,
 				false,
 				true,
@@ -1027,7 +1090,7 @@ namespace {
 			center,
 			Vec2{ 0.0, 0.0 },
 			centerColor,
-			settings.sightCenterScale,
+			settings.sight.centerScale,
 			false,
 			false,
 			false,
@@ -1035,7 +1098,7 @@ namespace {
 	}
 
 	void startChapter4LargeAppleFall() {
-		const auto& settings = chapter4OpeningAppleSettings;
+		const auto& settings = chapter4Settings;
 
 		for (const auto& apple : chapter4OpeningLargeApples) {
 			if (!apple || apple->isDelete) {
@@ -1044,36 +1107,36 @@ namespace {
 
 			const double horizontalSign = (Random(0, 1) == 0) ? -1.0 : 1.0;
 			const double horizontalSpeed = horizontalSign * Random(
-				settings.largeAppleFallMinHorizontalSpeed,
-				settings.largeAppleFallMaxHorizontalSpeed);
+				settings.largeApple.fallMinHorizontalSpeed,
+				settings.largeApple.fallMaxHorizontalSpeed);
 			const double downSpeed = Random(
-				settings.largeAppleFallMinDownSpeed,
-				settings.largeAppleFallMaxDownSpeed);
+				settings.largeApple.fallMinDownSpeed,
+				settings.largeApple.fallMaxDownSpeed);
 			const double rotationSign = (Random(0, 1) == 0) ? -1.0 : 1.0;
 			const double rotationSpeed = rotationSign * Random(
-				settings.largeAppleFallMinRotationSpeed,
-				settings.largeAppleFallMaxRotationSpeed);
+				settings.largeApple.fallMinRotationSpeed,
+				settings.largeApple.fallMaxRotationSpeed);
 			const bool canKillPlayer = apple->canPlayerKill;
 
-			apple->setColor(settings.largeAppleFallColor);
+			apple->setColor(settings.largeApple.fallColor);
 			apple->setBehavior(makeChapter4LargeAppleFallBehavior(
 				apple->pos,
 				apple->textureAngle,
 				apple->getAge(),
 				horizontalSpeed,
 				downSpeed,
-				settings.largeAppleFallGravity,
+				settings.largeApple.fallGravity,
 				rotationSpeed,
 				canKillPlayer));
 		}
 	}
 
 	void createChapter4LargeWhiteApples(Iwanna::AvoidanceManager& manager) {
-		const auto& settings = chapter4OpeningAppleSettings;
+		const auto& settings = chapter4Settings;
 		const auto appleRoutes = getChapter4OpeningAppleRoutes();
 		const auto spreadTargets = getChapter4SecondAppleSpreadTargets();
-		const int32 appleAge = settings.symbolClearFlashStep - settings.secondAppleFlowStep;
-		const int32 moveStep = Max(settings.largeAppleMoveEndStep - settings.symbolClearFlashStep, 1);
+		const int32 appleAge = settings.timeline.symbolClearFlashStep - settings.timeline.secondAppleFlowStep;
+		const int32 moveStep = Max(settings.largeApple.moveEndStep - settings.timeline.symbolClearFlashStep, 1);
 
 		for (int32 i = 0; i < static_cast<int32>(appleRoutes.size()); ++i) {
 			const double moveDirection = (Random(0, 1) == 0) ? -1.0 : 1.0;
@@ -1081,29 +1144,29 @@ namespace {
 				appleRoutes[i].first,
 				appleRoutes[i].second,
 				spreadTargets[i],
-				settings.moveTime,
-				settings.spreadStartSteps[i],
-				settings.spreadMoveTime,
+				settings.opening.moveTime,
+				settings.opening.spreadStartSteps[i],
+				settings.opening.spreadMoveTime,
 				appleAge);
 
 			auto apple = std::make_shared<Iwanna::Cherry>();
 			apple->reset(startPos, Iwanna::Cherry::Settings{
-				.textureName = settings.textureName,
-				.color = settings.color,
+				.textureName = settings.common.whiteAppleTexture,
+				.color = settings.common.whiteAppleColor,
 				.behavior = makeChapter4LargeAppleBehavior(
 					startPos,
 					moveDirection,
-					settings.largeAppleMoveDistance,
-					settings.largeAppleAlpha,
+					settings.largeApple.moveDistance,
+					settings.largeApple.alpha,
 					moveStep,
 					(i < static_cast<int32>(chapter4OpeningSymbolIsCircle.size()))
 						? !chapter4OpeningSymbolIsCircle[i]
 						: true),
 				.canDeleteOutOfScreen = false,
 				.canPlayerKill = false,
-				.depth = settings.depth + 0.1,
-				.scale = settings.largeAppleScale,
-				.alpha = settings.largeAppleAlpha,
+				.depth = settings.common.appleDepth + 0.1,
+				.scale = settings.largeApple.scale,
+				.alpha = settings.largeApple.alpha,
 				.canPlayerKillBeforeFullAlpha = false,
 				.manualCanPlayerKillControl = true,
 			});
@@ -1113,10 +1176,10 @@ namespace {
 	}
 
 	void createChapter4RedAppleLines(Iwanna::AvoidanceManager& manager) {
-		const auto& settings = chapter4OpeningAppleSettings;
+		const auto& settings = chapter4Settings;
 		const Vec2 center{ Global::windowWidth / 2.0, Global::windowHeight / 2.0 };
-		const double redLineLength = settings.ringTargetRadius;
-		const int32 count = Max(static_cast<int32>(std::ceil(redLineLength / settings.redLineSpacing)) + 1, 2);
+		const double redLineLength = settings.ring.targetRadius;
+		const int32 count = Max(static_cast<int32>(std::ceil(redLineLength / settings.redLine.spacing)) + 1, 2);
 
 		for (int32 lineIndex = 0; lineIndex < 3; ++lineIndex) {
 			const double angle = chapter4OpeningBaseAngle + 360.0 * lineIndex / 3.0;
@@ -1132,11 +1195,11 @@ namespace {
 				manager.createCherry(pos, Iwanna::Cherry::Settings{
 					.textureName = U"sprCherry",
 					.color = Palette::Red,
-					.behavior = makeChapter4RedLineBehavior(settings.redLineFadeOutStep),
+					.behavior = makeChapter4RedLineBehavior(settings.redLine.fadeOutStep),
 					.canDeleteOutOfScreen = false,
 					.canPlayerKill = true,
-					.depth = settings.depth - 0.1,
-					.scale = settings.redLineScale,
+					.depth = settings.common.appleDepth - 0.1,
+					.scale = settings.redLine.scale,
 					.canPlayerKillBeforeFullAlpha = true,
 					.manualCanPlayerKillControl = true,
 				});
@@ -1154,7 +1217,7 @@ namespace Iwanna {
 			createChapter4OpeningAppleFlow();
 		});
 
-		timeline.at(Global::startStep_Chapter4 + chapter4OpeningAppleSettings.flashStep, [&] {
+		timeline.at(Global::startStep_Chapter4 + chapter4Settings.timeline.firstFlashStep, [&] {
 			for (const auto& apple : chapter4OpeningApples) {
 				if (apple) {
 					apple->isDelete = true;
@@ -1168,7 +1231,7 @@ namespace Iwanna {
 			createChapter4OpeningWhiteRing(*this);
 		});
 
-		timeline.at(Global::startStep_Chapter4 + chapter4OpeningAppleSettings.symbolClearFlashStep, [&] {
+		timeline.at(Global::startStep_Chapter4 + chapter4Settings.timeline.symbolClearFlashStep, [&] {
 			deleteChapter4OpeningSymbols();
 			chapter4OpeningBlackoutVisible = false;
 			chapter4OpeningFlashStartStep = step;
@@ -1178,45 +1241,45 @@ namespace Iwanna {
 		});
 
 		timeline.every(
-			chapter4OpeningAppleSettings.largeAppleTrailIntervalStep,
-			Global::startStep_Chapter4 + chapter4OpeningAppleSettings.largeAppleDashStep,
-			Global::startStep_Chapter4 + chapter4OpeningAppleSettings.largeAppleDashStep + chapter4OpeningAppleSettings.largeAppleDashMoveStep,
+			chapter4Settings.largeApple.trailIntervalStep,
+			Global::startStep_Chapter4 + chapter4Settings.largeApple.dashStep,
+			Global::startStep_Chapter4 + chapter4Settings.largeApple.dashStep + chapter4Settings.largeApple.dashMoveStep,
 			[&](int32) {
 				createChapter4LargeAppleTrails(*this);
 			});
 
-		timeline.at(Global::startStep_Chapter4 + chapter4OpeningAppleSettings.largeAppleDashStep, [&] {
+		timeline.at(Global::startStep_Chapter4 + chapter4Settings.largeApple.dashStep, [&] {
 			createChapter4RadialDecorationBarrage(*this);
 			createChapter4SightBarrage(*this, step);
 			requestScreenShake(
-				chapter4OpeningAppleSettings.largeAppleDashShakeAmplitude,
-				chapter4OpeningAppleSettings.largeAppleDashShakeDurationStep,
-				chapter4OpeningAppleSettings.largeAppleDashShakeFrequency);
+				chapter4Settings.largeApple.dashShakeAmplitude,
+				chapter4Settings.largeApple.dashShakeDurationStep,
+				chapter4Settings.largeApple.dashShakeFrequency);
 			startChapter4SecondRedLineBlow();
 		});
 
-		timeline.at(Global::startStep_Chapter4 + chapter4OpeningAppleSettings.sightFocusStep, [&] {
-			chapter4OpeningFlashStartStep = step;
+		timeline.at(Global::startStep_Chapter4 + chapter4Settings.sight.focusStep, [&] {
 			chapter4SightOuterMaskVisible = true;
+			chapter4SightOuterMaskStartStep = step;
 		});
 
-		timeline.at(Global::startStep_Chapter4 + chapter4OpeningAppleSettings.largeAppleFallStep, [&] {
+		timeline.at(Global::startStep_Chapter4 + chapter4Settings.largeApple.fallStep, [&] {
 			startChapter4LargeAppleFall();
 		});
 
-		timeline.at(Global::startStep_Chapter4 + chapter4OpeningAppleSettings.redLineStep, [&] {
+		timeline.at(Global::startStep_Chapter4 + chapter4Settings.timeline.redLineStep, [&] {
 			createChapter4RadialDecorationBarrage(*this);
 			createChapter4RedAppleLines(*this);
 		});
 
-		timeline.at(Global::startStep_Chapter4 + chapter4OpeningAppleSettings.secondAppleFlowStep, [&] {
+		timeline.at(Global::startStep_Chapter4 + chapter4Settings.timeline.secondAppleFlowStep, [&] {
 			deleteChapter4OpeningWhiteRing();
 			createChapter4OpeningAppleFlow(true);
 		});
 	}
 
 	void AvoidanceManager::createChapter4OpeningAppleFlow(bool isSecondFlow) {
-		const auto& settings = chapter4OpeningAppleSettings;
+		const auto& settings = chapter4Settings;
 		deleteChapter4OpeningSymbols();
 		deleteChapter4OpeningLargeApples();
 		deleteChapter4SecondRedLineApples();
@@ -1230,6 +1293,7 @@ namespace Iwanna {
 		chapter4SightCameraStartStep = -1;
 		chapter4SightCameraTargetCenter = Vec2{ Global::windowWidth / 2.0, Global::windowHeight / 2.0 };
 		chapter4SightOuterMaskVisible = false;
+		chapter4SightOuterMaskStartStep = -1;
 
 		const auto appleRoutes = getChapter4OpeningAppleRoutes();
 		const Vec2 center{ Global::windowWidth / 2.0, Global::windowHeight / 2.0 };
@@ -1239,7 +1303,7 @@ namespace Iwanna {
 			spreadTargets = getChapter4SecondAppleSpreadTargets();
 		}
 		else {
-			const int32 targetPointCount = Max(settings.targetPointCount, 3);
+			const int32 targetPointCount = Max(settings.opening.targetPointCount, 3);
 			const int32 targetSpacing = Max(static_cast<int32>(std::ceil(targetPointCount / 3.0)), 1);
 			const int32 baseTargetIndex = Random(targetSpacing - 1);
 			chapter4OpeningBaseAngle = -90.0 + 360.0 * baseTargetIndex / targetPointCount;
@@ -1247,8 +1311,8 @@ namespace Iwanna {
 			for (int32 i = 0; i < 3; ++i) {
 				const double angle = chapter4OpeningBaseAngle + 360.0 * i / 3.0;
 				spreadTargets << center + Vec2{
-					Math::Cos(Math::ToRadians(angle)) * settings.spreadRadius,
-					Math::Sin(Math::ToRadians(angle)) * settings.spreadRadius,
+					Math::Cos(Math::ToRadians(angle)) * settings.opening.firstSpreadRadius,
+					Math::Sin(Math::ToRadians(angle)) * settings.opening.firstSpreadRadius,
 				};
 			}
 		}
@@ -1256,22 +1320,22 @@ namespace Iwanna {
 		for (int32 i = 0; i < static_cast<int32>(appleRoutes.size()); ++i) {
 			const auto& [startPos, targetPos] = appleRoutes[i];
 			Cherry::Settings cherrySettings{
-				.textureName = settings.textureName,
-				.color = settings.color,
+				.textureName = settings.common.whiteAppleTexture,
+				.color = settings.common.whiteAppleColor,
 				.behavior = makeChapter4OpeningAppleBehavior(
 					startPos,
 					targetPos,
 					spreadTargets[i],
-					settings.moveTime,
-					settings.spreadStartSteps[i],
-					settings.spreadMoveTime,
+					settings.opening.moveTime,
+					settings.opening.spreadStartSteps[i],
+					settings.opening.spreadMoveTime,
 					isSecondFlow),
 				.canDeleteOutOfScreen = false,
 				.canPlayerKill = false,
-				.depth = settings.depth,
-				.scale = settings.scale,
+				.depth = settings.common.appleDepth,
+				.scale = settings.common.whiteAppleScale,
 				.appearanceEffect = CherryEffect::FadeIn,
-				.appearanceDuration = settings.fadeInTime,
+				.appearanceDuration = settings.opening.fadeInTime,
 			};
 			auto apple = std::make_shared<Cherry>();
 			apple->reset(startPos, cherrySettings);
@@ -1297,11 +1361,48 @@ namespace Iwanna {
 			return;
 		}
 
-		const auto& settings = chapter4OpeningAppleSettings;
-		const double maskRadius = settings.sightRadius + settings.sightCrossExtend + settings.sightMaskExtraRadius;
+		const auto& settings = chapter4Settings;
+		const int32 maskAge = (chapter4SightOuterMaskStartStep < 0)
+			? settings.sight.maskFadeInStep
+			: step - chapter4SightOuterMaskStartStep;
+		const double fadeT = maskAge / static_cast<double>(Max(settings.sight.maskFadeInStep, 1));
+		ColorF maskColor = Palette::Black;
+		maskColor.a = applyEasing(EasingMoveType::EaseInOut, fadeT);
 		const double maskThickness = 2400.0;
-		Circle{ chapter4SightCameraTargetCenter, maskRadius + maskThickness / 2.0 }
-			.drawFrame(maskThickness, Palette::Black);
+		Circle{ chapter4SightCameraTargetCenter, settings.sight.maskInnerRadius + maskThickness / 2.0 }
+			.drawFrame(maskThickness, maskColor);
+	}
+
+	void AvoidanceManager::drawChapter4SightForeground() const {
+		if (activeChapter != 4 || !chapter4SightOuterMaskVisible) {
+			return;
+		}
+
+		const auto& settings = chapter4Settings;
+		for (auto* obj : sortedDrawList) {
+			if (obj->type == ObjectType::Cherry
+				&& Abs(obj->getDepth() - settings.sight.depth) < 0.001) {
+				obj->draw();
+			}
+		}
+	}
+
+	void AvoidanceManager::drawChapter4SightInnerMask() const {
+		if (activeChapter != 4 || !chapter4SightOuterMaskVisible) {
+			return;
+		}
+
+		const auto& settings = chapter4Settings;
+		const int32 innerMaskStartStep = Global::startStep_Chapter4 + settings.sight.crossAttackStep;
+		if (step < innerMaskStartStep) {
+			return;
+		}
+
+		const double fadeT = (step - innerMaskStartStep)
+			/ static_cast<double>(Max(settings.sight.innerMaskFadeInStep, 1));
+		ColorF maskColor = Palette::Black;
+		maskColor.a = applyEasing(EasingMoveType::EaseInOut, fadeT);
+		Circle{ chapter4SightCameraTargetCenter, 2400.0 }.draw(maskColor);
 	}
 
 	void AvoidanceManager::drawChapter4OpeningFlash() const {
@@ -1310,7 +1411,7 @@ namespace Iwanna {
 		}
 
 		const int32 flashAge = step - chapter4OpeningFlashStartStep;
-		const int32 flashDuration = Max(chapter4OpeningAppleSettings.flashDurationStep, 1);
+		const int32 flashDuration = Max(chapter4Settings.flash.durationStep, 1);
 		if (flashDuration < flashAge) {
 			return;
 		}
@@ -1325,12 +1426,21 @@ namespace Iwanna {
 			return 1.0;
 		}
 
-		const auto& settings = chapter4OpeningAppleSettings;
+		const auto& settings = chapter4Settings;
 		if (chapter4SightCameraZoomEnabled && 0 <= chapter4SightCameraStartStep) {
 			const int32 zoomAge = step - chapter4SightCameraStartStep;
-			const double t = zoomAge / static_cast<double>(Max(settings.sightShrinkStep, 1));
-			const double eased = applyEasing(EasingMoveType::EaseIn, t);
-			return 1.0 + (settings.cameraTargetScale - 1.0) * eased;
+			const int32 zoomInStep = Max(settings.sight.shrinkStep, 1);
+			if (zoomAge <= zoomInStep) {
+				const double t = zoomAge / static_cast<double>(zoomInStep);
+				const double eased = applyEasing(EasingMoveType::EaseIn, t);
+				return 1.0 + (settings.camera.targetScale - 1.0) * eased;
+			}
+
+			const int32 zoomOutStep = Max(settings.sight.cameraZoomOutStep, 1);
+			const double t = (zoomAge - zoomInStep) / static_cast<double>(zoomOutStep);
+			const double eased = applyEasing(EasingMoveType::EaseInOut, t);
+			return settings.camera.targetScale
+				+ (settings.sight.cameraZoomOutTargetScale - settings.camera.targetScale) * eased;
 		}
 
 		if (chapter4OpeningFlashStartStep < 0 || !chapter4OpeningCameraZoomEnabled) {
@@ -1338,9 +1448,9 @@ namespace Iwanna {
 		}
 
 		const int32 zoomAge = step - chapter4OpeningFlashStartStep;
-		const double t = zoomAge / static_cast<double>(Max(settings.cameraZoomStep, 1));
+		const double t = zoomAge / static_cast<double>(Max(settings.camera.openingZoomStep, 1));
 		const double eased = applyEasing(EasingMoveType::EaseOut, t);
-		return 1.0 + (settings.cameraTargetScale - 1.0) * eased;
+		return 1.0 + (settings.camera.targetScale - 1.0) * eased;
 	}
 
 	Vec2 AvoidanceManager::getChapter4CameraCenter() const {
@@ -1349,9 +1459,9 @@ namespace Iwanna {
 			return screenCenter;
 		}
 
-		const auto& settings = chapter4OpeningAppleSettings;
+		const auto& settings = chapter4Settings;
 		const int32 cameraAge = step - chapter4SightCameraStartStep;
-		const double t = cameraAge / static_cast<double>(Max(settings.sightShrinkStep, 1));
+		const double t = cameraAge / static_cast<double>(Max(settings.sight.shrinkStep, 1));
 		const double eased = applyEasing(EasingMoveType::EaseIn, t);
 		return screenCenter + (chapter4SightCameraTargetCenter - screenCenter) * eased;
 	}

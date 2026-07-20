@@ -131,6 +131,8 @@ namespace Iwanna {
 		void drawChapter2SniperSight() const;
 		void drawChapter4OpeningBlackout() const;
 		void drawChapter4SightOuterMask() const;
+		void drawChapter4SightForeground() const;
+		void drawChapter4SightInnerMask() const;
 		void drawChapter4OpeningFlash() const;
 	public:
 		AvoidanceManager();

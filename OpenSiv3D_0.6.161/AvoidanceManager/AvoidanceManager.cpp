@@ -384,10 +384,9 @@ namespace Iwanna {
 			const RectF cherryVisibleArea{ -32.0, -32.0,
 				Global::windowWidth + 64.0, Global::windowHeight + 64.0 };
 			const double chapter2SatBarrageFrontDepth = DrawDepth::Player + 10.0;
-			const double chapter4SightMaskDepth = DrawDepth::Cherry + 3.0;
 
 			for (auto* obj : sortedDrawList) {
-				if (obj->getDepth() < chapter4SightMaskDepth) {
+				if (obj->getDepth() < chapter2SatBarrageFrontDepth) {
 					if (obj->type == ObjectType::Cherry
 						&& !obj->getBroadRect().intersects(cherryVisibleArea)) {
 						continue;
@@ -396,22 +395,10 @@ namespace Iwanna {
 				}
 			}
 
-			drawChapter4SightOuterMask();
 			drawChapter4OpeningBlackout();
 			drawChapter2SatBarrageMasks();
 			drawChapter1OpeningFade();
 			drawChapter1SniperSights();
-
-			for (auto* obj : sortedDrawList) {
-				if (chapter4SightMaskDepth <= obj->getDepth()
-					&& obj->getDepth() < chapter2SatBarrageFrontDepth) {
-					if (obj->type == ObjectType::Cherry
-						&& !obj->getBroadRect().intersects(cherryVisibleArea)) {
-						continue;
-					}
-					obj->draw();
-				}
-			}
 
 			for (auto* obj : sortedDrawList) {
 				if (chapter2SatBarrageFrontDepth <= obj->getDepth()) {
@@ -425,6 +412,9 @@ namespace Iwanna {
 
 			drawChapter2SniperSight();
 			drawChapter1EndingFade();
+			drawChapter4SightOuterMask();
+			drawChapter4SightForeground();
+			drawChapter4SightInnerMask();
 		}
 
 		const double fadeAlpha = getChapterTransitionFadeAlpha();
