@@ -21,7 +21,7 @@ namespace Iwanna {
 		};
 
 		const std::array<AchievementViewData, SaveData::AchievementCount> AchievementViews{ {
-			{ U"First Start", U"Started the endurance for the first time.", U"achive_start" },
+			{ U"First Start", U"Started the avoidance for the first time.", U"achive_start" },
 			{ U"Chapter 1", U"Passed chapter 1.", U"achive_chapter1" },
 			{ U"Chapter 2", U"Passed chapter 2.", U"achive_chapter2" },
 			{ U"Chapter 3", U"Passed chapter 3.", U"achive_chapter3" },
