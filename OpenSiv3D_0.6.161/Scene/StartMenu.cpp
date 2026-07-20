@@ -175,7 +175,24 @@ namespace Iwanna {
 			FontAsset(U"Button")(U"Unlocked : " + unlockedAt).draw(pageOffset + Vec2{ 26.0, 488.0 + achivementDescOffsetY }, textColor);
 		}
 
-		void drawRightPageOptions(MainGame& game, double cameraX) {
+		void drawVolumeSliderView(
+			const String& label,
+			double value,
+			const Vec2& pos,
+			double labelWidth,
+			double sliderWidth) {
+
+			FontAsset(U"Button")(label).draw(pos, ColorF{ 0.78, 0.82, 0.92 });
+
+			const double barX = pos.x + labelWidth;
+			const double barY = pos.y + 15.0;
+			const double knobX = barX + sliderWidth * Clamp(value, 0.0, 1.0);
+			Line{ Vec2{ barX, barY }, Vec2{ barX + sliderWidth, barY } }.draw(4.0, ColorF{ 0.28, 0.30, 0.36 });
+			Line{ Vec2{ barX, barY }, Vec2{ knobX, barY } }.draw(4.0, ColorF{ 0.25, 0.65, 1.0 });
+			Circle{ Vec2{ knobX, barY }, 8.0 }.draw(ColorF{ 0.92, 0.95, 1.0 });
+		}
+
+		void drawRightPageOptions(MainGame& game, double cameraX, bool canEditOptions) {
 			const double pageX = RightPageX - cameraX;
 			FontAsset(U"Big")(U"Option").draw(Vec2{ pageX + 84.0, 36.0 }, Palette::White);
 			FontAsset(U"Button")(U"Volume").draw(Vec2{ pageX + 128.0, 170.0 }, ColorF{ 0.78, 0.82, 0.92 });
@@ -183,8 +200,14 @@ namespace Iwanna {
 			double bgmVolume = game.getSaveData().bgmVolume;
 			double seVolume = game.getSaveData().seVolume;
 
-			SimpleGUI::Slider(U"BGM", bgmVolume, 0.0, 1.0, Vec2{ pageX + 120.0, 230.0 }, 88.0, 360.0);
-			SimpleGUI::Slider(U"SE", seVolume, 0.0, 1.0, Vec2{ pageX + 120.0, 300.0 }, 88.0, 360.0);
+			if (canEditOptions) {
+				SimpleGUI::Slider(U"BGM", bgmVolume, 0.0, 1.0, Vec2{ pageX + 120.0, 230.0 }, 88.0, 360.0);
+				SimpleGUI::Slider(U"SE", seVolume, 0.0, 1.0, Vec2{ pageX + 120.0, 300.0 }, 88.0, 360.0);
+			}
+			else {
+				drawVolumeSliderView(U"BGM", bgmVolume, Vec2{ pageX + 120.0, 230.0 }, 88.0, 360.0);
+				drawVolumeSliderView(U"SE", seVolume, Vec2{ pageX + 120.0, 300.0 }, 88.0, 360.0);
+			}
 
 			FontAsset(U"Button")(ToFixed(bgmVolume * 100.0, 0) + U"%").draw(Vec2{ pageX + 590.0, 229.0 }, Palette::White);
 			FontAsset(U"Button")(ToFixed(seVolume * 100.0, 0) + U"%").draw(Vec2{ pageX + 590.0, 299.0 }, Palette::White);
@@ -221,10 +244,10 @@ namespace Iwanna {
 			tutorialButton.rounded(6.0).drawFrame(2.0, ColorF{ 0.25, 0.30, 0.42 });
 			FontAsset(U"Button")(U"Tutorial").drawAt(tutorialButton.center(), ColorF{ 0.06, 0.07, 0.10 });
 
-			if (0.001 < Abs(bgmVolume - game.getSaveData().bgmVolume)) {
+			if (canEditOptions && 0.001 < Abs(bgmVolume - game.getSaveData().bgmVolume)) {
 				game.setBgmVolume(bgmVolume);
 			}
-			if (0.001 < Abs(seVolume - game.getSaveData().seVolume)) {
+			if (canEditOptions && 0.001 < Abs(seVolume - game.getSaveData().seVolume)) {
 				game.setSeVolume(seVolume);
 			}
 		}
@@ -396,7 +419,7 @@ namespace Iwanna {
 			FontAsset(U"Button")(U"Best : " + enduranceText).draw(saveTextPos + Vec2{ 0.0, lineHeight * 2.0 }, saveTextColor);
 		}
 
-		drawRightPageOptions(mutableGame, cameraX);
+		drawRightPageOptions(mutableGame, cameraX, cameraPage == 1 && !isCameraMoving);
 
 		drawArrowButton(-1, cameraPage > CameraMinPage || isCameraMoving);
 		drawArrowButton(1, cameraPage < CameraMaxPage || isCameraMoving);
