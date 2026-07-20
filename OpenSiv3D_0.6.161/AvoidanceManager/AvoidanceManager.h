@@ -121,12 +121,17 @@ namespace Iwanna {
 		void createChapter2MikuHandBarrage();
 		double getScreenShakeOffset() const;
 		double getChapterTransitionFadeAlpha() const;
+		double getChapter4CameraScale() const;
+		Vec2 getChapter4CameraCenter() const;
 		void requestChapterTransitionFade(int32 durationStep = 40);
 		void drawChapter1OpeningFade() const;
 		void drawChapter1EndingFade() const;
 		void drawChapter1SniperSights() const;
 		void drawChapter2SatBarrageMasks() const;
 		void drawChapter2SniperSight() const;
+		void drawChapter4OpeningBlackout() const;
+		void drawChapter4SightOuterMask() const;
+		void drawChapter4OpeningFlash() const;
 	public:
 		AvoidanceManager();
 
@@ -174,6 +179,7 @@ namespace Iwanna {
 		void requestChapter1BlueSightRadialBarrageState(bool isAttackState);
 		void requestChapter1GreenSightRadialBarrageState(bool isAttackState);
 		void requestChapter2MikuHandBarrageState(bool isAttackState);
+		void createChapter4OpeningAppleFlow(bool isSecondFlow = false);
 		void createCherrySpread(Vec2 pos, int32 num, double spd, const std::function<std::shared_ptr<Cherry>()>& factory);
 	};
 }

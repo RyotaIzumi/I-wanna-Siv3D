@@ -12,7 +12,8 @@ namespace Iwanna {
 	}
 
 	void AvoidanceManager::setUpObjects(int32 chapter) {
-		const bool shouldStartChapterTransitionFade = (activeChapter != 0 && activeChapter != chapter);
+		const bool shouldStartChapterTransitionFade =
+			(activeChapter != 0 && activeChapter != chapter && chapter != 4);
 
 		gameObjects.player = std::make_shared<Player>();
 
@@ -128,7 +129,21 @@ namespace Iwanna {
 			settings.isInfiniteJumpMode = true;
 			break;
 		case 4:
+			settings.playerPos = Vec2{ 400,300 };
+			settings.backgroundColor = ColorF(0.0, 1.0);
+			addPeripheryBlockSettings(settings.blocks);
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,3 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,6 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,9 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,12 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 3,15 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,3 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,7 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,11 });
+			addFloorBlockSettings(settings.blocks, Vec2{ 10,15 });
+			break;
 		case 5:
+			settings.playerPos = Vec2{ 400,300 };
 			addPeripheryBlockSettings(settings.blocks);
 			addFloorBlockSettings(settings.blocks, Vec2{ 3,3 });
 			addFloorBlockSettings(settings.blocks, Vec2{ 3,6 });
@@ -349,8 +364,16 @@ namespace Iwanna {
 
 	void AvoidanceManager::draw() const {
 		const double screenShakeY = getScreenShakeOffset();
+		const double cameraScale = getChapter4CameraScale();
+		const Vec2 cameraCenter = getChapter4CameraCenter();
+		const Vec2 screenCenter{ Global::windowWidth / 2.0, Global::windowHeight / 2.0 };
+		const Vec2 cameraOffset = (screenCenter - cameraCenter) * cameraScale;
 		{
 			const Transformer2D screenShakeTransformer{ Mat3x2::Translate(0.0, screenShakeY) };
+			const Transformer2D cameraTransformer{
+				Mat3x2::Scale(cameraScale, screenCenter)
+					.translated(cameraOffset)
+			};
 			// Cherry ごとではなく、描画パス全体で一度だけ設定する。
 			const ScopedRenderStates2D nearestSampler{ SamplerState::ClampNearest };
 
@@ -361,9 +384,10 @@ namespace Iwanna {
 			const RectF cherryVisibleArea{ -32.0, -32.0,
 				Global::windowWidth + 64.0, Global::windowHeight + 64.0 };
 			const double chapter2SatBarrageFrontDepth = DrawDepth::Player + 10.0;
+			const double chapter4SightMaskDepth = DrawDepth::Cherry + 3.0;
 
 			for (auto* obj : sortedDrawList) {
-				if (obj->getDepth() < chapter2SatBarrageFrontDepth) {
+				if (obj->getDepth() < chapter4SightMaskDepth) {
 					if (obj->type == ObjectType::Cherry
 						&& !obj->getBroadRect().intersects(cherryVisibleArea)) {
 						continue;
@@ -372,9 +396,22 @@ namespace Iwanna {
 				}
 			}
 
+			drawChapter4SightOuterMask();
+			drawChapter4OpeningBlackout();
 			drawChapter2SatBarrageMasks();
 			drawChapter1OpeningFade();
 			drawChapter1SniperSights();
+
+			for (auto* obj : sortedDrawList) {
+				if (chapter4SightMaskDepth <= obj->getDepth()
+					&& obj->getDepth() < chapter2SatBarrageFrontDepth) {
+					if (obj->type == ObjectType::Cherry
+						&& !obj->getBroadRect().intersects(cherryVisibleArea)) {
+						continue;
+					}
+					obj->draw();
+				}
+			}
 
 			for (auto* obj : sortedDrawList) {
 				if (chapter2SatBarrageFrontDepth <= obj->getDepth()) {
@@ -396,6 +433,8 @@ namespace Iwanna {
 			fadeColor.a *= fadeAlpha;
 			Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(fadeColor);
 		}
+
+		drawChapter4OpeningFlash();
 	}
 
 	double AvoidanceManager::getScreenShakeOffset() const {
