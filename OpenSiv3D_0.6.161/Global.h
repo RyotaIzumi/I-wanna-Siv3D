@@ -10,6 +10,12 @@ namespace Global {
 		RIGHT
 	};
 
+	enum class Difficulty {
+		Unselected = 0,
+		Easy = 1,
+		Medium = 2,
+	};
+
 	// ======================
 	// 共有変数宣言
 	// ======================
@@ -34,6 +40,7 @@ namespace Global {
 	inline bool isInfiniteJumpMode = false;
 	inline double bgmVolume = 1.0;
 	inline double seVolume = 1.0;
+	inline Difficulty difficulty = Difficulty::Unselected;
 
 	 // ======================
 	// 定数

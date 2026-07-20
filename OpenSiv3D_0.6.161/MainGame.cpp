@@ -7,6 +7,7 @@ namespace Iwanna {
 		saveData.load();
 		Global::bgmVolume = saveData.bgmVolume;
 		Global::seVolume = saveData.seVolume;
+		Global::difficulty = saveData.difficulty;
 	}
 
 	MainGame::~MainGame() {
@@ -14,12 +15,17 @@ namespace Iwanna {
 	}
 
 	void MainGame::startGame(int32 chapter) {
+		if (!canStartAvoidance()) {
+			return;
+		}
+
 		isTutorial = false;
 		lastSelectedChapter = Clamp(chapter, 1, 6);
 		wasPlayerDead = false;
 		shouldUpdateHighestEndurance = (lastSelectedChapter == 1);
 		practiceLimitReached = false;
 		practiceLimitStep = shouldUpdateHighestEndurance ? none : getPracticeLimitStep();
+		saveData.hasStartedAvoidance = true;
 		saveData.unlockAchievement(0);
 		saveData.updateHighestChapter(lastSelectedChapter);
 		saveData.save();
@@ -47,6 +53,24 @@ namespace Iwanna {
 
 	double MainGame::getEnduranceLengthSec() const {
 		return AudioAsset{ U"sndHibana" }.lengthSec();
+	}
+
+	bool MainGame::canStartAvoidance() const {
+		return saveData.difficulty != Global::Difficulty::Unselected;
+	}
+
+	bool MainGame::canChangeDifficulty() const {
+		return !saveData.hasStartedAvoidance || canDebugChangeDifficulty;
+	}
+
+	void MainGame::setDifficulty(Global::Difficulty difficulty) {
+		if (!canChangeDifficulty()) {
+			return;
+		}
+
+		saveData.difficulty = difficulty;
+		Global::difficulty = saveData.difficulty;
+		saveData.save();
 	}
 
 	void MainGame::setBgmVolume(double volume) {
@@ -138,6 +162,8 @@ namespace Iwanna {
 	}
 
 	void MainGame::debugGame() {
+		canDebugChangeDifficulty = true;
+
 		if (isTutorial) {
 			return;
 		}

@@ -18,6 +18,7 @@ namespace Iwanna {
 		bool shouldUpdateHighestEndurance = true;
 		bool practiceLimitReached = false;
 		bool isTutorial = false;
+		bool canDebugChangeDifficulty = false;
 		Optional<int32> practiceLimitStep;
 		double saveTimerSec = 0.0;
 
@@ -33,6 +34,9 @@ namespace Iwanna {
 		int32 getLastSelectedChapter() const;
 		const SaveData& getSaveData() const;
 		double getEnduranceLengthSec() const;
+		bool canStartAvoidance() const;
+		bool canChangeDifficulty() const;
+		void setDifficulty(Global::Difficulty difficulty);
 		void setBgmVolume(double volume);
 		void setSeVolume(double volume);
 		void updateGame();

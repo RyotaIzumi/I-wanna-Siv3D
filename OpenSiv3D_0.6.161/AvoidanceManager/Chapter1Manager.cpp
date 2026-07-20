@@ -141,11 +141,19 @@ namespace {
 
 	const Chapter1GreenRadarSweepSettings chapter1GreenRadarSweepSettings{};
 
+	double getChapter1GreenRadarSweepAlphaRate() {
+		return (Global::difficulty == Global::Difficulty::Medium) ? 1.0 : 0.5;
+	}
+
+	bool canChapter1GreenRadarSweepKillPlayer() {
+		return (Global::difficulty == Global::Difficulty::Medium);
+	}
+
 	struct Chapter1GreenRadarSignalSettings {
 		String textureName = U"sprCherryAllWhite";
 		ColorF color = ColorF{ 1.0, 1.0, 1.0, 1.0 };
 		ColorF attackColor = ColorF{ 1.0, 0.0, 0.0, 1.0 };
-		int32 count = 100;
+		int32 count = 150;
 		int32 roundCount = 4;
 		int32 fadeOutStep = 30;
 		int32 vanishStep = 30;
@@ -155,7 +163,11 @@ namespace {
 		bool canPlayerKill = false;
 	};
 
-	const Chapter1GreenRadarSignalSettings chapter1GreenRadarSignalSettings{};
+	Chapter1GreenRadarSignalSettings getChapter1GreenRadarSignalSettings() {
+		Chapter1GreenRadarSignalSettings settings;
+		settings.count = (Global::difficulty == Global::Difficulty::Medium) ? 150 : 100;
+		return settings;
+	}
 
 	struct Chapter1SightBarrageSettings {
 		String textureName = U"sprCherryAllWhite";
@@ -196,7 +208,7 @@ namespace {
 		int32 startStep = 136;
 		Array<int32> sightStartSteps = { 136, 200, 260 };
 		int32 repeatIntervalStep = 3;
-		int32 directionCount = 4;
+		//int32 directionCount = 4;
 		double baseAngle = 90.0;
 		double angleShiftPerShot = 53.0;
 		double speed = 7.5;
@@ -218,6 +230,10 @@ namespace {
 	};
 
 	const Chapter1RedSightRadialBarrageSettings chapter1RedSightRadialBarrageSettings{};
+
+	int32 getChapter1RedSightRadialBarrageDirectionCount() {
+		return (Global::difficulty == Global::Difficulty::Medium) ? 5 : 4;
+	}
 
 	struct Chapter1RedSightRadialBarrageController {
 		double rate = 1.0;
@@ -624,21 +640,24 @@ namespace {
 			const int32 localStep = settings.startStep + age;
 			const double angle = getChapter1GreenRadarSweepAngle(localStep);
 			const Vec2 direction{ Math::Cos(angle), Math::Sin(angle) };
+			const double alphaRate = getChapter1GreenRadarSweepAlphaRate();
 
 			self.pos = settings.center + direction * distanceFromCenter;
-			self.canPlayerKill = (localStep < settings.fourthRoundStartStep);
+			self.canPlayerKill = canChapter1GreenRadarSweepKillPlayer()
+				&& (localStep < settings.fourthRoundStartStep);
 			self.alpha = (settings.fourthRoundStartStep <= localStep)
-				? settings.fourthRoundAlpha
-				: settings.sweepColor.a;
+				? settings.fourthRoundAlpha * alphaRate
+				: settings.sweepColor.a * alphaRate;
 		};
 	}
 
 	Iwanna::Cherry::Behavior makeChapter1GreenRadarSweepTrailBehavior(double initialAlpha) {
 		return [initialAlpha](Iwanna::Cherry& self, int32 age) {
 			const auto& settings = chapter1GreenRadarSweepSettings;
+			const double alphaRate = getChapter1GreenRadarSweepAlphaRate();
 			const double t = age / static_cast<double>(Max(settings.trailFadeOutStep, 1));
 			self.canPlayerKill = false;
-			self.alpha = initialAlpha * (1.0 - Iwanna::applyEasing(Iwanna::EasingMoveType::EaseInOut, t));
+			self.alpha = initialAlpha * alphaRate * (1.0 - Iwanna::applyEasing(Iwanna::EasingMoveType::EaseInOut, t));
 
 			if (settings.trailFadeOutStep <= age) {
 				self.isDelete = true;
@@ -653,7 +672,7 @@ namespace {
 		double revealAlpha) {
 
 		return [roundStartStep, roundEndStep, revealStep, revealAlpha](Iwanna::Cherry& self, int32 age) {
-			const auto& signalSettings = chapter1GreenRadarSignalSettings;
+			const auto signalSettings = getChapter1GreenRadarSignalSettings();
 			const int32 localStep = roundStartStep + age;
 
 			self.setScale(signalSettings.scale);
@@ -1441,7 +1460,7 @@ namespace {
 		int32 attackStep,
 		bool usesEaseOutSweep) {
 
-		const auto& signalSettings = chapter1GreenRadarSignalSettings;
+		const auto signalSettings = getChapter1GreenRadarSignalSettings();
 		const auto& sweepSettings = chapter1GreenRadarSweepSettings;
 		const int32 rotationStep = Max(sweepEndStep - roundStartStep, 1);
 		const double sweepStartAngle = -(Math::Pi / 2.0);
@@ -1573,11 +1592,12 @@ namespace {
 		const int32 repeatIndex = Max((localStep - sightStartStep) / Max(settings.repeatIntervalStep, 1), 0);
 		const Vec2 center = getChapter1SightCenter(sightIndex, localStep);
 		const ColorF color = sightSettings.centerColors[sightIndex % sightSettings.centerColors.size()];
-		const double angleInterval = 360.0 / Max(settings.directionCount, 1);
+		const int32 directionCount = getChapter1RedSightRadialBarrageDirectionCount();
+		const double angleInterval = 360.0 / Max(directionCount, 1);
 		const double baseAngle = settings.baseAngle + settings.angleShiftPerShot * repeatIndex;
 		const bool usesSlowDown = (sightIndex == 0);
 
-		for (int32 i = 0; i < settings.directionCount; ++i) {
+		for (int32 i = 0; i < directionCount; ++i) {
 			const double direction = baseAngle + angleInterval * i;
 			const double rad = Math::ToRadians(direction);
 			const Vec2 velocity{
@@ -1810,7 +1830,8 @@ namespace Iwanna {
 		const int32 sonarRoundStep = Max(
 			chapter1GreenRadarSweepSettings.oneRoundEndStep - chapter1GreenRadarSweepSettings.startStep,
 			1);
-		const int32 normalRoundCount = Min(chapter1GreenRadarSignalSettings.roundCount, 3);
+		const auto signalSettings = getChapter1GreenRadarSignalSettings();
+		const int32 normalRoundCount = Min(signalSettings.roundCount, 3);
 		for (int32 roundIndex = 0; roundIndex < normalRoundCount; ++roundIndex) {
 			const int32 roundStartStep = chapter1GreenRadarSweepSettings.startStep + sonarRoundStep * roundIndex;
 			const int32 roundEndStep = roundStartStep + sonarRoundStep;
@@ -1824,7 +1845,7 @@ namespace Iwanna {
 			});
 		}
 
-		if (4 <= chapter1GreenRadarSignalSettings.roundCount) {
+		if (4 <= signalSettings.roundCount) {
 			timeline.at(Global::startStep_Chapter1 + chapter1GreenRadarSweepSettings.fourthRoundStartStep, [&] {
 				createChapter1GreenRadarSignals(
 					*this,

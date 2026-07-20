@@ -37,6 +37,17 @@ namespace {
 		}
 	}
 
+	bool readBool(const std::string& json, const char* key, bool& value) {
+		const std::regex pattern(std::string("\"") + key + R"("\s*:\s*(true|false))");
+		std::smatch match;
+		if (!std::regex_search(json, match, pattern)) {
+			return false;
+		}
+
+		value = (match[1].str() == "true");
+		return true;
+	}
+
 	void readIntArray(const std::string& json, const char* key, std::array<int32, Iwanna::SaveData::ChapterCount>& values) {
 		const std::regex pattern(std::string("\"") + key + R"("\s*:\s*\[([^\]]*)\])");
 		std::smatch match;
@@ -115,6 +126,10 @@ namespace Iwanna {
 		if (readNumber(json, "seVolume", value)) {
 			seVolume = std::clamp(value, 0.0, 1.0);
 		}
+		if (readNumber(json, "difficulty", value)) {
+			difficulty = static_cast<Global::Difficulty>(std::clamp(static_cast<int32>(value), 0, 2));
+		}
+		readBool(json, "hasStartedAvoidance", hasStartedAvoidance);
 		readIntArray(json, "chapterDeathCounts", chapterDeathCounts);
 		readStringArray(json, "achievementUnlockedAt", achievementUnlockedAt);
 	}
@@ -133,6 +148,8 @@ namespace Iwanna {
 			<< roundToMillis(highestEnduranceSec) << ",\n";
 		writer << "  \"bgmVolume\": " << std::defaultfloat << bgmVolume << ",\n";
 		writer << "  \"seVolume\": " << seVolume << ",\n";
+		writer << "  \"difficulty\": " << static_cast<int32>(difficulty) << ",\n";
+		writer << "  \"hasStartedAvoidance\": " << (hasStartedAvoidance ? "true" : "false") << ",\n";
 		writer << "  \"chapterDeathCounts\": [";
 		for (size_t i = 0; i < chapterDeathCounts.size(); ++i) {
 			if (i != 0) writer << ", ";

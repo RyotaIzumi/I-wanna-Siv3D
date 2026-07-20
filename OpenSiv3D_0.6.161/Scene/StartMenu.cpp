@@ -67,7 +67,11 @@ namespace Iwanna {
 		}
 
 		RectF tutorialButtonRect() {
-			return RectF{ RightPageX + 260.0, 440.0, 280.0, 58.0 };
+			return RectF{ RightPageX + 260.0, 520.0, 280.0, 58.0 };
+		}
+
+		RectF difficultyButtonRect(int32 difficulty) {
+			return RectF{ RightPageX + 120.0 + (difficulty - 1) * 160.0, 425.0, 132.0, 46.0 };
 		}
 
 		String twoDigits(int32 value) {
@@ -173,8 +177,8 @@ namespace Iwanna {
 
 		void drawRightPageOptions(MainGame& game, double cameraX) {
 			const double pageX = RightPageX - cameraX;
-			FontAsset(U"Big")(U"Option").draw(Vec2{ pageX + 84.0, 76.0 }, Palette::White);
-			FontAsset(U"Button")(U"Volume").draw(Vec2{ pageX + 88.0, 170.0 }, ColorF{ 0.78, 0.82, 0.92 });
+			FontAsset(U"Big")(U"Option").draw(Vec2{ pageX + 84.0, 36.0 }, Palette::White);
+			FontAsset(U"Button")(U"Volume").draw(Vec2{ pageX + 128.0, 170.0 }, ColorF{ 0.78, 0.82, 0.92 });
 
 			double bgmVolume = game.getSaveData().bgmVolume;
 			double seVolume = game.getSaveData().seVolume;
@@ -184,6 +188,32 @@ namespace Iwanna {
 
 			FontAsset(U"Button")(ToFixed(bgmVolume * 100.0, 0) + U"%").draw(Vec2{ pageX + 590.0, 229.0 }, Palette::White);
 			FontAsset(U"Button")(ToFixed(seVolume * 100.0, 0) + U"%").draw(Vec2{ pageX + 590.0, 299.0 }, Palette::White);
+
+			FontAsset(U"Button")(U"Difficulty").draw(Vec2{ pageX + 128.0, 374.0 }, ColorF{ 0.78, 0.82, 0.92 });
+			const bool canChangeDifficulty = game.canChangeDifficulty();
+			for (int32 difficulty = 1; difficulty <= 2; ++difficulty) {
+				const RectF button = difficultyButtonRect(difficulty).movedBy(-cameraX, 0.0);
+				const Global::Difficulty difficultyValue = (difficulty == 1)
+					? Global::Difficulty::Easy
+					: Global::Difficulty::Medium;
+				const bool selected = (game.getSaveData().difficulty == difficultyValue);
+				const bool hovered = canChangeDifficulty && button.mouseOver();
+				const ColorF fill = selected
+					? ColorF{ 0.25, 0.65, 1.0 }
+					: (canChangeDifficulty
+						? (hovered ? ColorF{ 0.25, 0.25, 0.30 } : ColorF{ 0.16, 0.16, 0.20 })
+						: ColorF{ 0.10, 0.10, 0.13 });
+				const ColorF frame = selected ? ColorF{ 0.75, 0.90, 1.0 } : ColorF{ 0.45, 0.45, 0.52 };
+				const ColorF text = canChangeDifficulty || selected ? ColorF{ 1.0 } : ColorF{ 0.42, 0.44, 0.50 };
+				const String label = (difficulty == 1) ? U"Easy" : U"Medium";
+
+				button.rounded(6.0).draw(fill);
+				button.rounded(6.0).drawFrame(2.0, frame);
+				FontAsset(U"Button")(label).drawAt(button.center(), text);
+			}
+			if (!canChangeDifficulty) {
+				FontAsset(U"Button")(U"Locked after starting avoidance").draw(Vec2{ pageX + 430.0, 435.0 }, ColorF{ 0.60, 0.64, 0.72 });
+			}
 
 			const RectF tutorialButton = tutorialButtonRect().movedBy(-cameraX, 0.0);
 			const bool hovered = tutorialButton.mouseOver();
@@ -241,6 +271,9 @@ namespace Iwanna {
 		auto& data = getData().game;
 		const int32 highestChapter = data.getSaveData().highestChapter;
 		selectedChapter = Clamp(selectedChapter, 1, highestChapter);
+		if (data.canStartAvoidance()) {
+			showDifficultyMessage = false;
+		}
 		updateCameraMove();
 
 		if (arrowButtonRect(-1).leftClicked()) {
@@ -254,6 +287,15 @@ namespace Iwanna {
 			data.startTutorial();
 			changeScene(SceneType::IN_GAME, 0.0s);
 			return;
+		}
+
+		if (data.canChangeDifficulty()) {
+			for (int32 difficulty = 1; difficulty <= 2; ++difficulty) {
+				if (difficultyButtonRect(difficulty).movedBy(-cameraX, 0.0).leftClicked()) {
+					data.setDifficulty((difficulty == 1) ? Global::Difficulty::Easy : Global::Difficulty::Medium);
+					showDifficultyMessage = false;
+				}
+			}
 		}
 
 		for (int32 chapter = 1; chapter <= 6; ++chapter) {
@@ -274,12 +316,20 @@ namespace Iwanna {
 
 		const RectF startButton{ 300.0 + ChapterSelectOffset.x - cameraX, 460.0 + ChapterSelectOffset.y, 200.0, 56.0 };
 		if (startButton.leftClicked()) {
+			if (!data.canStartAvoidance()) {
+				showDifficultyMessage = true;
+				return;
+			}
 			data.startGame(selectedChapter);
 			changeScene(SceneType::IN_GAME, 0.0s);
 			return;
 		}
 
 		if (cameraPage == 0 && Global::inputStart.down()) {
+			if (!data.canStartAvoidance()) {
+				showDifficultyMessage = true;
+				return;
+			}
 			data.startGame(selectedChapter);
 			changeScene(SceneType::IN_GAME, 0.0s);
 		}
@@ -329,6 +379,9 @@ namespace Iwanna {
 			FontAsset(U"Button")(U"Start Chapter " + Format(selectedChapter)).drawAt(startButton.center(), ColorF{ 0.06, 0.07, 0.10 });
 
 			FontAsset(U"Button")(U"Shift also starts the selected chapter").drawAt(400 + ChapterSelectOffset.x, 550 + ChapterSelectOffset.y, ColorF{ 0.60, 0.64, 0.72 });
+			if (showDifficultyMessage) {
+				FontAsset(U"Button")(U"Please select difficulty in option screen").drawAt(400, 300, ColorF{ 1.0, 0.82, 0.38 });
+			}
 
 			const Vec2 saveTextPos{ 28.0, Global::windowHeight - 112.0 };
 			const double lineHeight = 28.0;

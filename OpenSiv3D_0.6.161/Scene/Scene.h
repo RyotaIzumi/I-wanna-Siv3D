@@ -48,6 +48,7 @@ namespace Iwanna {
 		double cameraTargetX = 0.0;
 		double cameraMoveTimerSec = 0.0;
 		bool isCameraMoving = false;
+		bool showDifficultyMessage = false;
 
 		void updateCameraMove();
 		void requestCameraMove(int32 direction);

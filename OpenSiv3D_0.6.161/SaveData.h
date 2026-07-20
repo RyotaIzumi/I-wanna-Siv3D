@@ -1,6 +1,7 @@
 #pragma once
 #include <Siv3D.hpp>
 #include <array>
+#include "Global.h"
 
 namespace Iwanna {
 	struct SaveData {
@@ -13,6 +14,8 @@ namespace Iwanna {
 		double highestEnduranceSec = 0.0;
 		double bgmVolume = 1.0;
 		double seVolume = 1.0;
+		Global::Difficulty difficulty = Global::Difficulty::Unselected;
+		bool hasStartedAvoidance = false;
 		std::array<int32, ChapterCount> chapterDeathCounts{};
 		std::array<String, AchievementCount> achievementUnlockedAt{};
 
