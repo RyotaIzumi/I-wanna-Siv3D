@@ -11,6 +11,8 @@ namespace Iwanna {
 		double playTimeSec = 0.0;
 		int32 highestChapter = 1;
 		double highestEnduranceSec = 0.0;
+		double bgmVolume = 1.0;
+		double seVolume = 1.0;
 		std::array<int32, ChapterCount> chapterDeathCounts{};
 		std::array<String, AchievementCount> achievementUnlockedAt{};
 

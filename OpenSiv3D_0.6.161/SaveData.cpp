@@ -109,6 +109,12 @@ namespace Iwanna {
 		if (readNumber(json, "highestEnduranceSec", value)) {
 			highestEnduranceSec = std::max(0.0, roundToMillis(value));
 		}
+		if (readNumber(json, "bgmVolume", value)) {
+			bgmVolume = std::clamp(value, 0.0, 1.0);
+		}
+		if (readNumber(json, "seVolume", value)) {
+			seVolume = std::clamp(value, 0.0, 1.0);
+		}
 		readIntArray(json, "chapterDeathCounts", chapterDeathCounts);
 		readStringArray(json, "achievementUnlockedAt", achievementUnlockedAt);
 	}
@@ -125,6 +131,8 @@ namespace Iwanna {
 		writer << "  \"highestChapter\": " << highestChapter << ",\n";
 		writer << "  \"highestEnduranceSec\": " << std::fixed << std::setprecision(3)
 			<< roundToMillis(highestEnduranceSec) << ",\n";
+		writer << "  \"bgmVolume\": " << std::defaultfloat << bgmVolume << ",\n";
+		writer << "  \"seVolume\": " << seVolume << ",\n";
 		writer << "  \"chapterDeathCounts\": [";
 		for (size_t i = 0; i < chapterDeathCounts.size(); ++i) {
 			if (i != 0) writer << ", ";

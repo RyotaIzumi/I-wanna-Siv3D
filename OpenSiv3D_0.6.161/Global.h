@@ -32,6 +32,8 @@ namespace Global {
 
 	// モード設定
 	inline bool isInfiniteJumpMode = false;
+	inline double bgmVolume = 1.0;
+	inline double seVolume = 1.0;
 
 	 // ======================
 	// 定数

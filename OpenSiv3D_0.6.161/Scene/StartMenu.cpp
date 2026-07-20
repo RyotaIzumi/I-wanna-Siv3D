@@ -12,6 +12,7 @@ namespace Iwanna {
 		constexpr int32 CameraMaxPage = 1;
 		constexpr double CameraMoveDurationSec = 0.45;
 		constexpr double LeftPageX = -Global::windowWidth;
+		constexpr double RightPageX = Global::windowWidth;
 
 		struct AchievementViewData {
 			String title;
@@ -63,6 +64,10 @@ namespace Iwanna {
 				50.0,
 				50.0,
 			};
+		}
+
+		RectF tutorialButtonRect() {
+			return RectF{ RightPageX + 260.0, 440.0, 280.0, 58.0 };
 		}
 
 		String twoDigits(int32 value) {
@@ -165,6 +170,34 @@ namespace Iwanna {
 			FontAsset(U"Button")(achievement.description).draw(pageOffset + Vec2{ 26.0, 456.0 + achivementDescOffsetY }, textColor);
 			FontAsset(U"Button")(U"Unlocked : " + unlockedAt).draw(pageOffset + Vec2{ 26.0, 488.0 + achivementDescOffsetY }, textColor);
 		}
+
+		void drawRightPageOptions(MainGame& game, double cameraX) {
+			const double pageX = RightPageX - cameraX;
+			FontAsset(U"Big")(U"Option").draw(Vec2{ pageX + 84.0, 76.0 }, Palette::White);
+			FontAsset(U"Button")(U"Volume").draw(Vec2{ pageX + 88.0, 170.0 }, ColorF{ 0.78, 0.82, 0.92 });
+
+			double bgmVolume = game.getSaveData().bgmVolume;
+			double seVolume = game.getSaveData().seVolume;
+
+			SimpleGUI::Slider(U"BGM", bgmVolume, 0.0, 1.0, Vec2{ pageX + 120.0, 230.0 }, 88.0, 360.0);
+			SimpleGUI::Slider(U"SE", seVolume, 0.0, 1.0, Vec2{ pageX + 120.0, 300.0 }, 88.0, 360.0);
+
+			FontAsset(U"Button")(ToFixed(bgmVolume * 100.0, 0) + U"%").draw(Vec2{ pageX + 590.0, 229.0 }, Palette::White);
+			FontAsset(U"Button")(ToFixed(seVolume * 100.0, 0) + U"%").draw(Vec2{ pageX + 590.0, 299.0 }, Palette::White);
+
+			const RectF tutorialButton = tutorialButtonRect().movedBy(-cameraX, 0.0);
+			const bool hovered = tutorialButton.mouseOver();
+			tutorialButton.rounded(6.0).draw(hovered ? ColorF{ 0.95, 0.95, 1.0 } : ColorF{ 0.78, 0.82, 0.92 });
+			tutorialButton.rounded(6.0).drawFrame(2.0, ColorF{ 0.25, 0.30, 0.42 });
+			FontAsset(U"Button")(U"Tutorial").drawAt(tutorialButton.center(), ColorF{ 0.06, 0.07, 0.10 });
+
+			if (0.001 < Abs(bgmVolume - game.getSaveData().bgmVolume)) {
+				game.setBgmVolume(bgmVolume);
+			}
+			if (0.001 < Abs(seVolume - game.getSaveData().seVolume)) {
+				game.setSeVolume(seVolume);
+			}
+		}
 	}
 
 	StartMenu::StartMenu(const InitData& data) : IScene(data) {
@@ -217,6 +250,12 @@ namespace Iwanna {
 			requestCameraMove(1);
 		}
 
+		if (tutorialButtonRect().movedBy(-cameraX, 0.0).leftClicked()) {
+			data.startTutorial();
+			changeScene(SceneType::IN_GAME, 0.0s);
+			return;
+		}
+
 		for (int32 chapter = 1; chapter <= 6; ++chapter) {
 			const RectF button = chapterButtonRect(chapter).movedBy(-cameraX, 0.0);
 			const bool unlocked = (chapter <= highestChapter);
@@ -247,7 +286,8 @@ namespace Iwanna {
 	}
 
 	void StartMenu::draw() const {
-		const auto& data = getData().game;
+		auto& mutableGame = const_cast<MainGame&>(getData().game);
+		const auto& data = mutableGame;
 		const SaveData& saveData = data.getSaveData();
 		const int32 highestChapter = saveData.highestChapter;
 
@@ -302,6 +342,8 @@ namespace Iwanna {
 			FontAsset(U"Button")(U"Play Time : " + formatPlayTime(saveData.playTimeSec)).draw(saveTextPos + Vec2{ 0.0, lineHeight }, saveTextColor);
 			FontAsset(U"Button")(U"Best : " + enduranceText).draw(saveTextPos + Vec2{ 0.0, lineHeight * 2.0 }, saveTextColor);
 		}
+
+		drawRightPageOptions(mutableGame, cameraX);
 
 		drawArrowButton(-1, cameraPage > CameraMinPage || isCameraMoving);
 		drawArrowButton(1, cameraPage < CameraMaxPage || isCameraMoving);

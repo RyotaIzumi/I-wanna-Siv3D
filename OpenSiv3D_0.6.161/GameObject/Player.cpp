@@ -113,13 +113,13 @@ namespace Iwanna{
 		if (isOnGround) {
 			vspeed = -jump;
 			djump = true;
-			AudioAsset(Sound::JUMP).playOneShot();
+			AudioAsset(Sound::JUMP).playOneShot(Global::seVolume);
 			isOnGround = false;
 		}
 		else if (djump || Global::isInfiniteJumpMode) {
 			vspeed = -jump2;
 			djump = false;
-			AudioAsset(Sound::DJUMP).playOneShot();
+			AudioAsset(Sound::DJUMP).playOneShot(Global::seVolume);
 		}
 	}
 
@@ -138,7 +138,7 @@ namespace Iwanna{
 		hspeed = 0;
 		vspeed = 0;
 		spriteSystem.stopAnimation();
-		AudioAsset(Sound::DEATH).playOneShot();
+		AudioAsset(Sound::DEATH).playOneShot(Global::seVolume);
 	}
 
 	Vec2 Player::snappedPos(Vec2 p)

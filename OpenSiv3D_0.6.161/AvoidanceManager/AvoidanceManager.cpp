@@ -37,6 +37,58 @@ namespace Iwanna {
 		}
 	}
 
+	void AvoidanceManager::setUpTutorialObjects() {
+		gameObjects.player = std::make_shared<Player>();
+
+		stockNearGameObjects.clear();
+		stockBulletsNearGameObjects.clear();
+		recycleAllCherries();
+		gameObjects.bullets.clear();
+		gameObjects.bloods.clear();
+		gameObjects.blocks.clear();
+		gameObjects.miku.reset();
+
+		ChapterSettings settings;
+		settings.playerPos = Vec2{ 400,300 };
+		settings.backgroundColor = ColorF(0.8, 1.0);
+		settings.isInfiniteJumpMode = false;
+		addPeripheryBlockSettings(settings.blocks);
+		addFloorBlockSettings(settings.blocks, Vec2{ 17,3 });
+		addFloorBlockSettings(settings.blocks, Vec2{ 17,6 });
+		addFloorBlockSettings(settings.blocks, Vec2{ 17,9 });
+		addFloorBlockSettings(settings.blocks, Vec2{ 17,12 });
+		addFloorBlockSettings(settings.blocks, Vec2{ 17,15 });
+		addFloorBlockSettings(settings.blocks, Vec2{ 10,3 });
+		addFloorBlockSettings(settings.blocks, Vec2{ 10,7 });
+		addFloorBlockSettings(settings.blocks, Vec2{ 10,11 });
+		addFloorBlockSettings(settings.blocks, Vec2{ 10,15 });
+		addFloorBlockSettings(settings.blocks, Vec2{ 3,3 });
+		addFloorBlockSettings(settings.blocks, Vec2{ 3,6 });
+		addFloorBlockSettings(settings.blocks, Vec2{ 3,9 });
+		addFloorBlockSettings(settings.blocks, Vec2{ 3,12 });
+
+		backgroundColor = settings.backgroundColor;
+		Global::isInfiniteJumpMode = settings.isInfiniteJumpMode;
+		gameObjects.player->pos = settings.playerPos;
+		gameObjects.player->hitBox->setPos(settings.playerPos);
+		gameObjects.player->setDepth(settings.playerDepth);
+		for (const auto& blockSetting : settings.blocks) {
+			auto block = std::make_shared<Block>(blockSetting.textureName, blockSetting.gridPos);
+			block->setHasCollide(blockSetting.hasCollide);
+			block->setDepth(blockSetting.depth);
+			gameObjects.blocks << block;
+		}
+
+		activeChapter = 0;
+		step = 0;
+		previousStep = -1;
+		isGenerateBloods = false;
+		screenShakeActive = false;
+		screenShakeStopwatch.reset();
+		chapterTransitionFadeActive = false;
+		markDrawListDirty();
+	}
+
 	int32 AvoidanceManager::getChapterFromStep(int32 targetStep) const {
 		if (targetStep < Global::startStep_Chapter2) return 1;
 		if (targetStep < Global::startStep_Chapter3) return 2;
@@ -175,7 +227,7 @@ namespace Iwanna {
 			if (bullets.size() < bulletMaxNum) {
 				bullets << std::make_shared<Bullet>(player->pos, player->getDirection() == Global::Direction::RIGHT ? bulletSpeed : -bulletSpeed);
 				markDrawListDirty();
-				AudioAsset(Sound::SHOOT).playOneShot();
+				AudioAsset(Sound::SHOOT).playOneShot(Global::seVolume);
 			}
 			player->setIsGenerateBullet(false);
 		}
@@ -409,6 +461,57 @@ namespace Iwanna {
 		step = newStep;
 	}
 
+	void AvoidanceManager::updateTutorial() {
+		auto& player = gameObjects.player;
+		auto& bullets = gameObjects.bullets;
+		auto& blocks = gameObjects.blocks;
+
+		player->update();
+
+		if (player->getIsGenerateBullet()) {
+			if (bullets.size() < bulletMaxNum) {
+				bullets << std::make_shared<Bullet>(player->pos, player->getDirection() == Global::Direction::RIGHT ? bulletSpeed : -bulletSpeed);
+				markDrawListDirty();
+				AudioAsset(Sound::SHOOT).playOneShot(Global::seVolume);
+			}
+			player->setIsGenerateBullet(false);
+		}
+
+		stockNearGameObjects.clear();
+		stockBulletsNearGameObjects.clear();
+		stockNearGameObjects.add(player.get());
+		for (auto& block : blocks) {
+			stockNearGameObjects.add(block.get());
+			stockBulletsNearGameObjects.add(block.get());
+		}
+		for (auto& bullet : bullets) {
+			bullet->update();
+		}
+
+		auto near = stockNearGameObjects.query(player->getBroadRect());
+		for (auto* obj : near) {
+			if (obj != player.get()) {
+				player->onCollision(*obj);
+			}
+		}
+		player->updateLate();
+
+		for (auto& bullet : bullets) {
+			auto nearObjs = stockBulletsNearGameObjects.query(bullet->getBroadRect());
+			for (auto* obj : nearObjs) {
+				bullet->onCollision(*obj);
+			}
+		}
+
+		const size_t bulletCountBeforeRemove = bullets.size();
+		bullets.remove_if([](auto&& bullet) {
+			return bullet->isOutOfScreen || bullet->isDelete;
+		});
+		if (bullets.size() != bulletCountBeforeRemove) {
+			markDrawListDirty();
+		}
+	}
+
 	int32 AvoidanceManager::getActiveChapter() const {
 		return activeChapter;
 	}
@@ -489,7 +592,9 @@ namespace Iwanna {
 			+ gameObjects.bloods.size()
 			+ gameObjects.bullets.size());
 
-		sortedDrawList << gameObjects.miku.get();
+		if (gameObjects.miku) {
+			sortedDrawList << gameObjects.miku.get();
+		}
 		sortedDrawList << gameObjects.player.get();
 		for (const auto& block : gameObjects.blocks) sortedDrawList << block.get();
 		for (const auto& cherry : gameObjects.cherries) sortedDrawList << cherry.get();

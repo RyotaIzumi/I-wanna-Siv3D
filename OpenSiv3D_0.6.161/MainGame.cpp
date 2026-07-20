@@ -1,8 +1,12 @@
 ﻿#include "MainGame.h"
 
+#include "Audio/AudioAsset.h"
+
 namespace Iwanna {
 	MainGame::MainGame() {
 		saveData.load();
+		Global::bgmVolume = saveData.bgmVolume;
+		Global::seVolume = saveData.seVolume;
 	}
 
 	MainGame::~MainGame() {
@@ -10,6 +14,7 @@ namespace Iwanna {
 	}
 
 	void MainGame::startGame(int32 chapter) {
+		isTutorial = false;
 		lastSelectedChapter = Clamp(chapter, 1, 6);
 		wasPlayerDead = false;
 		shouldUpdateHighestEndurance = (lastSelectedChapter == 1);
@@ -20,6 +25,16 @@ namespace Iwanna {
 		saveData.save();
 		avoidanceManager.setUpObjects(lastSelectedChapter);
 		playBgm(lastSelectedChapter);
+	}
+
+	void MainGame::startTutorial() {
+		isTutorial = true;
+		wasPlayerDead = false;
+		shouldUpdateHighestEndurance = false;
+		practiceLimitReached = false;
+		practiceLimitStep = none;
+		audio.stop();
+		avoidanceManager.setUpTutorialObjects();
 	}
 
 	int32 MainGame::getLastSelectedChapter() const {
@@ -34,6 +49,19 @@ namespace Iwanna {
 		return AudioAsset{ U"sndHibana" }.lengthSec();
 	}
 
+	void MainGame::setBgmVolume(double volume) {
+		saveData.bgmVolume = Clamp(volume, 0.0, 1.0);
+		Global::bgmVolume = saveData.bgmVolume;
+		audio.setVolume(saveData.bgmVolume);
+		saveData.save();
+	}
+
+	void MainGame::setSeVolume(double volume) {
+		saveData.seVolume = Clamp(volume, 0.0, 1.0);
+		Global::seVolume = saveData.seVolume;
+		saveData.save();
+	}
+
 	Optional<int32> MainGame::getPracticeLimitStep() const {
 		switch (Clamp(saveData.highestChapter + 1, 1, 7)) {
 		case 2: return Global::startStep_Chapter2 - 1;
@@ -46,6 +74,11 @@ namespace Iwanna {
 	}
 
 	void MainGame::updateGame() {
+		if (isTutorial) {
+			avoidanceManager.updateTutorial();
+			return;
+		}
+
 		const bool wasAliveAtFrameStart = !wasPlayerDead;
 		const double deltaTimeSec = Scene::DeltaTime();
 		if (wasAliveAtFrameStart) {
@@ -105,6 +138,10 @@ namespace Iwanna {
 	}
 
 	void MainGame::debugGame() {
+		if (isTutorial) {
+			return;
+		}
+
 		avoidanceManager.debug();
 		if (Global::inputDebugPause.down())pauseBgm();
 		if (Global::inputDebugStart.down())audio.play();
@@ -115,6 +152,15 @@ namespace Iwanna {
 
 		if (practiceLimitReached) {
 			FontAsset(U"Button")(U"Practice End").draw(Vec2{ 28.0, Global::windowHeight - 44.0 }, ColorF{ 1.0, 0.82, 0.38 });
+		}
+		if (isTutorial) {
+			const Vec2 textPos{ 40.0, Global::windowHeight - 162.0 };
+			const double lineHeight = 30.0;
+			const ColorF textColor{ 0.08, 0.09, 0.12 };
+			FontAsset(U"Button")(U"[←,→] move").draw(textPos, textColor);
+			FontAsset(U"Button")(U"[shift] jump,double jump").draw(textPos + Vec2{ 0.0, lineHeight }, textColor);
+			FontAsset(U"Button")(U"[Z] shot").draw(textPos + Vec2{ 0.0, lineHeight * 2.0 }, textColor);
+			FontAsset(U"Button")(U"[R] back to main menu").draw(textPos + Vec2{ 0.0, lineHeight * 3.0 }, textColor);
 		}
 	}
 
@@ -131,6 +177,7 @@ namespace Iwanna {
 	void MainGame::playBgm(int32 chapter) {
 		stopBgm();
 		audio = AudioAsset{ U"sndHibana"};
+		audio.setVolume(saveData.bgmVolume);
 		SecondsF startTime = 0.0s;
 		int32 startStep = 0;
 
@@ -150,6 +197,7 @@ namespace Iwanna {
 	}
 
 	void MainGame::stopBgm() {
+		isTutorial = false;
 		audio.stop();
 		saveData.save();
 	}

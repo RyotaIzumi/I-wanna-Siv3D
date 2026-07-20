@@ -17,6 +17,7 @@ namespace Iwanna {
 		bool wasPlayerDead = false;
 		bool shouldUpdateHighestEndurance = true;
 		bool practiceLimitReached = false;
+		bool isTutorial = false;
 		Optional<int32> practiceLimitStep;
 		double saveTimerSec = 0.0;
 
@@ -28,9 +29,12 @@ namespace Iwanna {
 		~MainGame();
 
 		void startGame(int32 chapter = 1);
+		void startTutorial();
 		int32 getLastSelectedChapter() const;
 		const SaveData& getSaveData() const;
 		double getEnduranceLengthSec() const;
+		void setBgmVolume(double volume);
+		void setSeVolume(double volume);
 		void updateGame();
 		void debugGame();
 		void drawGame();

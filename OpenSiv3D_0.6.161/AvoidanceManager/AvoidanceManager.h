@@ -131,7 +131,9 @@ namespace Iwanna {
 		AvoidanceManager();
 
 		void setUpObjects(int32 chapter);
+		void setUpTutorialObjects();
 		void update();
+		void updateTutorial();
 		void debug();
 		void draw() const;
 		void setStep(int32 newStep);
