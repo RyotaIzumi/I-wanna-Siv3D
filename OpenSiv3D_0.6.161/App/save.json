@@ -1,6 +1,8 @@
 {
-  "deathCount": 9,
-  "playTimeSec": 88.7376,
-  "highestChapter": 2,
-  "highestEnduranceSec": 18.820
+  "deathCount": 3,
+  "playTimeSec": 3.50396,
+  "highestChapter": 1,
+  "highestEnduranceSec": 1.770,
+  "chapterDeathCounts": [3, 0, 0, 0, 0, 0],
+  "achievementUnlockedAt": ["2026-07-20 09:42:44", "", "", "", "", "", ""]
 }

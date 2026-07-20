@@ -8,9 +8,26 @@ namespace Iwanna {
 		constexpr double ChapterButtonBaseY = 330.0;
 		constexpr double ChapterButtonSpacingX = 84.0;
 		constexpr double ChapterButtonSpacingY = 56.0;
-		constexpr int32 CameraMinPage = 0;
+		constexpr int32 CameraMinPage = -1;
 		constexpr int32 CameraMaxPage = 1;
 		constexpr double CameraMoveDurationSec = 0.45;
+		constexpr double LeftPageX = -Global::windowWidth;
+
+		struct AchievementViewData {
+			String title;
+			String description;
+			String textureName;
+		};
+
+		const std::array<AchievementViewData, SaveData::AchievementCount> AchievementViews{ {
+			{ U"First Start", U"Started the endurance for the first time.", U"achive_start" },
+			{ U"Chapter 1", U"Passed chapter 1.", U"achive_chapter1" },
+			{ U"Chapter 2", U"Passed chapter 2.", U"achive_chapter2" },
+			{ U"Chapter 3", U"Passed chapter 3.", U"achive_chapter3" },
+			{ U"Chapter 4", U"Passed chapter 4.", U"achive_chapter4" },
+			{ U"Chapter 5", U"Passed chapter 5.", U"" },
+			{ U"Chapter 6", U"Passed chapter 6.", U"" },
+		} };
 
 		double easeOutCubic(double t) {
 			const double clampedT = Clamp(t, 0.0, 1.0);
@@ -33,6 +50,18 @@ namespace Iwanna {
 				ChapterButtonBaseY + ChapterSelectOffset.y + row * ChapterButtonSpacingY,
 				72.0,
 				48.0,
+			};
+		}
+
+		RectF achievementIconRect(int32 index) {
+			constexpr int32 iconsPerRow = 9;
+			const int32 column = index % iconsPerRow;
+			const int32 row = index / iconsPerRow;
+			return RectF{
+				LeftPageX + 86.0 + column * 78.0,
+				388.0 + row * 58.0,
+				50.0,
+				50.0,
 			};
 		}
 
@@ -72,6 +101,69 @@ namespace Iwanna {
 				Vec2{ center.x - sign * 10.0, center.y - 18.0 },
 				Vec2{ center.x - sign * 10.0, center.y + 18.0 },
 			}.draw(arrowColor);
+		}
+
+		void drawLeftPageRecord(const SaveData& saveData) {
+			const Vec2 pageOffset{ LeftPageX, 0.0 };
+			FontAsset(U"Big")(U"Record").draw(pageOffset + Vec2{ 84.0, 20.0 }, Palette::White);
+
+			const RectF table{ LeftPageX + 84.0, 112.0, 630.0, 58.0 };
+			const double firstColumnWidth = 102.0;
+			const double dataColumnWidth = (table.w - firstColumnWidth) / SaveData::ChapterCount;
+			table.drawFrame(1.5, Palette::White);
+			Line{ table.x, table.y + 29.0, table.x + table.w, table.y + 29.0 }.draw(1.5, Palette::White);
+			Line{ table.x + firstColumnWidth, table.y, table.x + firstColumnWidth, table.y + table.h }.draw(1.5, Palette::White);
+
+			FontAsset(U"Button")(U"Chapter").drawAt(Vec2{ table.x + firstColumnWidth * 0.5, table.y + 14.5 }, Palette::White);
+			FontAsset(U"Button")(U"Death").drawAt(Vec2{ table.x + firstColumnWidth * 0.5, table.y + 43.5 }, Palette::White);
+
+			for (int32 chapter = 1; chapter <= SaveData::ChapterCount; ++chapter) {
+				const double x = table.x + firstColumnWidth + (chapter - 1) * dataColumnWidth;
+				Line{ x, table.y, x, table.y + table.h }.draw(1.0, ColorF{ 0.9 });
+				FontAsset(U"Button")(Format(chapter)).drawAt(Vec2{ x + dataColumnWidth * 0.5, table.y + 14.5 }, Palette::White);
+				FontAsset(U"Button")(Format(saveData.chapterDeathCounts[chapter - 1])).drawAt(Vec2{ x + dataColumnWidth * 0.5, table.y + 43.5 }, Palette::White);
+			}
+		}
+
+		void drawLeftPageAchievements(const SaveData& saveData, int32 selectedAchievement, double cameraX) {
+			const Vec2 pageOffset{ LeftPageX, 0.0 };
+			Line{ pageOffset + Vec2{ 0.0, 304 }, pageOffset + Vec2{ 800.0, 304.0 } }.draw(1.5, Palette::White);
+			FontAsset(U"Big")(U"Achievement").draw(pageOffset + Vec2{ 84.0, 300.0 }, Palette::White);
+
+			for (int32 index = 0; index < SaveData::AchievementCount; ++index) {
+				const RectF icon = achievementIconRect(index);
+				const bool unlocked = !saveData.achievementUnlockedAt[index].isEmpty();
+				const bool selected = (index == selectedAchievement);
+				const bool hovered = icon.movedBy(-cameraX, 0.0).mouseOver();
+				const ColorF fill = unlocked
+					? (hovered ? ColorF{ 0.33, 0.39, 0.52 } : ColorF{ 0.20, 0.25, 0.34 })
+					: ColorF{ 0.08, 0.09, 0.12 };
+				const ColorF frame = selected ? ColorF{ 1.0, 0.82, 0.38 } : ColorF{ 0.92 };
+
+				icon.draw(fill);
+				const String textureName = unlocked ? AchievementViews[index].textureName : U"achive_locked";
+				if (!textureName.isEmpty()) {
+					TextureAsset(textureName).resized(icon.w, icon.h).draw(icon.pos);
+				}
+				else {
+					FontAsset(U"Button")(Format(index + 1)).drawAt(icon.center(), ColorF{ 1.0 });
+				}
+				icon.drawFrame(selected ? 3.0 : 2.0, frame);
+			}
+
+			const RectF detailBand{ LeftPageX, 540.0, Global::windowWidth, 168 };
+			detailBand.draw(ColorF{ 0.96, 0.97, 1.0 });
+
+			const auto& achievement = AchievementViews[selectedAchievement];
+			const String unlockedAt = saveData.achievementUnlockedAt[selectedAchievement].isEmpty()
+				? U"Not unlocked"
+				: saveData.achievementUnlockedAt[selectedAchievement];
+			const ColorF textColor{ 0.08, 0.09, 0.12 };
+
+			const double achivementDescOffsetY = 85;
+
+			FontAsset(U"Button")(achievement.description).draw(pageOffset + Vec2{ 26.0, 456.0 + achivementDescOffsetY }, textColor);
+			FontAsset(U"Button")(U"Unlocked : " + unlockedAt).draw(pageOffset + Vec2{ 26.0, 488.0 + achivementDescOffsetY }, textColor);
 		}
 	}
 
@@ -134,6 +226,13 @@ namespace Iwanna {
 			}
 		}
 
+		for (int32 index = 0; index < SaveData::AchievementCount; ++index) {
+			const RectF icon = achievementIconRect(index).movedBy(-cameraX, 0.0);
+			if (icon.leftClicked()) {
+				selectedAchievement = index;
+			}
+		}
+
 		const RectF startButton{ 300.0 + ChapterSelectOffset.x - cameraX, 460.0 + ChapterSelectOffset.y, 200.0, 56.0 };
 		if (startButton.leftClicked()) {
 			data.startGame(selectedChapter);
@@ -141,7 +240,7 @@ namespace Iwanna {
 			return;
 		}
 
-		if (Global::inputStart.down()) {
+		if (cameraPage == 0 && Global::inputStart.down()) {
 			data.startGame(selectedChapter);
 			changeScene(SceneType::IN_GAME, 0.0s);
 		}
@@ -155,6 +254,9 @@ namespace Iwanna {
 		Rect{ 0, 0, Global::windowWidth, Global::windowHeight }.draw(ColorF{ 0.08, 0.08, 0.10 });
 		{
 			const Transformer2D cameraTransformer{ Mat3x2::Translate(-cameraX, 0.0) };
+
+			drawLeftPageRecord(saveData);
+			drawLeftPageAchievements(saveData, selectedAchievement, cameraX);
 
 			FontAsset(U"Big")(U"I wanna Siv3D").drawAt(400, 150, Palette::White);
 
@@ -187,19 +289,19 @@ namespace Iwanna {
 			FontAsset(U"Button")(U"Start Chapter " + Format(selectedChapter)).drawAt(startButton.center(), ColorF{ 0.06, 0.07, 0.10 });
 
 			FontAsset(U"Button")(U"Shift also starts the selected chapter").drawAt(400 + ChapterSelectOffset.x, 550 + ChapterSelectOffset.y, ColorF{ 0.60, 0.64, 0.72 });
+
+			const Vec2 saveTextPos{ 28.0, Global::windowHeight - 112.0 };
+			const double lineHeight = 28.0;
+			const String enduranceText =
+				formatEnduranceTime(saveData.highestEnduranceSec)
+				+ U" / "
+				+ formatEnduranceTime(data.getEnduranceLengthSec());
+			const ColorF saveTextColor{ 0.72, 0.76, 0.84 };
+
+			FontAsset(U"Button")(U"Death : " + Format(saveData.deathCount)).draw(saveTextPos, saveTextColor);
+			FontAsset(U"Button")(U"Play Time : " + formatPlayTime(saveData.playTimeSec)).draw(saveTextPos + Vec2{ 0.0, lineHeight }, saveTextColor);
+			FontAsset(U"Button")(U"Best : " + enduranceText).draw(saveTextPos + Vec2{ 0.0, lineHeight * 2.0 }, saveTextColor);
 		}
-
-		const Vec2 saveTextPos{ 28.0, Global::windowHeight - 112.0 };
-		const double lineHeight = 28.0;
-		const String enduranceText =
-			formatEnduranceTime(saveData.highestEnduranceSec)
-			+ U" / "
-			+ formatEnduranceTime(data.getEnduranceLengthSec());
-		const ColorF saveTextColor{ 0.72, 0.76, 0.84 };
-
-		FontAsset(U"Button")(U"Death : " + Format(saveData.deathCount)).draw(saveTextPos, saveTextColor);
-		FontAsset(U"Button")(U"Play Time : " + formatPlayTime(saveData.playTimeSec)).draw(saveTextPos + Vec2{ 0.0, lineHeight }, saveTextColor);
-		FontAsset(U"Button")(U"Best : " + enduranceText).draw(saveTextPos + Vec2{ 0.0, lineHeight * 2.0 }, saveTextColor);
 
 		drawArrowButton(-1, cameraPage > CameraMinPage || isCameraMoving);
 		drawArrowButton(1, cameraPage < CameraMaxPage || isCameraMoving);

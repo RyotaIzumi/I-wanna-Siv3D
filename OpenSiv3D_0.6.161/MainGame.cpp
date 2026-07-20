@@ -15,6 +15,7 @@ namespace Iwanna {
 		shouldUpdateHighestEndurance = (lastSelectedChapter == 1);
 		practiceLimitReached = false;
 		practiceLimitStep = shouldUpdateHighestEndurance ? none : getPracticeLimitStep();
+		saveData.unlockAchievement(0);
 		saveData.updateHighestChapter(lastSelectedChapter);
 		saveData.save();
 		avoidanceManager.setUpObjects(lastSelectedChapter);
@@ -69,11 +70,24 @@ namespace Iwanna {
 		avoidanceManager.setStep(newStep);
 		avoidanceManager.update();
 		const int32 previousHighestChapter = saveData.highestChapter;
-		saveData.updateHighestChapter(avoidanceManager.getActiveChapter());
+		const int32 activeChapter = avoidanceManager.getActiveChapter();
+		bool shouldSave = false;
+
+		if (previousHighestChapter < activeChapter) {
+			for (int32 clearedChapter = previousHighestChapter; clearedChapter < activeChapter; ++clearedChapter) {
+				shouldSave |= saveData.unlockAchievement(clearedChapter);
+			}
+		}
+
+		saveData.updateHighestChapter(activeChapter);
 		if (shouldUpdateHighestEndurance) {
 			saveData.updateHighestEnduranceSec(enduranceSec);
 		}
-		if (previousHighestChapter != saveData.highestChapter) {
+		if (shouldUpdateHighestEndurance
+			&& getEnduranceLengthSec() <= enduranceSec) {
+			shouldSave |= saveData.unlockAchievement(6);
+		}
+		if (previousHighestChapter != saveData.highestChapter || shouldSave) {
 			saveData.save();
 		}
 
@@ -83,7 +97,7 @@ namespace Iwanna {
 			pauseBgm();
 
 			if (!wasPlayerDead) {
-				saveData.addDeath();
+				saveData.addDeath(avoidanceManager.getActiveChapter());
 				saveData.save();
 			}
 		}
