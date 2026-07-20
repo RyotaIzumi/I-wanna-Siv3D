@@ -123,10 +123,24 @@ namespace Iwanna {
 		return practiceLimit ? practiceLimit : trialLimit;
 	}
 
+	bool MainGame::isPracticeMode() const {
+		return !isTutorial && 2 <= lastSelectedChapter;
+	}
+
+	void MainGame::togglePlayerMuteki() {
+		if (const auto player = avoidanceManager.getPlayer()) {
+			player->setIsMuteki(!player->getIsMuteki());
+		}
+	}
+
 	void MainGame::updateGame() {
 		if (isTutorial) {
 			avoidanceManager.updateTutorial();
 			return;
+		}
+
+		if (isPracticeMode() && Global::inputDebugMuteki.down()) {
+			togglePlayerMuteki();
 		}
 
 		const bool wasAliveAtFrameStart = !wasPlayerDead;
@@ -194,6 +208,10 @@ namespace Iwanna {
 			return;
 		}
 
+		if (!isPracticeMode() && Global::inputDebugMuteki.down()) {
+			togglePlayerMuteki();
+		}
+
 		avoidanceManager.debug();
 		if (Global::inputDebugPause.down())pauseBgm();
 		if (Global::inputDebugStart.down())audio.play();
@@ -204,6 +222,12 @@ namespace Iwanna {
 
 		if (practiceLimitReached) {
 			FontAsset(U"Button")(U"Practice End").draw(Vec2{ 28.0, Global::windowHeight - 44.0 }, ColorF{ 1.0, 0.82, 0.38 });
+		}
+		if (isPracticeMode()) {
+			if (const auto player = avoidanceManager.getPlayer();
+				player && player->getIsMuteki()) {
+				FontAsset(U"Big")(U"★").draw(Vec2{ 28.0, Global::windowHeight - 78.0 }, ColorF{ 1.0, 0.88, 0.25 });
+			}
 		}
 		if (isTutorial) {
 			const Vec2 textPos{ 40.0, Global::windowHeight - 162.0 };

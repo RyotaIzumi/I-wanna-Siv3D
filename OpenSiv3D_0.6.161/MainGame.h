@@ -25,6 +25,8 @@ namespace Iwanna {
 		Optional<int32> getPracticeLimitStep() const;
 		Optional<int32> getTrialLimitStep() const;
 		Optional<int32> getStepLimitStep() const;
+		bool isPracticeMode() const;
+		void togglePlayerMuteki();
 		void savePeriodically(double deltaTimeSec);
 
 	public:

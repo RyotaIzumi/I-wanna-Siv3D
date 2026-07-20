@@ -329,12 +329,6 @@ namespace Iwanna {
 	}
 
 	void AvoidanceManager::debug() {
-		auto& player = gameObjects.player;
-
-		if (Global::inputDebugMuteki.down()) {
-			player->setIsMuteki(!player->getIsMuteki());
-		}
-
 		ClearPrint();
 		Print << U" Avoidance Step : " << step;
 		Print << U" Chapter : " << activeChapter;
