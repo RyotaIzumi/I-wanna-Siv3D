@@ -98,6 +98,18 @@ namespace {
 	double roundToMillis(double value) {
 		return Math::Round(value * 1000.0) / 1000.0;
 	}
+
+	String twoDigits(int32 value) {
+		return (value < 10 ? U"0" : U"") + Format(value);
+	}
+
+	String formatPlayTime(double seconds) {
+		const int32 totalSeconds = Max(0, static_cast<int32>(Math::Floor(seconds)));
+		const int32 hours = totalSeconds / 3600;
+		const int32 minutes = (totalSeconds / 60) % 60;
+		const int32 secs = totalSeconds % 60;
+		return twoDigits(hours) + U":" + twoDigits(minutes) + U":" + twoDigits(secs);
+	}
 }
 
 namespace Iwanna {
@@ -189,7 +201,8 @@ namespace Iwanna {
 			return false;
 		}
 
-		achievementUnlockedAt[index] = DateTime::Now().format(U"yyyy-MM-dd HH:mm:ss");
+		achievementUnlockedAt[index] = DateTime::Now().format(U"yyyy-MM-dd HH:mm:ss")
+			+ U" (" + formatPlayTime(playTimeSec) + U")";
 		return true;
 	}
 }

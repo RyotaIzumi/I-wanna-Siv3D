@@ -1,12 +1,12 @@
 {
-  "deathCount": 171,
-  "playTimeSec": 4100.14,
-  "highestChapter": 5,
-  "highestEnduranceSec": 81.390,
+  "deathCount": 8,
+  "playTimeSec": 44.9546,
+  "highestChapter": 2,
+  "highestEnduranceSec": 18.820,
   "bgmVolume": 1,
-  "seVolume": 0.0593,
+  "seVolume": 1,
   "difficulty": 2,
   "hasStartedAvoidance": true,
-  "chapterDeathCounts": [42, 10, 4, 114, 1, 0],
-  "achievementUnlockedAt": ["2026-07-20 11:08:07", "2026-07-20 11:29:38", "2026-07-20 11:54:32", "2026-07-20 11:55:30", "2026-07-20 11:55:56", "", ""]
+  "chapterDeathCounts": [7, 1, 0, 0, 0, 0],
+  "achievementUnlockedAt": ["2026-07-20 22:40:38 (00:00:00)", "2026-07-20 22:41:33 (00:00:41)", "", "", "", "", ""]
 }

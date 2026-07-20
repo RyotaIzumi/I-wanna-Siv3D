@@ -914,7 +914,7 @@ namespace Iwanna {
 		});
 
 		timeline.at(Global::startStep_Chapter3 + horizontalSweepSettings.startStepOffset, [&] {
-			//createHorizontalSweep();
+			if(Global::difficulty == Global::Difficulty::Medium) createHorizontalSweep();
 		});
 
 		for (int32 i = 0; i < static_cast<int32>(cogHintDirections.size()); ++i) {

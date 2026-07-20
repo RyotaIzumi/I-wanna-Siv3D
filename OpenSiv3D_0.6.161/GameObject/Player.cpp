@@ -88,7 +88,7 @@ namespace Iwanna{
 	}
 
 	void Player::draw() const {
-		hitBox->draw(Palette::Red);
+		//hitBox->draw(Palette::Red);
 		
 		TextureRegion texture = spriteSystem.getTextureRegion(direction);
 		if(!isDead)texture.drawAt(pos.x,pos.y - 6);

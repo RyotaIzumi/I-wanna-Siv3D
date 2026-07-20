@@ -20,7 +20,10 @@ namespace {
 	bool chapter2SatResultBarrageCreated = false;
 
 	struct Chapter2MeasureAreaSettings {
-		int32 attackFadeOutStep = 18;
+		// Measure guide frames become fully visible at spawn and once again after this delay.
+		int32 guideSecondFlashDelayStep = 18;
+		// Each guide flash fades out over this many steps.
+		int32 guideFadeOutStep = 15;
 		int32 fillAppearanceDuration = 30;
 		int32 fillHoldAfterPulseStep = 8;
 		int32 fillFadeOutStep = 18;
@@ -93,6 +96,8 @@ namespace {
 		double scale = 1.0;
 		int32 appearanceDuration = 20;
 		int32 fallStartDelayAfterAppearance = 15;
+		double mediumColumnSpacingY = 8.0;
+		int32 mediumColumnFadeOutStep = 15;
 		Array<ColorF> resultColors = {
 			ColorF{ 0.25, 0.95, 0.45 },
 			ColorF{ 1.0, 0.82, 0.20 },
@@ -111,6 +116,8 @@ namespace {
 		double centerScale = 0.55;
 		double rotationSpeed = 0.04;
 		int32 fadeOutStep = 60;
+		int32 pulseDurationStep = 10;
+		double pulseScale = 1.28;
 		double screenShakeAmplitude = 6.0;
 		int32 screenShakeDurationStep = 18;
 		double screenShakeFrequency = 0.85;
@@ -139,7 +146,7 @@ namespace {
 		String textureName = U"sprCherryWhite";
 		ColorF color = Palette::White;
 		Vec2 centerOffsetFromMiku = Vec2{ 0.0, 0.0 };
-		int32 lineCount = 3;
+		int32 lineCount = (Global::difficulty == Global::Difficulty::Medium) ? 4 : 3;
 		double cherrySpacing = 64.0;
 		double minRadius = 0.0;
 		double maxRadius = 1000.0;
@@ -421,25 +428,29 @@ namespace {
 	}
 
 	Iwanna::Cherry::Behavior makeChapter2TimedGuideBehavior(
-		int32 judgeAge,
+		int32 secondFlashDelayStep,
 		int32 fadeOutStep) {
 
-		return [judgeAge, fadeOutStep](Iwanna::Cherry& self, int32 age) {
-			if (age < judgeAge) {
-				self.alpha = 0.28 + 0.18 * Math::Sin(age * 0.25);
-				self.setScale(0.65);
-				self.canPlayerKill = false;
-				return;
+		return [secondFlashDelayStep, fadeOutStep](Iwanna::Cherry& self, int32 age) {
+			const int32 fadeDuration = Max(fadeOutStep, 1);
+			const int32 secondDelay = Max(secondFlashDelayStep, 0);
+			const double firstT = age / static_cast<double>(fadeDuration);
+			const double secondT = (age - secondDelay) / static_cast<double>(fadeDuration);
+			double alpha = 0.0;
+
+			if (0.0 <= firstT && firstT <= 1.0) {
+				alpha = Max(alpha, 1.0 - Iwanna::applyEasing(Iwanna::EasingMoveType::EaseInOut, firstT));
 			}
 
-			const int32 fadeDuration = Max(fadeOutStep, 1);
-			const double t = (age - judgeAge) / static_cast<double>(fadeDuration);
-			const double rate = Iwanna::applyEasing(Iwanna::EasingMoveType::EaseInOut, t);
-			self.alpha = 1.0 - rate;
-			self.setScale(1.0 - rate);
+			if (0.0 <= secondT && secondT <= 1.0) {
+				alpha = Max(alpha, 1.0 - Iwanna::applyEasing(Iwanna::EasingMoveType::EaseInOut, secondT));
+			}
+
+			self.alpha = alpha;
+			self.setScale(0.65);
 			self.canPlayerKill = false;
 
-			if (1.0 <= t) {
+			if (secondDelay + fadeDuration < age) {
 				self.isDelete = true;
 			}
 		};
@@ -563,6 +574,48 @@ namespace {
 			self.pos = home + Vec2{ 0, state->fallOffset };
 		};
 	}
+
+	Iwanna::Cherry::Behavior makeChapter2SatResultMediumSourceBehavior(
+		const Vec2& home,
+		int32 waitStep) {
+
+		return [home, waitStep](Iwanna::Cherry& self, int32 age) {
+			self.pos = home;
+			self.canPlayerKill = false;
+
+			if (Max(waitStep, 0) <= age) {
+				self.isDelete = true;
+			}
+		};
+	}
+
+	Iwanna::Cherry::Behavior makeChapter2SatResultMediumColumnBehavior(
+		int32 waitStep,
+		int32 fadeOutStep,
+		double scale) {
+
+		return [waitStep, fadeOutStep, scale](Iwanna::Cherry& self, int32 age) {
+			const int32 startStep = Max(waitStep, 0);
+			if (age < startStep) {
+				self.alpha = 0.0;
+				self.setScale(scale);
+				self.canPlayerKill = false;
+				return;
+			}
+
+			const int32 fadeDuration = Max(fadeOutStep, 1);
+			const double t = (age - startStep) / static_cast<double>(fadeDuration);
+			const double rate = Iwanna::applyEasing(Iwanna::EasingMoveType::EaseInOut, t);
+			const double sizeRate = Max(1.0 - rate, 0.0);
+			self.alpha = sizeRate;
+			self.setScale(scale * sizeRate);
+			self.canPlayerKill = (age == startStep);
+
+			if (1.0 <= t) {
+				self.isDelete = true;
+			}
+		};
+	}
 }
 
 namespace Iwanna {
@@ -622,12 +675,12 @@ namespace Iwanna {
 		AvoidanceManager& manager,
 		const RectF& rect,
 		const ColorF& color,
-		int32 judgeAge,
+		int32 secondFlashDelayStep,
 		int32 fadeOutStep) {
 
 		constexpr double spacing = 16.0;
 		constexpr double scale = 0.65;
-		const auto behavior = makeChapter2TimedGuideBehavior(judgeAge, fadeOutStep);
+		const auto behavior = makeChapter2TimedGuideBehavior(secondFlashDelayStep, fadeOutStep);
 
 		const auto createGuideCherry = [&](const Vec2& pos) {
 			manager.createCherry(pos, Cherry::Settings{
@@ -689,7 +742,6 @@ namespace Iwanna {
 
 		const Chapter2MeasureAreaSettings areaSettings;
 		const auto& window = chapter2MeasureWindows[index];
-		const int32 judgeAge = Max(window.judgeStep - window.begin, 0);
 
 		for (int32 i = 0; i < static_cast<int32>(window.areaIndices.size()); ++i) {
 			const int32 areaIndex = window.areaIndices[i];
@@ -701,8 +753,8 @@ namespace Iwanna {
 				*this,
 				areaSettings.areas[areaIndex],
 				areaSettings.colors[i % areaSettings.colors.size()],
-				judgeAge,
-				areaSettings.attackFadeOutStep);
+				areaSettings.guideSecondFlashDelayStep,
+				areaSettings.guideFadeOutStep);
 		}
 	}
 
@@ -974,6 +1026,10 @@ namespace Iwanna {
 			const ColorF color = settings.resultColors[resultIndex % settings.resultColors.size()];
 			const double gapCenterX = settings.gapCentersX[resultIndex % settings.gapCentersX.size()];
 			const double y = settings.topY + line * settings.lineSpacingY;
+			const int32 rowFromBottom = Max(settings.lineCount - 1 - line, 0);
+			const int32 rowStartDelayStep = settings.appearanceDuration
+				+ settings.fallStartDelayAfterAppearance
+				+ rowFromBottom * Max(settings.lineFallIntervalStep, 0);
 
 			for (double x = settings.leftX; x <= settings.rightX; x += settings.cherrySpacingX) {
 				if (Abs(x - gapCenterX) <= settings.gapHalfWidth) {
@@ -981,25 +1037,50 @@ namespace Iwanna {
 				}
 
 				const Vec2 home{ x, y };
+				const bool isMedium = (Global::difficulty == Global::Difficulty::Medium);
 				createCherry(home, Cherry::Settings{
 					.textureName = U"sprCherryAllWhite",
 					.color = color,
-					.behavior = makeChapter2SatResultFallBehavior(
-						home,
-						line,
-						settings.lineCount,
-						settings.gravity,
-						settings.initialUpSpeed,
-						settings.maxFallSpeed,
-						settings.lineFallIntervalStep,
-						settings.appearanceDuration + settings.fallStartDelayAfterAppearance),
+					.behavior = isMedium
+						? makeChapter2SatResultMediumSourceBehavior(home, rowStartDelayStep)
+						: makeChapter2SatResultFallBehavior(
+							home,
+							line,
+							settings.lineCount,
+							settings.gravity,
+							settings.initialUpSpeed,
+							settings.maxFallSpeed,
+							settings.lineFallIntervalStep,
+							settings.appearanceDuration + settings.fallStartDelayAfterAppearance),
 					.canDeleteOutOfScreen = true,
-					.canPlayerKill = true,
+					.canPlayerKill = !isMedium,
 					.depth = DrawDepth::Cherry + 7.0,
 					.scale = settings.scale,
 					.appearanceEffect = CherryEffect::ScaleIn,
 					.appearanceDuration = settings.appearanceDuration,
+					.manualCanPlayerKillControl = isMedium,
 				});
+
+				if (isMedium) {
+					const double spacingY = Max(settings.mediumColumnSpacingY, 1.0);
+					for (double columnY = y; columnY <= Global::windowHeight + spacingY; columnY += spacingY) {
+						createCherry(Vec2{ x, columnY }, Cherry::Settings{
+							.textureName = U"sprCherryAllWhite",
+							.color = color,
+							.behavior = makeChapter2SatResultMediumColumnBehavior(
+								rowStartDelayStep,
+								settings.mediumColumnFadeOutStep,
+								settings.scale),
+							.canDeleteOutOfScreen = false,
+							.canPlayerKill = false,
+							.depth = DrawDepth::Cherry + 7.0,
+							.scale = settings.scale,
+							.alpha = 0.0,
+							.canPlayerKillBeforeFullAlpha = true,
+							.manualCanPlayerKillControl = true,
+						});
+					}
+				}
 			}
 		}
 	}
@@ -1071,6 +1152,13 @@ namespace Iwanna {
 			return;
 		}
 
+		const int32 pulseAge = localStep - latestPulseStep;
+		const double sizeRate = (0 <= pulseAge && pulseAge <= settings.pulseDurationStep)
+			? 1.0 + (settings.pulseScale - 1.0)
+				* (1.0 - Iwanna::applyEasing(
+					Iwanna::EasingMoveType::EaseOut,
+					pulseAge / static_cast<double>(Max(settings.pulseDurationStep, 1))))
+			: 1.0;
 		const double fadeT = (localStep - latestPulseStep) / static_cast<double>(Max(settings.fadeOutStep, 1));
 		const double alphaRate = 1.0 - Iwanna::applyEasing(Iwanna::EasingMoveType::EaseInOut, fadeT);
 		ColorF outerColor = settings.outerColor;
@@ -1082,7 +1170,7 @@ namespace Iwanna {
 
 		for (int32 i = 0; i < settings.circleCherryCount; ++i) {
 			const double angle = 6.283185307179586 * i / Max(settings.circleCherryCount, 1) + rotation;
-			const Vec2 pos = center + Vec2{ Math::Cos(angle), Math::Sin(angle) } * settings.radius;
+			const Vec2 pos = center + Vec2{ Math::Cos(angle), Math::Sin(angle) } * settings.radius * sizeRate;
 			texture.scaled(settings.outerScale).drawAt(pos, outerColor);
 		}
 
@@ -1091,11 +1179,11 @@ namespace Iwanna {
 				continue;
 			}
 
-			texture.scaled(settings.crossScale).drawAt(center + rotate(Vec2{ offset, 0.0 }), crossColor);
-			texture.scaled(settings.crossScale).drawAt(center + rotate(Vec2{ 0.0, offset }), crossColor);
+			texture.scaled(settings.crossScale).drawAt(center + rotate(Vec2{ offset * sizeRate, 0.0 }), crossColor);
+			texture.scaled(settings.crossScale).drawAt(center + rotate(Vec2{ 0.0, offset * sizeRate }), crossColor);
 		}
 
-		texture.scaled(settings.centerScale).drawAt(center, centerColor);
+		texture.scaled(settings.centerScale * sizeRate).drawAt(center, centerColor);
 	}
 
 	// step : 840 - 2139
@@ -1147,29 +1235,29 @@ namespace Iwanna {
 		});
 
 		timeline.at(Global::startStep_Chapter2 + 85, [&] {
-			requestChapter2MikuHandBarrageState(false);
+			if (Global::difficulty == Global::Difficulty::Easy) requestChapter2MikuHandBarrageState(false);
 		});
 
-		timeline.at(Global::startStep_Chapter2 +110, [&] {
+		timeline.at(Global::startStep_Chapter2 +114, [&] {
 			createChapter2MeasureGuide(1);
 			requestChapter2CherryRodMove(4, 10);
 		});
 
-		timeline.at(Global::startStep_Chapter2 + 115, [&] {
-			requestChapter2MikuHandBarrageState(true);
+		timeline.at(Global::startStep_Chapter2 + 112, [&] {
+			if (Global::difficulty == Global::Difficulty::Easy) requestChapter2MikuHandBarrageState(true);
 		});
 
 		timeline.at(Global::startStep_Chapter2 + 205, [&] {
-			requestChapter2MikuHandBarrageState(false);
+			if (Global::difficulty == Global::Difficulty::Easy) requestChapter2MikuHandBarrageState(false);
 		});
 
-		timeline.at(Global::startStep_Chapter2 + 250, [&] {
+		timeline.at(Global::startStep_Chapter2 + 240, [&] {
 			createChapter2MeasureGuide(2);
 			requestChapter2CherryRodMove(2, 15);
 		});
 
 		timeline.at(Global::startStep_Chapter2 + 235, [&] {
-			requestChapter2MikuHandBarrageState(true);
+			if (Global::difficulty == Global::Difficulty::Easy) requestChapter2MikuHandBarrageState(true);
 		});
 
 		timeline.at(Global::startStep_Chapter2 + 325, [&] {

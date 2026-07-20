@@ -10,10 +10,11 @@ void Main()
 {
 	System60::SetDisplaySize(Size{ 800,608 });
 
-	Window::SetTitle(U"I wanna Siv3D");
+	Window::SetTitle(U"I wanna break the Devotion");
 
 	//フォントはここで宣言
 	FontAsset::Register(U"Big", 60, Typeface::Regular);
+	FontAsset::Register(U"Title", 40, Typeface::Regular);
 	FontAsset::Register(U"Button", FontMethod::MSDF, 20, Typeface::Medium);
 
 	
