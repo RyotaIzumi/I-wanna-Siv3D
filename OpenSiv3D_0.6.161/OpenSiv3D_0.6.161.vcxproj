@@ -135,6 +135,7 @@
     <ClCompile Include="GameObject\Miku.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainGame.cpp" />
+    <ClCompile Include="SaveData.cpp" />
     <ClCompile Include="GameObject\Player.cpp" />
     <ClCompile Include="Scene\InGame.cpp" />
     <ClCompile Include="Scene\Loading.cpp" />
@@ -378,6 +379,7 @@
     <ClInclude Include="GameObject\StockNearGameObjects.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="MainGame.h" />
+    <ClInclude Include="SaveData.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="GameObject\HitBox.h" />
     <ClInclude Include="GameObject\Player.h" />

@@ -131,10 +131,13 @@ namespace Iwanna {
 		AvoidanceManager();
 
 		void setUpObjects(int32 chapter);
+		void setUpTutorialObjects();
 		void update();
+		void updateTutorial();
 		void debug();
 		void draw() const;
 		void setStep(int32 newStep);
+		int32 getActiveChapter() const;
 		void requestScreenShake(
 			double amplitude = 6.0,
 			int32 durationStep = 18,

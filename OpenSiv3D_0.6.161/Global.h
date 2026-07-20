@@ -10,6 +10,12 @@ namespace Global {
 		RIGHT
 	};
 
+	enum class Difficulty {
+		Unselected = 0,
+		Easy = 1,
+		Medium = 2,
+	};
+
 	// ======================
 	// 共有変数宣言
 	// ======================
@@ -32,6 +38,9 @@ namespace Global {
 
 	// モード設定
 	inline bool isInfiniteJumpMode = false;
+	inline double bgmVolume = 1.0;
+	inline double seVolume = 1.0;
+	inline Difficulty difficulty = Difficulty::Unselected;
 
 	 // ======================
 	// 定数
@@ -49,6 +58,9 @@ namespace Global {
 	constexpr int32 startStep_Chapter2 = 840;
 	constexpr int32 startStep_Chapter3 = 1320;
 	constexpr int32 startStep_Chapter4 = 1820;
-	constexpr int32 startStep_Chapter5 = 3120;
-	constexpr int32 startStep_Chapter6 = 4070;
+	constexpr int32 startStep_Chapter5 = 2260;
+	constexpr int32 startStep_Chapter6 = 2760;
+
+	// 体験版でクリア可能な最終チャプター
+	constexpr int32 trialClearableChapter = 4;
 }
