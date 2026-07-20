@@ -23,6 +23,8 @@ namespace Iwanna {
 		double saveTimerSec = 0.0;
 
 		Optional<int32> getPracticeLimitStep() const;
+		Optional<int32> getTrialLimitStep() const;
+		Optional<int32> getStepLimitStep() const;
 		void savePeriodically(double deltaTimeSec);
 
 	public:

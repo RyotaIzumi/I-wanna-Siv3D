@@ -24,7 +24,7 @@ namespace Iwanna {
 		wasPlayerDead = false;
 		shouldUpdateHighestEndurance = (lastSelectedChapter == 1);
 		practiceLimitReached = false;
-		practiceLimitStep = shouldUpdateHighestEndurance ? none : getPracticeLimitStep();
+		practiceLimitStep = getStepLimitStep();
 		saveData.hasStartedAvoidance = true;
 		saveData.unlockAchievement(0);
 		saveData.updateHighestChapter(lastSelectedChapter);
@@ -87,6 +87,10 @@ namespace Iwanna {
 	}
 
 	Optional<int32> MainGame::getPracticeLimitStep() const {
+		if (shouldUpdateHighestEndurance) {
+			return none;
+		}
+
 		switch (Clamp(saveData.highestChapter + 1, 1, 7)) {
 		case 2: return Global::startStep_Chapter2 - 1;
 		case 3: return Global::startStep_Chapter3 - 1;
@@ -95,6 +99,28 @@ namespace Iwanna {
 		case 6: return Global::startStep_Chapter6 - 1;
 		default: return none;
 		}
+	}
+
+	Optional<int32> MainGame::getTrialLimitStep() const {
+		switch (Clamp(Global::trialClearableChapter + 2, 1, 7)) {
+		case 2: return Global::startStep_Chapter2 - 1;
+		case 3: return Global::startStep_Chapter3 - 1;
+		case 4: return Global::startStep_Chapter4 - 1;
+		case 5: return Global::startStep_Chapter5 - 1;
+		case 6: return Global::startStep_Chapter6 - 1;
+		default: return none;
+		}
+	}
+
+	Optional<int32> MainGame::getStepLimitStep() const {
+		const Optional<int32> practiceLimit = getPracticeLimitStep();
+		const Optional<int32> trialLimit = getTrialLimitStep();
+
+		if (practiceLimit && trialLimit) {
+			return Min(*practiceLimit, *trialLimit);
+		}
+
+		return practiceLimit ? practiceLimit : trialLimit;
 	}
 
 	void MainGame::updateGame() {

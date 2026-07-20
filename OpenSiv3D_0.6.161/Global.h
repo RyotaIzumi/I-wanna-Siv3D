@@ -58,6 +58,9 @@ namespace Global {
 	constexpr int32 startStep_Chapter2 = 840;
 	constexpr int32 startStep_Chapter3 = 1320;
 	constexpr int32 startStep_Chapter4 = 1820;
-	constexpr int32 startStep_Chapter5 = 3120;
-	constexpr int32 startStep_Chapter6 = 4070;
+	constexpr int32 startStep_Chapter5 = 2260;
+	constexpr int32 startStep_Chapter6 = 2760;
+
+	// 体験版でクリア可能な最終チャプター
+	constexpr int32 trialClearableChapter = 4;
 }
