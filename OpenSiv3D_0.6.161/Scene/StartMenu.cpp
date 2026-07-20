@@ -2,7 +2,7 @@
 
 namespace Iwanna {
 	namespace {
-		constexpr Vec2 ChapterSelectOffset = { 170.0, 30.0 };
+		constexpr Vec2 ChapterSelectOffset = { 110.0, 30.0 };
 		constexpr int32 ChapterButtonsPerRow = 5;
 		constexpr double ChapterButtonBaseX = 190.0;
 		constexpr double ChapterButtonBaseY = 330.0;

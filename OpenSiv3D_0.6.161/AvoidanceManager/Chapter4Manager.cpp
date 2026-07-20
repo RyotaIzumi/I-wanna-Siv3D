@@ -59,7 +59,7 @@ namespace {
 
 		struct SecondRedLine {
 			// 2回目フラッシュ後、画面外から入ってくる4本の赤りんご線。
-			double spacing = 20.0;
+			double spacing = 20.0;// 難易度差有り
 			double scale = 1.0;
 			double offscreenMargin = 40.0;
 			double leftX = 272.0;
@@ -96,6 +96,7 @@ namespace {
 			int32 shrinkStep = focusStep - barrageStep;
 			double startRadius = 1220.0;
 			double radius = 72.0;
+			double easyRadius = 92.0;
 			double crossExtend = 12.0;
 			double crossSpacing = 2.0;
 			double outerScale = 0.5;
@@ -103,7 +104,11 @@ namespace {
 			double centerScale = 0.55;
 			double crossAlpha = 0.65;
 			double candidateMinY = 208.0;
+			double candidateMinX = 160.0;
 			double candidateMaxX = 500.0;
+			double handShakeAmplitude = 7.0;
+			double handShakeSpeedX = 0.17;
+			double handShakeSpeedY = 0.13;
 			double rotationSpeed = 4.0;
 			double reverseRotationSpeed = Random<double>(8.0, 12.0);
 			int32 maskFadeInStep = 12;
@@ -755,7 +760,7 @@ namespace {
 
 		for (const auto& route : routes) {
 			const double lineLength = route.begin.distanceFrom(route.end);
-			const int32 count = Max(static_cast<int32>(std::ceil(lineLength / settings.secondRedLine.spacing)) + 1, 2);
+			const int32 count = Max(static_cast<int32>(std::ceil(lineLength / ((Global::difficulty == Global::Difficulty::Medium) ? 20 : 30))) + 1, 2);
 
 			for (int32 i = 0; i < count; ++i) {
 				const double rate = i / static_cast<double>(count - 1);
@@ -892,7 +897,7 @@ namespace {
 
 			const Vec2 candidate = block->pos + Vec2{ blockSize / 2.0, -blockSize / 2.0 };
 			const auto& settings = chapter4Settings;
-			if (settings.sight.candidateMaxX < candidate.x || candidate.y < settings.sight.candidateMinY) {
+			if (settings.sight.candidateMinX > candidate.x || settings.sight.candidateMaxX < candidate.x || candidate.y < settings.sight.candidateMinY) {
 				continue;
 			}
 
@@ -909,6 +914,35 @@ namespace {
 			offset.x * c - offset.y * s,
 			offset.x * s + offset.y * c,
 		};
+	}
+
+	Vec2 getChapter4SightHandShakeOffset(
+		int32 age,
+		int32 shrinkStep,
+		double phaseX,
+		double phaseY) {
+
+		const auto& settings = chapter4Settings;
+		const double t = Clamp(age / static_cast<double>(Max(shrinkStep, 1)), 0.0, 1.0);
+		const double settleRate = 1.0 - Iwanna::applyEasing(Iwanna::EasingMoveType::EaseIn, t);
+		const double amplitude = settings.sight.handShakeAmplitude * settleRate;
+		return Vec2{
+			Math::Sin(phaseX + age * settings.sight.handShakeSpeedX) * amplitude,
+			Math::Sin(phaseY + age * settings.sight.handShakeSpeedY) * amplitude,
+		};
+	}
+
+	double getChapter4SightTargetRadius() {
+		const auto& settings = chapter4Settings;
+		return (Global::difficulty == Global::Difficulty::Easy)
+			? settings.sight.easyRadius
+			: settings.sight.radius;
+	}
+
+	double getChapter4SightMaskInnerRadius() {
+		const auto& settings = chapter4Settings;
+		return settings.sight.maskInnerRadius
+			+ (getChapter4SightTargetRadius() - settings.sight.radius);
 	}
 
 	double getChapter4SightRotation(
@@ -935,10 +969,12 @@ namespace {
 		bool canKill,
 		bool shouldScaleVisual,
 		bool isCross,
-		double rotationDirection) {
+		double rotationDirection,
+		double handShakePhaseX,
+		double handShakePhaseY) {
 
 		const auto& settings = chapter4Settings;
-		const double targetRadius = Max(settings.sight.radius, 1.0);
+		const double targetRadius = Max(getChapter4SightTargetRadius(), 1.0);
 		const double startRate = Max(settings.sight.startRadius / targetRadius, 1.0);
 		const int32 shrinkStep = Max(settings.sight.shrinkStep, 1);
 		const int32 fadeStep = Max(settings.sight.fadeInStep, 1);
@@ -949,10 +985,15 @@ namespace {
 		const int32 crossAttackAge = Max(settings.sight.crossAttackStep - settings.sight.barrageStep, 0);
 		const int32 crossReturnFadeStep = Max(settings.sight.crossReturnFadeStep, 1);
 
-		return [center, targetOffset, baseScale, targetAlpha, canKill, shouldScaleVisual, isCross, startRate, shrinkStep, fadeStep, rotationSpeed, reverseRotationSpeed, reverseStartAge, reverseDuration, crossAttackAge, crossReturnFadeStep](Iwanna::Cherry& self, int32 age) {
+		return [center, targetOffset, baseScale, targetAlpha, canKill, shouldScaleVisual, isCross, startRate, shrinkStep, fadeStep, rotationSpeed, reverseRotationSpeed, reverseStartAge, reverseDuration, crossAttackAge, crossReturnFadeStep, handShakePhaseX, handShakePhaseY](Iwanna::Cherry& self, int32 age) {
 			const double shrinkT = Clamp(age / static_cast<double>(shrinkStep), 0.0, 1.0);
 			const double shrinkRate = startRate + (1.0 - startRate)
 				* Iwanna::applyEasing(Iwanna::EasingMoveType::EaseIn, shrinkT);
+			const Vec2 shakenCenter = center + getChapter4SightHandShakeOffset(
+				age,
+				shrinkStep,
+				handShakePhaseX,
+				handShakePhaseY);
 			const double rotation = getChapter4SightRotation(
 				rotationSpeed,
 				reverseRotationSpeed,
@@ -980,7 +1021,7 @@ namespace {
 				currentCanKill = (age == crossAttackAge);
 			}
 
-			self.pos = center + rotatedOffset;
+			self.pos = shakenCenter + rotatedOffset;
 			self.textureAngle = rotation;
 			self.setColor(color);
 			self.alpha = alpha;
@@ -998,10 +1039,12 @@ namespace {
 		bool canKill,
 		bool shouldScaleVisual,
 		bool isCross,
-		double rotationDirection) {
+		double rotationDirection,
+		double handShakePhaseX,
+		double handShakePhaseY) {
 
 		const auto& settings = chapter4Settings;
-		manager.createCherry(center + targetOffset * (settings.sight.startRadius / Max(settings.sight.radius, 1.0)), Iwanna::Cherry::Settings{
+		manager.createCherry(center + targetOffset * (settings.sight.startRadius / Max(getChapter4SightTargetRadius(), 1.0)), Iwanna::Cherry::Settings{
 			.textureName = U"sprCherryAllWhite",
 			.color = color,
 			.behavior = makeChapter4SightBarrageBehavior(
@@ -1012,7 +1055,9 @@ namespace {
 				canKill,
 				shouldScaleVisual,
 				isCross,
-				rotationDirection),
+				rotationDirection,
+				handShakePhaseX,
+				handShakePhaseY),
 			.canDeleteOutOfScreen = false,
 			.canPlayerKill = canKill,
 			.depth = settings.sight.depth,
@@ -1031,11 +1076,14 @@ namespace {
 		}
 
 		const Vec2 center = candidates[Random(static_cast<int32>(candidates.size()) - 1)];
-		const double lineRadius = settings.sight.radius + settings.sight.crossExtend;
+		const double targetRadius = getChapter4SightTargetRadius();
+		const double lineRadius = targetRadius + settings.sight.crossExtend;
 		const ColorF outerColor{ 1.0, 1.0, 1.0, 1.0 };
 		const ColorF crossColor{ 1.0, 1.0, 1.0, settings.sight.crossAlpha };
 		const ColorF centerColor{ 1.0, 0.0, 0.0, 1.0 };
 		const double rotationDirection = (Random(0, 1) == 0) ? -1.0 : 1.0;
+		const double handShakePhaseX = Random(0.0, Math::TwoPi);
+		const double handShakePhaseY = Random(0.0, Math::TwoPi);
 		chapter4SightCameraZoomEnabled = true;
 		chapter4SightCameraStartStep = currentStep;
 		chapter4SightCameraTargetCenter = center;
@@ -1043,8 +1091,8 @@ namespace {
 		for (int32 i = 0; i < settings.sight.outerCount; ++i) {
 			const double angle = Math::TwoPi * i / Max(settings.sight.outerCount, 1);
 			const Vec2 targetOffset{
-				Math::Cos(angle) * settings.sight.radius,
-				Math::Sin(angle) * settings.sight.radius,
+				Math::Cos(angle) * targetRadius,
+				Math::Sin(angle) * targetRadius,
 			};
 			createChapter4SightBarrageCherry(
 				manager,
@@ -1055,7 +1103,9 @@ namespace {
 				true,
 				true,
 				false,
-				rotationDirection);
+				rotationDirection,
+				handShakePhaseX,
+				handShakePhaseY);
 		}
 
 		for (double offset = -lineRadius; offset <= lineRadius; offset += settings.sight.crossSpacing) {
@@ -1072,7 +1122,9 @@ namespace {
 				false,
 				false,
 				true,
-				rotationDirection);
+				rotationDirection,
+				handShakePhaseX,
+				handShakePhaseY);
 			createChapter4SightBarrageCherry(
 				manager,
 				center,
@@ -1082,7 +1134,9 @@ namespace {
 				false,
 				false,
 				true,
-				rotationDirection);
+				rotationDirection,
+				handShakePhaseX,
+				handShakePhaseY);
 		}
 
 		createChapter4SightBarrageCherry(
@@ -1094,7 +1148,9 @@ namespace {
 			false,
 			false,
 			false,
-			rotationDirection);
+			rotationDirection,
+			handShakePhaseX,
+			handShakePhaseY);
 	}
 
 	void startChapter4LargeAppleFall() {
@@ -1369,7 +1425,7 @@ namespace Iwanna {
 		ColorF maskColor = Palette::Black;
 		maskColor.a = applyEasing(EasingMoveType::EaseInOut, fadeT);
 		const double maskThickness = 2400.0;
-		Circle{ chapter4SightCameraTargetCenter, settings.sight.maskInnerRadius + maskThickness / 2.0 }
+		Circle{ chapter4SightCameraTargetCenter, getChapter4SightMaskInnerRadius() + maskThickness / 2.0 }
 			.drawFrame(maskThickness, maskColor);
 	}
 
