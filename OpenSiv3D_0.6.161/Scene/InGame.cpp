@@ -15,7 +15,7 @@ namespace Iwanna {
 			changeScene(SceneType::START_MENU, 0.0s);
 		}
 
-		debug();
+		//debug();
 	}
 
 	void InGame::debug() const {

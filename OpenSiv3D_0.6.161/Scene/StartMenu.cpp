@@ -371,7 +371,7 @@ namespace Iwanna {
 			drawLeftPageRecord(saveData);
 			drawLeftPageAchievements(saveData, selectedAchievement, cameraX);
 
-			FontAsset(U"Big")(U"I wanna Siv3D").drawAt(400, 150, Palette::White);
+			FontAsset(U"Title")(U"I wanna break the Devotion").drawAt(400, 150, Palette::White);
 
 			for (int32 chapter = 1; chapter <= 6; ++chapter) {
 				const RectF button = chapterButtonRect(chapter);
