@@ -40,6 +40,10 @@ namespace Iwanna{
 	}
 
 	void Player::update() {
+		update(ReplayInputFrame::FromCurrentInput());
+	}
+
+	void Player::update(const ReplayInputFrame& input) {
 
 		hspeed = 0.0;
 		isChanedActionWait = false;
@@ -47,11 +51,11 @@ namespace Iwanna{
 		if (isDead) return;
 
 		if (!frozen) {
-			if (Global::inputLeft.pressed()) playerMoveLeft();
-			if (Global::inputRight.pressed()) playerMoveRight();
-			if (Global::inputShoot.down()) playerShoot();
-			if (Global::inputJump.down()) playerJump();
-			if (Global::inputJump.up()) playerVJump();
+			if (input.leftPressed) playerMoveLeft();
+			if (input.rightPressed) playerMoveRight();
+			if (input.shootDown) playerShoot();
+			if (input.jumpDown) playerJump();
+			if (input.jumpUp) playerVJump();
 		}
 
 		// 重力反映

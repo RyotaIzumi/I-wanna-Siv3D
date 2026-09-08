@@ -921,6 +921,9 @@
     <ClInclude Include="MainGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Replay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="SaveData.h">
       <Filter>Header Files</Filter>
     </ClInclude>

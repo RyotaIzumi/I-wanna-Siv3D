@@ -211,6 +211,10 @@ namespace Iwanna {
 	}
 
 	void AvoidanceManager::update() {
+		update(ReplayInputFrame::FromCurrentInput());
+	}
+
+	void AvoidanceManager::update(const ReplayInputFrame& input) {
 		const int32 chapter = getChapterFromStep(step);
 		if (chapter != activeChapter) {
 			setUpObjects(chapter);
@@ -235,7 +239,7 @@ namespace Iwanna {
 		auto& bloods = gameObjects.bloods;
 		auto& miku = gameObjects.miku;
 
-		player->update();
+		player->update(input);
 
 		// 弾丸の生成
 		if (player->getIsGenerateBullet()) {
@@ -485,11 +489,15 @@ namespace Iwanna {
 	}
 
 	void AvoidanceManager::updateTutorial() {
+		updateTutorial(ReplayInputFrame::FromCurrentInput());
+	}
+
+	void AvoidanceManager::updateTutorial(const ReplayInputFrame& input) {
 		auto& player = gameObjects.player;
 		auto& bullets = gameObjects.bullets;
 		auto& blocks = gameObjects.blocks;
 
-		player->update();
+		player->update(input);
 
 		if (player->getIsGenerateBullet()) {
 			if (bullets.size() < bulletMaxNum) {

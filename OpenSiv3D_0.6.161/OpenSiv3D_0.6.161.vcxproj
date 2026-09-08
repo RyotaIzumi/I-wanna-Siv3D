@@ -379,6 +379,7 @@
     <ClInclude Include="GameObject\StockNearGameObjects.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="MainGame.h" />
+    <ClInclude Include="Replay.h" />
     <ClInclude Include="SaveData.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="GameObject\HitBox.h" />
