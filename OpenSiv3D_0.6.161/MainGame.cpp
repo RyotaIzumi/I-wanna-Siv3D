@@ -79,6 +79,7 @@ namespace Iwanna {
 			return;
 		}
 
+		stopBgm();
 		playMode = PlayMode::Replay;
 		isTutorial = false;
 		isRecordingReplay = false;
@@ -90,7 +91,21 @@ namespace Iwanna {
 		Global::difficulty = playbackReplay.difficulty;
 		Reseed(playbackReplay.randomSeed);
 		avoidanceManager.setUpObjects(playbackReplay.chapter);
-		playBgm(playbackReplay.chapter);
+		audio = AudioAsset{ U"sndHibana" };
+		audio.setVolume(saveData.bgmVolume);
+		audio.seekTime(SecondsF(static_cast<double>(playbackReplay.startStep) / static_cast<double>(Global::FPS)));
+		audio.play();
+	}
+
+	void MainGame::returnToStartMenu() {
+		const bool shouldKeepLastReplaySelectable = isReplayMode() && lastReplay.isValid();
+		stopBgm();
+		playMode = PlayMode::Normal;
+		isTutorial = false;
+		isRecordingReplay = false;
+		if (shouldKeepLastReplaySelectable) {
+			wasPlayerDead = true;
+		}
 	}
 
 	void MainGame::setDifficulty(Global::Difficulty difficulty) {

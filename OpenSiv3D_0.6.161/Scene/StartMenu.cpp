@@ -8,10 +8,11 @@ namespace Iwanna {
 		constexpr double ChapterButtonBaseY = 330.0;
 		constexpr double ChapterButtonSpacingX = 84.0;
 		constexpr double ChapterButtonSpacingY = 56.0;
-		constexpr int32 CameraMinPage = -1;
+		constexpr int32 CameraMinPage = -2;
 		constexpr int32 CameraMaxPage = 1;
 		constexpr double CameraMoveDurationSec = 0.45;
-		constexpr double LeftPageX = -Global::windowWidth;
+		constexpr double ReplayPageX = -Global::windowWidth;
+		constexpr double RecordPageX = -Global::windowWidth * 2.0;
 		constexpr double RightPageX = Global::windowWidth;
 
 		struct AchievementViewData {
@@ -59,11 +60,15 @@ namespace Iwanna {
 			const int32 column = index % iconsPerRow;
 			const int32 row = index / iconsPerRow;
 			return RectF{
-				LeftPageX + 86.0 + column * 78.0,
+				RecordPageX + 86.0 + column * 78.0,
 				388.0 + row * 58.0,
 				50.0,
 				50.0,
 			};
+		}
+
+		RectF replayButtonRect() {
+			return RectF{ ReplayPageX + 280.0, 304.0, 240.0, 58.0 };
 		}
 
 		RectF tutorialButtonRect() {
@@ -113,10 +118,10 @@ namespace Iwanna {
 		}
 
 		void drawLeftPageRecord(const SaveData& saveData) {
-			const Vec2 pageOffset{ LeftPageX, 0.0 };
+			const Vec2 pageOffset{ RecordPageX, 0.0 };
 			FontAsset(U"Big")(U"Record").draw(pageOffset + Vec2{ 84.0, 20.0 }, Palette::White);
 
-			const RectF table{ LeftPageX + 84.0, 112.0, 630.0, 58.0 };
+			const RectF table{ RecordPageX + 84.0, 112.0, 630.0, 58.0 };
 			const double firstColumnWidth = 102.0;
 			const double dataColumnWidth = (table.w - firstColumnWidth) / SaveData::ChapterCount;
 			table.drawFrame(1.5, Palette::White);
@@ -135,7 +140,7 @@ namespace Iwanna {
 		}
 
 		void drawLeftPageAchievements(const SaveData& saveData, int32 selectedAchievement, double cameraX) {
-			const Vec2 pageOffset{ LeftPageX, 0.0 };
+			const Vec2 pageOffset{ RecordPageX, 0.0 };
 			Line{ pageOffset + Vec2{ 0.0, 304 }, pageOffset + Vec2{ 800.0, 304.0 } }.draw(1.5, Palette::White);
 			FontAsset(U"Big")(U"Achievement").draw(pageOffset + Vec2{ 84.0, 300.0 }, Palette::White);
 
@@ -160,7 +165,7 @@ namespace Iwanna {
 				icon.drawFrame(selected ? 3.0 : 2.0, frame);
 			}
 
-			const RectF detailBand{ LeftPageX, 540.0, Global::windowWidth, 168 };
+			const RectF detailBand{ RecordPageX, 540.0, Global::windowWidth, 168 };
 			detailBand.draw(ColorF{ 0.96, 0.97, 1.0 });
 
 			const auto& achievement = AchievementViews[selectedAchievement];
@@ -173,6 +178,25 @@ namespace Iwanna {
 
 			FontAsset(U"Button")(achievement.description).draw(pageOffset + Vec2{ 26.0, 456.0 + achivementDescOffsetY }, textColor);
 			FontAsset(U"Button")(U"Unlocked : " + unlockedAt).draw(pageOffset + Vec2{ 26.0, 488.0 + achivementDescOffsetY }, textColor);
+		}
+
+		void drawReplayPage(const MainGame& game, double cameraX) {
+			const Vec2 pageOffset{ ReplayPageX, 0.0 };
+			FontAsset(U"Big")(U"Replay").draw(pageOffset + Vec2{ 84.0, 54.0 }, Palette::White);
+
+			const bool canReplay = game.canStartLastReplay();
+			const RectF button = replayButtonRect();
+			const bool hovered = canReplay && button.movedBy(-cameraX, 0.0).mouseOver();
+			const ColorF fill = canReplay
+				? (hovered ? ColorF{ 0.95, 0.95, 1.0 } : ColorF{ 0.78, 0.82, 0.92 })
+				: ColorF{ 0.14, 0.15, 0.19 };
+			const ColorF frame = canReplay ? ColorF{ 0.25, 0.30, 0.42 } : ColorF{ 0.30, 0.32, 0.38 };
+			const ColorF text = canReplay ? ColorF{ 0.06, 0.07, 0.10 } : ColorF{ 0.48, 0.50, 0.56 };
+
+			FontAsset(U"Button")(U"Latest Replay").drawAt(pageOffset + Vec2{ 400.0, 244.0 }, ColorF{ 0.72, 0.76, 0.84 });
+			button.rounded(6.0).draw(fill);
+			button.rounded(6.0).drawFrame(2.0, frame);
+			FontAsset(U"Button")(canReplay ? U"Play Replay" : U"No Replay").drawAt(button.center(), text);
 		}
 
 		void drawVolumeSliderView(
@@ -312,6 +336,13 @@ namespace Iwanna {
 			return;
 		}
 
+		if (replayButtonRect().movedBy(-cameraX, 0.0).leftClicked()
+			&& data.canStartLastReplay()) {
+			data.startLastReplay();
+			changeScene(SceneType::IN_GAME, 0.0s);
+			return;
+		}
+
 		if (data.canChangeDifficulty()) {
 			for (int32 difficulty = 1; difficulty <= 2; ++difficulty) {
 				if (difficultyButtonRect(difficulty).movedBy(-cameraX, 0.0).leftClicked()) {
@@ -370,6 +401,7 @@ namespace Iwanna {
 
 			drawLeftPageRecord(saveData);
 			drawLeftPageAchievements(saveData, selectedAchievement, cameraX);
+			drawReplayPage(data, cameraX);
 
 			FontAsset(U"Title")(U"I wanna break the Devotion").drawAt(400, 150, Palette::White);
 

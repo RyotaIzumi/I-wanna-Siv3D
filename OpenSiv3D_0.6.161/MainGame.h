@@ -60,6 +60,7 @@ namespace Iwanna {
 		bool canChangeDifficulty() const;
 		bool canStartLastReplay() const;
 		void startLastReplay();
+		void returnToStartMenu();
 		void setDifficulty(Global::Difficulty difficulty);
 		void setBgmVolume(double volume);
 		void setSeVolume(double volume);
