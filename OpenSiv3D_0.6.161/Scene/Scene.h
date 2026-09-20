@@ -42,6 +42,7 @@ namespace Iwanna {
 	private:
 		int32 selectedChapter = 1;
 		int32 selectedAchievement = 0;
+		int32 selectedReplay = 0;
 		int32 cameraPage = 0;
 		double cameraX = 0.0;
 		double cameraStartX = 0.0;

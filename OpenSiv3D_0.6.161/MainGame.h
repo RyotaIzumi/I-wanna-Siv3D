@@ -8,6 +8,8 @@
 namespace Iwanna {
 	class MainGame {
 	private:
+		static constexpr size_t MaxReplayCount = 5;
+
 		enum class PlayMode {
 			Normal,
 			Replay,
@@ -21,7 +23,7 @@ namespace Iwanna {
 		SaveData saveData;
 		ReplayData recordingReplay;
 		ReplayData playbackReplay;
-		ReplayData lastReplay;
+		Array<ReplayData> replayHistory;
 		int32 lastSelectedChapter = 1;
 		int32 replayFrame = 0;
 		bool wasPlayerDead = false;
@@ -44,6 +46,8 @@ namespace Iwanna {
 		void savePeriodically(double deltaTimeSec);
 		void beginReplayRecording(int32 chapter);
 		void finishReplayRecording();
+		void loadReplayHistory();
+		void saveReplayHistory() const;
 		void updateNormalGame();
 		void updateReplayGame();
 
@@ -58,6 +62,10 @@ namespace Iwanna {
 		double getEnduranceLengthSec() const;
 		bool canStartAvoidance() const;
 		bool canChangeDifficulty() const;
+		size_t getReplayCount() const;
+		const ReplayData* getReplay(size_t index) const;
+		bool canStartReplay(size_t index) const;
+		void startReplay(size_t index);
 		bool canStartLastReplay() const;
 		void startLastReplay();
 		void returnToStartMenu();

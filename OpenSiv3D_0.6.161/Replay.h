@@ -27,6 +27,7 @@ namespace Iwanna {
 		int32 fps = Global::FPS;
 		uint64 randomSeed = 0;
 		Global::Difficulty difficulty = Global::Difficulty::Unselected;
+		String recordedAt;
 		Array<ReplayInputFrame> frames;
 		Array<int32> frameSteps;
 
