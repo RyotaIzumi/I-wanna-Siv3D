@@ -9,6 +9,7 @@ namespace Iwanna {
 	class MainGame {
 	private:
 		static constexpr size_t MaxReplayCount = 5;
+		static constexpr size_t MaxFavoriteReplayCount = 20;
 
 		enum class PlayMode {
 			Normal,
@@ -24,6 +25,7 @@ namespace Iwanna {
 		ReplayData recordingReplay;
 		ReplayData playbackReplay;
 		Array<ReplayData> replayHistory;
+		Array<ReplayData> favoriteReplays;
 		int32 lastSelectedChapter = 1;
 		int32 replayFrame = 0;
 		bool wasPlayerDead = false;
@@ -48,6 +50,7 @@ namespace Iwanna {
 		void finishReplayRecording();
 		void loadReplayHistory();
 		void saveReplayHistory() const;
+		void startReplayData(const ReplayData& replay);
 		void updateNormalGame();
 		void updateReplayGame();
 
@@ -66,6 +69,13 @@ namespace Iwanna {
 		const ReplayData* getReplay(size_t index) const;
 		bool canStartReplay(size_t index) const;
 		void startReplay(size_t index);
+		size_t getFavoriteReplayCount() const;
+		const ReplayData* getFavoriteReplay(size_t index) const;
+		bool isReplayFavorite(size_t index) const;
+		bool canAddReplayToFavorites(size_t index) const;
+		void addReplayToFavorites(size_t index);
+		bool canStartFavoriteReplay(size_t index) const;
+		void startFavoriteReplay(size_t index);
 		bool canStartLastReplay() const;
 		void startLastReplay();
 		void returnToStartMenu();

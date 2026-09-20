@@ -6,7 +6,7 @@
 namespace {
 	constexpr const char* ReplayFilePath = "replays.dat";
 	constexpr uint32 ReplayFileMagic = 0x52505749;
-	constexpr uint32 ReplayFileVersion = 1;
+	constexpr uint32 ReplayFileVersion = 2;
 	constexpr uint32 MaxStoredFrames = 60 * 60 * Global::FPS;
 
 	template <class Type>
@@ -17,6 +17,79 @@ namespace {
 	template <class Type>
 	bool readValue(std::ifstream& reader, Type& value) {
 		return static_cast<bool>(reader.read(reinterpret_cast<char*>(&value), sizeof(Type)));
+	}
+
+	bool readReplay(std::ifstream& reader, Iwanna::ReplayData& replay) {
+		int32 difficulty = 0;
+		uint32 dateSize = 0;
+		uint32 frameCount = 0;
+		if (!readValue(reader, replay.chapter)
+			|| !readValue(reader, replay.startStep)
+			|| !readValue(reader, replay.fps)
+			|| !readValue(reader, replay.randomSeed)
+			|| !readValue(reader, difficulty)
+			|| !readValue(reader, dateSize)
+			|| 64 < dateSize) {
+			return false;
+		}
+
+		std::string recordedAt(dateSize, '\0');
+		if (dateSize != 0 && !reader.read(recordedAt.data(), dateSize)) {
+			return false;
+		}
+		if (!readValue(reader, frameCount) || MaxStoredFrames < frameCount) {
+			return false;
+		}
+
+		replay.difficulty = static_cast<Global::Difficulty>(Clamp(difficulty, 0, 2));
+		replay.recordedAt = Unicode::FromUTF8(recordedAt);
+		replay.frames.reserve(frameCount);
+		replay.frameSteps.reserve(frameCount);
+		for (uint32 frameIndex = 0; frameIndex < frameCount; ++frameIndex) {
+			uint8 inputBits = 0;
+			int32 step = 0;
+			if (!readValue(reader, inputBits) || !readValue(reader, step)) {
+				return false;
+			}
+
+			Iwanna::ReplayInputFrame frame;
+			frame.leftPressed = (inputBits & 0x01) != 0;
+			frame.rightPressed = (inputBits & 0x02) != 0;
+			frame.jumpDown = (inputBits & 0x04) != 0;
+			frame.jumpUp = (inputBits & 0x08) != 0;
+			frame.shootDown = (inputBits & 0x10) != 0;
+			replay.frames << frame;
+			replay.frameSteps << step;
+		}
+
+		return replay.isValid();
+	}
+
+	void writeReplay(std::ofstream& writer, const Iwanna::ReplayData& replay) {
+		writeValue(writer, replay.chapter);
+		writeValue(writer, replay.startStep);
+		writeValue(writer, replay.fps);
+		writeValue(writer, replay.randomSeed);
+		const int32 difficulty = static_cast<int32>(replay.difficulty);
+		writeValue(writer, difficulty);
+		const std::string recordedAt = Unicode::ToUTF8(replay.recordedAt);
+		const uint32 dateSize = static_cast<uint32>(recordedAt.size());
+		writeValue(writer, dateSize);
+		writer.write(recordedAt.data(), dateSize);
+		const uint32 frameCount = static_cast<uint32>(replay.frames.size());
+		writeValue(writer, frameCount);
+
+		for (size_t frameIndex = 0; frameIndex < replay.frames.size(); ++frameIndex) {
+			const Iwanna::ReplayInputFrame& frame = replay.frames[frameIndex];
+			const uint8 inputBits =
+				(frame.leftPressed ? 0x01 : 0)
+				| (frame.rightPressed ? 0x02 : 0)
+				| (frame.jumpDown ? 0x04 : 0)
+				| (frame.jumpUp ? 0x08 : 0)
+				| (frame.shootDown ? 0x10 : 0);
+			writeValue(writer, inputBits);
+			writeValue(writer, replay.frameSteps[frameIndex]);
+		}
 	}
 }
 
@@ -108,6 +181,62 @@ namespace Iwanna {
 			return;
 		}
 
+		startReplayData(replayHistory[index]);
+	}
+
+	size_t MainGame::getFavoriteReplayCount() const {
+		return favoriteReplays.size();
+	}
+
+	const ReplayData* MainGame::getFavoriteReplay(size_t index) const {
+		return (index < favoriteReplays.size()) ? &favoriteReplays[index] : nullptr;
+	}
+
+	bool MainGame::isReplayFavorite(size_t index) const {
+		const ReplayData* replay = getReplay(index);
+		if (!replay) {
+			return false;
+		}
+
+		return favoriteReplays.any([replay](const ReplayData& favorite) {
+			return favorite.randomSeed == replay->randomSeed
+				&& favorite.recordedAt == replay->recordedAt;
+		});
+	}
+
+	bool MainGame::canAddReplayToFavorites(size_t index) const {
+		return getReplay(index)
+			&& favoriteReplays.size() < MaxFavoriteReplayCount
+			&& !isReplayFavorite(index);
+	}
+
+	void MainGame::addReplayToFavorites(size_t index) {
+		if (!canAddReplayToFavorites(index)) {
+			return;
+		}
+
+		favoriteReplays << replayHistory[index];
+		saveReplayHistory();
+	}
+
+	bool MainGame::canStartFavoriteReplay(size_t index) const {
+		const ReplayData* replay = getFavoriteReplay(index);
+		return playMode == PlayMode::Normal
+			&& !isTutorial
+			&& replay
+			&& replay->isValid();
+	}
+
+	void MainGame::startFavoriteReplay(size_t index) {
+		if (!canStartFavoriteReplay(index)) {
+			return;
+		}
+
+		startReplayData(favoriteReplays[index]);
+	}
+
+	void MainGame::startReplayData(const ReplayData& replay) {
+
 		stopBgm();
 		playMode = PlayMode::Replay;
 		isTutorial = false;
@@ -116,7 +245,7 @@ namespace Iwanna {
 		practiceLimitReached = false;
 		practiceLimitStep = none;
 		replayFrame = 0;
-		playbackReplay = replayHistory[index];
+		playbackReplay = replay;
 		Global::difficulty = playbackReplay.difficulty;
 		Reseed(playbackReplay.randomSeed);
 		avoidanceManager.setUpObjects(playbackReplay.chapter);
@@ -280,7 +409,7 @@ namespace Iwanna {
 			|| !readValue(reader, version)
 			|| !readValue(reader, replayCount)
 			|| magic != ReplayFileMagic
-			|| version != ReplayFileVersion
+			|| (version != 1 && version != ReplayFileVersion)
 			|| MaxReplayCount < replayCount) {
 			return;
 		}
@@ -288,54 +417,29 @@ namespace Iwanna {
 		Array<ReplayData> loaded;
 		for (uint32 replayIndex = 0; replayIndex < replayCount; ++replayIndex) {
 			ReplayData replay;
-			int32 difficulty = 0;
-			uint32 dateSize = 0;
-			uint32 frameCount = 0;
-			if (!readValue(reader, replay.chapter)
-				|| !readValue(reader, replay.startStep)
-				|| !readValue(reader, replay.fps)
-				|| !readValue(reader, replay.randomSeed)
-				|| !readValue(reader, difficulty)
-				|| !readValue(reader, dateSize)
-				|| 64 < dateSize) {
+			if (!readReplay(reader, replay)) {
 				return;
 			}
+			loaded << std::move(replay);
+		}
 
-			std::string recordedAt(dateSize, '\0');
-			if (dateSize != 0 && !reader.read(recordedAt.data(), dateSize)) {
+		Array<ReplayData> loadedFavorites;
+		if (2 <= version) {
+			uint32 favoriteCount = 0;
+			if (!readValue(reader, favoriteCount) || MaxFavoriteReplayCount < favoriteCount) {
 				return;
 			}
-			if (!readValue(reader, frameCount) || MaxStoredFrames < frameCount) {
-				return;
-			}
-
-			replay.difficulty = static_cast<Global::Difficulty>(Clamp(difficulty, 0, 2));
-			replay.recordedAt = Unicode::FromUTF8(recordedAt);
-			replay.frames.reserve(frameCount);
-			replay.frameSteps.reserve(frameCount);
-			for (uint32 frameIndex = 0; frameIndex < frameCount; ++frameIndex) {
-				uint8 inputBits = 0;
-				int32 step = 0;
-				if (!readValue(reader, inputBits) || !readValue(reader, step)) {
+			for (uint32 favoriteIndex = 0; favoriteIndex < favoriteCount; ++favoriteIndex) {
+				ReplayData replay;
+				if (!readReplay(reader, replay)) {
 					return;
 				}
-
-				ReplayInputFrame frame;
-				frame.leftPressed = (inputBits & 0x01) != 0;
-				frame.rightPressed = (inputBits & 0x02) != 0;
-				frame.jumpDown = (inputBits & 0x04) != 0;
-				frame.jumpUp = (inputBits & 0x08) != 0;
-				frame.shootDown = (inputBits & 0x10) != 0;
-				replay.frames << frame;
-				replay.frameSteps << step;
-			}
-
-			if (replay.isValid()) {
-				loaded << std::move(replay);
+				loadedFavorites << std::move(replay);
 			}
 		}
 
 		replayHistory = std::move(loaded);
+		favoriteReplays = std::move(loadedFavorites);
 	}
 
 	void MainGame::saveReplayHistory() const {
@@ -350,30 +454,13 @@ namespace Iwanna {
 		writeValue(writer, replayCount);
 
 		for (const ReplayData& replay : replayHistory) {
-			writeValue(writer, replay.chapter);
-			writeValue(writer, replay.startStep);
-			writeValue(writer, replay.fps);
-			writeValue(writer, replay.randomSeed);
-			const int32 difficulty = static_cast<int32>(replay.difficulty);
-			writeValue(writer, difficulty);
-			const std::string recordedAt = Unicode::ToUTF8(replay.recordedAt);
-			const uint32 dateSize = static_cast<uint32>(recordedAt.size());
-			writeValue(writer, dateSize);
-			writer.write(recordedAt.data(), dateSize);
-			const uint32 frameCount = static_cast<uint32>(replay.frames.size());
-			writeValue(writer, frameCount);
+			writeReplay(writer, replay);
+		}
 
-			for (size_t frameIndex = 0; frameIndex < replay.frames.size(); ++frameIndex) {
-				const ReplayInputFrame& frame = replay.frames[frameIndex];
-				const uint8 inputBits =
-					(frame.leftPressed ? 0x01 : 0)
-					| (frame.rightPressed ? 0x02 : 0)
-					| (frame.jumpDown ? 0x04 : 0)
-					| (frame.jumpUp ? 0x08 : 0)
-					| (frame.shootDown ? 0x10 : 0);
-				writeValue(writer, inputBits);
-				writeValue(writer, replay.frameSteps[frameIndex]);
-			}
+		const uint32 favoriteCount = static_cast<uint32>(favoriteReplays.size());
+		writeValue(writer, favoriteCount);
+		for (const ReplayData& replay : favoriteReplays) {
+			writeReplay(writer, replay);
 		}
 	}
 
