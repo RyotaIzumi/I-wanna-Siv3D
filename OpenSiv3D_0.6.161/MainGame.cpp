@@ -219,6 +219,15 @@ namespace Iwanna {
 		saveReplayHistory();
 	}
 
+	void MainGame::removeFavoriteReplay(size_t index) {
+		if (favoriteReplays.size() <= index) {
+			return;
+		}
+
+		favoriteReplays.erase(favoriteReplays.begin() + index);
+		saveReplayHistory();
+	}
+
 	bool MainGame::canStartFavoriteReplay(size_t index) const {
 		const ReplayData* replay = getFavoriteReplay(index);
 		return playMode == PlayMode::Normal

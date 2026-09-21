@@ -74,6 +74,7 @@ namespace Iwanna {
 		bool isReplayFavorite(size_t index) const;
 		bool canAddReplayToFavorites(size_t index) const;
 		void addReplayToFavorites(size_t index);
+		void removeFavoriteReplay(size_t index);
 		bool canStartFavoriteReplay(size_t index) const;
 		void startFavoriteReplay(size_t index);
 		bool canStartLastReplay() const;

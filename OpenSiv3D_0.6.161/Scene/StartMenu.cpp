@@ -79,6 +79,10 @@ namespace Iwanna {
 			return RectF{ ReplayPageX + 310.0, 548.0, 180.0, 42.0 };
 		}
 
+		RectF removeFavoriteButtonRect() {
+			return RectF{ ReplayPageX + 608.0, 358.0, 140.0, 42.0 };
+		}
+
 		RectF replaySelectArrowRect(int32 direction, bool favorite) {
 			const double x = (direction < 0) ? 126.0 : 620.0;
 			return RectF{ ReplayPageX + x, favorite ? 438.0 : 188.0, 54.0, 54.0 };
@@ -255,7 +259,7 @@ namespace Iwanna {
 
 		void drawReplayPage(const MainGame& game, int32 selectedReplay, int32 selectedFavoriteReplay, double cameraX) {
 			const Vec2 pageOffset{ ReplayPageX, 0.0 };
-			FontAsset(U"Big")(U"Replay").draw(pageOffset + Vec2{ 84.0, 32.0 }, Palette::White);
+			FontAsset(U"Big")(U"Replay").draw(pageOffset + Vec2{ 32.0, 12.0 }, Palette::White);
 			FontAsset(U"Button")(U"Recent").draw(pageOffset + Vec2{ 204.0, 98.0 }, ColorF{ 0.78, 0.82, 0.92 });
 
 			const size_t replayCount = game.getReplayCount();
@@ -291,6 +295,7 @@ namespace Iwanna {
 			drawReplaySelectArrow(-1, true, hasFavorite && selectedFavoriteReplay > 0, cameraX);
 			drawReplaySelectArrow(1, true, hasFavorite && static_cast<size_t>(selectedFavoriteReplay + 1) < favoriteCount, cameraX);
 			drawReplayActionButton(favoriteReplayButtonRect(), canPlayFavorite, canPlayFavorite ? U"Play" : U"No Favorite", cameraX);
+			drawReplayActionButton(removeFavoriteButtonRect(), hasFavorite, U"Remove", cameraX);
 		}
 
 		void drawVolumeSliderView(
@@ -454,6 +459,14 @@ namespace Iwanna {
 			data.startFavoriteReplay(selectedFavoriteReplay);
 			changeScene(SceneType::IN_GAME, 0.0s);
 			return;
+		}
+		if (removeFavoriteButtonRect().movedBy(-cameraX, 0.0).leftClicked()
+			&& 0 < data.getFavoriteReplayCount()) {
+			data.removeFavoriteReplay(selectedFavoriteReplay);
+			selectedFavoriteReplay = Clamp(
+				selectedFavoriteReplay,
+				0,
+				Max(0, static_cast<int32>(data.getFavoriteReplayCount()) - 1));
 		}
 		if (replaySelectArrowRect(-1, true).movedBy(-cameraX, 0.0).leftClicked() && 0 < selectedFavoriteReplay) {
 			--selectedFavoriteReplay;
