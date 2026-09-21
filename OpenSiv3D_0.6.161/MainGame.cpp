@@ -123,7 +123,14 @@ namespace Iwanna {
 		saveData.unlockAchievement(0);
 		saveData.updateHighestChapter(lastSelectedChapter);
 		saveData.save();
-		beginReplayRecording(lastSelectedChapter);
+		if (lastSelectedChapter == 1) {
+			beginReplayRecording(lastSelectedChapter);
+		}
+		else {
+			isRecordingReplay = false;
+			recordingReplay = ReplayData{};
+			Reseed(RandomUint64());
+		}
 		avoidanceManager.setUpObjects(lastSelectedChapter);
 		playBgm(lastSelectedChapter);
 	}
