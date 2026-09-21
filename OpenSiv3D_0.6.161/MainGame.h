@@ -50,7 +50,7 @@ namespace Iwanna {
 		void finishReplayRecording();
 		void loadReplayHistory();
 		void saveReplayHistory() const;
-		void startReplayData(const ReplayData& replay);
+		void startReplayData(const ReplayData& replay, int32 startChapter);
 		void updateNormalGame();
 		void updateReplayGame();
 
@@ -67,16 +67,16 @@ namespace Iwanna {
 		bool canChangeDifficulty() const;
 		size_t getReplayCount() const;
 		const ReplayData* getReplay(size_t index) const;
-		bool canStartReplay(size_t index) const;
-		void startReplay(size_t index);
+		bool canStartReplay(size_t index, int32 startChapter = 1) const;
+		void startReplay(size_t index, int32 startChapter = 1);
 		size_t getFavoriteReplayCount() const;
 		const ReplayData* getFavoriteReplay(size_t index) const;
 		bool isReplayFavorite(size_t index) const;
 		bool canAddReplayToFavorites(size_t index) const;
 		void addReplayToFavorites(size_t index);
 		void removeFavoriteReplay(size_t index);
-		bool canStartFavoriteReplay(size_t index) const;
-		void startFavoriteReplay(size_t index);
+		bool canStartFavoriteReplay(size_t index, int32 startChapter = 1) const;
+		void startFavoriteReplay(size_t index, int32 startChapter = 1);
 		bool canStartLastReplay() const;
 		void startLastReplay();
 		void returnToStartMenu();

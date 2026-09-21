@@ -175,20 +175,23 @@ namespace Iwanna {
 		return (index < replayHistory.size()) ? &replayHistory[index] : nullptr;
 	}
 
-	bool MainGame::canStartReplay(size_t index) const {
+	bool MainGame::canStartReplay(size_t index, int32 startChapter) const {
 		const ReplayData* replay = getReplay(index);
+		const int32 startStep = getChapterStartStep(startChapter);
 		return playMode == PlayMode::Normal
 			&& !isTutorial
 			&& replay
-			&& replay->isValid();
+			&& replay->isValid()
+			&& startChapter == Clamp(startChapter, 1, 6)
+			&& startStep <= replay->frameSteps.back();
 	}
 
-	void MainGame::startReplay(size_t index) {
-		if (!canStartReplay(index)) {
+	void MainGame::startReplay(size_t index, int32 startChapter) {
+		if (!canStartReplay(index, startChapter)) {
 			return;
 		}
 
-		startReplayData(replayHistory[index]);
+		startReplayData(replayHistory[index], startChapter);
 	}
 
 	size_t MainGame::getFavoriteReplayCount() const {
@@ -235,23 +238,26 @@ namespace Iwanna {
 		saveReplayHistory();
 	}
 
-	bool MainGame::canStartFavoriteReplay(size_t index) const {
+	bool MainGame::canStartFavoriteReplay(size_t index, int32 startChapter) const {
 		const ReplayData* replay = getFavoriteReplay(index);
+		const int32 startStep = getChapterStartStep(startChapter);
 		return playMode == PlayMode::Normal
 			&& !isTutorial
 			&& replay
-			&& replay->isValid();
+			&& replay->isValid()
+			&& startChapter == Clamp(startChapter, 1, 6)
+			&& startStep <= replay->frameSteps.back();
 	}
 
-	void MainGame::startFavoriteReplay(size_t index) {
-		if (!canStartFavoriteReplay(index)) {
+	void MainGame::startFavoriteReplay(size_t index, int32 startChapter) {
+		if (!canStartFavoriteReplay(index, startChapter)) {
 			return;
 		}
 
-		startReplayData(favoriteReplays[index]);
+		startReplayData(favoriteReplays[index], startChapter);
 	}
 
-	void MainGame::startReplayData(const ReplayData& replay) {
+	void MainGame::startReplayData(const ReplayData& replay, int32 startChapter) {
 
 		stopBgm();
 		playMode = PlayMode::Replay;
@@ -265,9 +271,16 @@ namespace Iwanna {
 		Global::difficulty = playbackReplay.difficulty;
 		Reseed(playbackReplay.randomSeed);
 		avoidanceManager.setUpObjects(playbackReplay.chapter);
+		const int32 startStep = getChapterStartStep(startChapter);
+		while (static_cast<size_t>(replayFrame) < playbackReplay.frames.size()
+			&& playbackReplay.frameSteps[replayFrame] < startStep) {
+			avoidanceManager.setStep(playbackReplay.frameSteps[replayFrame]);
+			avoidanceManager.update(playbackReplay.frames[replayFrame]);
+			++replayFrame;
+		}
 		audio = AudioAsset{ U"sndHibana" };
 		audio.setVolume(saveData.bgmVolume);
-		audio.seekTime(SecondsF(static_cast<double>(playbackReplay.startStep) / static_cast<double>(Global::FPS)));
+		audio.seekTime(SecondsF(static_cast<double>(startStep) / static_cast<double>(Global::FPS)));
 		audio.play();
 	}
 

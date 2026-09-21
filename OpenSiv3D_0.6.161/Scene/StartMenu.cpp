@@ -88,6 +88,11 @@ namespace Iwanna {
 			return RectF{ ReplayPageX + x, favorite ? 438.0 : 188.0, 54.0, 54.0 };
 		}
 
+		RectF replayChapterArrowRect(int32 direction) {
+			const double x = (direction < 0) ? 22.0 : 132.0;
+			return RectF{ ReplayPageX + x, 552.0, 42.0, 36.0 };
+		}
+
 		RectF tutorialButtonRect() {
 			return RectF{ RightPageX + 260.0, 520.0, 280.0, 58.0 };
 		}
@@ -257,7 +262,30 @@ namespace Iwanna {
 			FontAsset(U"Button")(label).drawAt(button.center(), text);
 		}
 
-		void drawReplayPage(const MainGame& game, int32 selectedReplay, int32 selectedFavoriteReplay, double cameraX) {
+		void drawReplayChapterSelector(int32 chapter, double cameraX) {
+			const Vec2 pageOffset{ ReplayPageX, 0.0 };
+			FontAsset(U"Button")(U"Start Chapter").draw(pageOffset + Vec2{ 30.0, 516.0 }, ColorF{ 0.78, 0.82, 0.92 });
+			FontAsset(U"Button")(Format(chapter)).drawAt(pageOffset + Vec2{ 97.0, 570.0 }, Palette::White);
+
+			for (const int32 direction : { -1, 1 }) {
+				const bool enabled = (direction < 0) ? (1 < chapter) : (chapter < 6);
+				const RectF button = replayChapterArrowRect(direction);
+				const bool hovered = enabled && button.movedBy(-cameraX, 0.0).mouseOver();
+				button.rounded(5.0).draw(enabled
+					? (hovered ? ColorF{ 0.30, 0.34, 0.44 } : ColorF{ 0.18, 0.21, 0.29 })
+					: ColorF{ 0.11, 0.12, 0.16 });
+				button.rounded(5.0).drawFrame(1.5, enabled ? ColorF{ 0.48, 0.54, 0.68 } : ColorF{ 0.24 });
+				const Vec2 center = button.center();
+				const double sign = static_cast<double>(direction);
+				Triangle{
+					Vec2{ center.x + sign * 7.0, center.y },
+					Vec2{ center.x - sign * 6.0, center.y - 10.0 },
+					Vec2{ center.x - sign * 6.0, center.y + 10.0 },
+				}.draw(enabled ? ColorF{ 0.92 } : ColorF{ 0.32 });
+			}
+		}
+
+		void drawReplayPage(const MainGame& game, int32 selectedReplay, int32 selectedFavoriteReplay, int32 startChapter, double cameraX) {
 			const Vec2 pageOffset{ ReplayPageX, 0.0 };
 			FontAsset(U"Big")(U"Replay").draw(pageOffset + Vec2{ 32.0, 12.0 }, Palette::White);
 			FontAsset(U"Button")(U"Recent").draw(pageOffset + Vec2{ 204.0, 98.0 }, ColorF{ 0.78, 0.82, 0.92 });
@@ -267,7 +295,7 @@ namespace Iwanna {
 			const size_t replayIndex = hasReplay
 				? Min(static_cast<size_t>(Max(selectedReplay, 0)), replayCount - 1)
 				: 0;
-			const bool canReplay = game.canStartReplay(replayIndex);
+			const bool canReplay = game.canStartReplay(replayIndex, startChapter);
 			drawReplayInfo(game, game.getReplay(replayIndex), replayIndex, replayCount,
 				RectF{ ReplayPageX + 204.0, 132.0, 392.0, 138.0 });
 			drawReplaySelectArrow(-1, false, hasReplay && selectedReplay > 0, cameraX);
@@ -289,13 +317,14 @@ namespace Iwanna {
 			const size_t favoriteIndex = hasFavorite
 				? Min(static_cast<size_t>(Max(selectedFavoriteReplay, 0)), favoriteCount - 1)
 				: 0;
-			const bool canPlayFavorite = game.canStartFavoriteReplay(favoriteIndex);
+			const bool canPlayFavorite = game.canStartFavoriteReplay(favoriteIndex, startChapter);
 			drawReplayInfo(game, game.getFavoriteReplay(favoriteIndex), favoriteIndex, favoriteCount,
 				RectF{ ReplayPageX + 204.0, 392.0, 392.0, 144.0 });
 			drawReplaySelectArrow(-1, true, hasFavorite && selectedFavoriteReplay > 0, cameraX);
 			drawReplaySelectArrow(1, true, hasFavorite && static_cast<size_t>(selectedFavoriteReplay + 1) < favoriteCount, cameraX);
 			drawReplayActionButton(favoriteReplayButtonRect(), canPlayFavorite, canPlayFavorite ? U"Play" : U"No Favorite", cameraX);
 			drawReplayActionButton(removeFavoriteButtonRect(), hasFavorite, U"Remove", cameraX);
+			drawReplayChapterSelector(startChapter, cameraX);
 		}
 
 		void drawVolumeSliderView(
@@ -438,8 +467,8 @@ namespace Iwanna {
 		}
 
 		if (recentReplayButtonRect().movedBy(-cameraX, 0.0).leftClicked()
-			&& data.canStartReplay(selectedReplay)) {
-			data.startReplay(selectedReplay);
+			&& data.canStartReplay(selectedReplay, replayStartChapter)) {
+			data.startReplay(selectedReplay, replayStartChapter);
 			changeScene(SceneType::IN_GAME, 0.0s);
 			return;
 		}
@@ -455,8 +484,8 @@ namespace Iwanna {
 			selectedFavoriteReplay = Max(0, static_cast<int32>(data.getFavoriteReplayCount()) - 1);
 		}
 		if (favoriteReplayButtonRect().movedBy(-cameraX, 0.0).leftClicked()
-			&& data.canStartFavoriteReplay(selectedFavoriteReplay)) {
-			data.startFavoriteReplay(selectedFavoriteReplay);
+			&& data.canStartFavoriteReplay(selectedFavoriteReplay, replayStartChapter)) {
+			data.startFavoriteReplay(selectedFavoriteReplay, replayStartChapter);
 			changeScene(SceneType::IN_GAME, 0.0s);
 			return;
 		}
@@ -474,6 +503,12 @@ namespace Iwanna {
 		if (replaySelectArrowRect(1, true).movedBy(-cameraX, 0.0).leftClicked()
 			&& static_cast<size_t>(selectedFavoriteReplay + 1) < data.getFavoriteReplayCount()) {
 			++selectedFavoriteReplay;
+		}
+		if (replayChapterArrowRect(-1).movedBy(-cameraX, 0.0).leftClicked() && 1 < replayStartChapter) {
+			--replayStartChapter;
+		}
+		if (replayChapterArrowRect(1).movedBy(-cameraX, 0.0).leftClicked() && replayStartChapter < 6) {
+			++replayStartChapter;
 		}
 
 		if (data.canChangeDifficulty()) {
@@ -534,7 +569,7 @@ namespace Iwanna {
 
 			drawLeftPageRecord(saveData);
 			drawLeftPageAchievements(saveData, selectedAchievement, cameraX);
-			drawReplayPage(data, selectedReplay, selectedFavoriteReplay, cameraX);
+			drawReplayPage(data, selectedReplay, selectedFavoriteReplay, replayStartChapter, cameraX);
 
 			FontAsset(U"Title")(U"I wanna break the Devotion").drawAt(400, 150, Palette::White);
 
