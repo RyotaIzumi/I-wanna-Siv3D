@@ -34,6 +34,7 @@ namespace Iwanna {
 		bool isTutorial = false;
 		bool canDebugChangeDifficulty = false;
 		bool isRecordingReplay = false;
+		bool replaySlowFrameSkip = false;
 		PlayMode playMode = PlayMode::Normal;
 		Optional<int32> practiceLimitStep;
 		double saveTimerSec = 0.0;

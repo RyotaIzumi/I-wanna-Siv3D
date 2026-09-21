@@ -267,6 +267,7 @@ namespace Iwanna {
 		practiceLimitReached = false;
 		practiceLimitStep = none;
 		replayFrame = 0;
+		replaySlowFrameSkip = false;
 		playbackReplay = replay;
 		Global::difficulty = playbackReplay.difficulty;
 		Reseed(playbackReplay.randomSeed);
@@ -280,6 +281,7 @@ namespace Iwanna {
 		}
 		audio = AudioAsset{ U"sndHibana" };
 		audio.setVolume(saveData.bgmVolume);
+		audio.setSpeed(1.0);
 		audio.seekTime(SecondsF(static_cast<double>(startStep) / static_cast<double>(Global::FPS)));
 		audio.play();
 	}
@@ -590,6 +592,18 @@ namespace Iwanna {
 			return;
 		}
 
+		const bool isSlowPlayback = KeyDown.pressed();
+		audio.setSpeed(isSlowPlayback ? 0.5 : 1.0);
+		if (isSlowPlayback) {
+			replaySlowFrameSkip = !replaySlowFrameSkip;
+			if (replaySlowFrameSkip) {
+				return;
+			}
+		}
+		else {
+			replaySlowFrameSkip = false;
+		}
+
 		const ReplayInputFrame inputFrame = playbackReplay.frames[replayFrame];
 		avoidanceManager.setStep(playbackReplay.frameSteps[replayFrame]);
 		avoidanceManager.update(inputFrame);
@@ -642,6 +656,10 @@ namespace Iwanna {
 		if (isReplayMode()) {
 			FontAsset(U"Button")(U"Replay").draw(Vec2{ 28.0, 24.0 }, ColorF{ 1.0, 0.82, 0.38 });
 			FontAsset(U"Button")(U"[R] back to main menu").draw(Vec2{ 28.0, 54.0 }, ColorF{ 0.92 });
+			FontAsset(U"Button")(U"[Down] hold for 0.5x").draw(Vec2{ 28.0, 84.0 }, ColorF{ 0.92 });
+			if (KeyDown.pressed()) {
+				FontAsset(U"Button")(U"0.5x").draw(Vec2{ 28.0, 114.0 }, ColorF{ 1.0, 0.82, 0.38 });
+			}
 		}
 		else if (canStartLastReplay()) {
 			FontAsset(U"Button")(U"[Enter] replay last play").drawAt(Vec2{ Global::windowWidth * 0.5, 62.0 }, ColorF{ 1.0, 0.82, 0.38 });
