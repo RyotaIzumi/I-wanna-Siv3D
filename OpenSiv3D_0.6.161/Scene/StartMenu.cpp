@@ -226,7 +226,8 @@ namespace Iwanna {
 			const ReplayData* replay,
 			size_t replayIndex,
 			size_t replayCount,
-			const RectF& infoRect) {
+			const RectF& infoRect,
+			HashTable<String, Texture>& screenshotTextures) {
 			infoRect.rounded(6.0).draw(ColorF{ 0.11, 0.12, 0.16 });
 			infoRect.rounded(6.0).drawFrame(1.5, ColorF{ 0.38, 0.43, 0.55 });
 
@@ -240,6 +241,24 @@ namespace Iwanna {
 				: static_cast<double>(replay->frameSteps.back()) / Global::FPS;
 			const String difficulty = (replay->difficulty == Global::Difficulty::Easy) ? U"Easy" : U"Medium";
 			const Vec2 textPos = infoRect.pos + Vec2{ 20.0, 12.0 };
+			const RectF screenshotRect{ infoRect.x + infoRect.w - 140.0, infoRect.y + 9.0, 130.0, infoRect.h - 26.0 };
+			screenshotRect.draw(ColorF{ 0.06, 0.07, 0.09 });
+			bool screenshotDrawn = false;
+			if (!replay->screenshotPath.isEmpty() && FileSystem::Exists(replay->screenshotPath)) {
+				auto it = screenshotTextures.find(replay->screenshotPath);
+				if (it == screenshotTextures.end()) {
+					it = screenshotTextures.emplace(replay->screenshotPath, Texture{ replay->screenshotPath }).first;
+				}
+				if (!it->second.isEmpty()) {
+					const double scale = Min(screenshotRect.w / it->second.width(), screenshotRect.h / it->second.height());
+					it->second.scaled(scale).drawAt(screenshotRect.center());
+					screenshotDrawn = true;
+				}
+			}
+			if (!screenshotDrawn) {
+				FontAsset(U"Button")(U"No Image").drawAt(screenshotRect.center(), ColorF{ 0.38, 0.40, 0.46 });
+			}
+			screenshotRect.drawFrame(1.0, ColorF{ 0.32, 0.36, 0.46 });
 			FontAsset(U"Button")(replay->recordedAt).draw(textPos, ColorF{ 0.96 });
 			FontAsset(U"Button")(U"Chapter " + Format(replay->chapter) + U"  /  " + difficulty)
 				.draw(textPos + Vec2{ 0.0, 33.0 }, ColorF{ 0.78, 0.82, 0.92 });
@@ -285,9 +304,10 @@ namespace Iwanna {
 			}
 		}
 
-		void drawReplayPage(const MainGame& game, int32 selectedReplay, int32 selectedFavoriteReplay, int32 startChapter, double cameraX) {
+		void drawReplayPage(const MainGame& game, int32 selectedReplay, int32 selectedFavoriteReplay, int32 startChapter,
+			double cameraX, HashTable<String, Texture>& screenshotTextures) {
 			const Vec2 pageOffset{ ReplayPageX, 0.0 };
-			FontAsset(U"Big")(U"Replay").draw(pageOffset + Vec2{ 32.0, 12.0 }, Palette::White);
+			FontAsset(U"Big")(U"Replay").draw(pageOffset + Vec2{ 12.0, 12.0 }, Palette::White);
 			FontAsset(U"Button")(U"Recent").draw(pageOffset + Vec2{ 204.0, 98.0 }, ColorF{ 0.78, 0.82, 0.92 });
 
 			const size_t replayCount = game.getReplayCount();
@@ -297,7 +317,7 @@ namespace Iwanna {
 				: 0;
 			const bool canReplay = game.canStartReplay(replayIndex, startChapter);
 			drawReplayInfo(game, game.getReplay(replayIndex), replayIndex, replayCount,
-				RectF{ ReplayPageX + 204.0, 132.0, 392.0, 138.0 });
+				RectF{ ReplayPageX + 204.0, 132.0, 392.0, 138.0 }, screenshotTextures);
 			drawReplaySelectArrow(-1, false, hasReplay && selectedReplay > 0, cameraX);
 			drawReplaySelectArrow(1, false, hasReplay && static_cast<size_t>(selectedReplay + 1) < replayCount, cameraX);
 			drawReplayActionButton(recentReplayButtonRect(), canReplay, canReplay ? U"Play" : U"No Replay", cameraX);
@@ -319,7 +339,7 @@ namespace Iwanna {
 				: 0;
 			const bool canPlayFavorite = game.canStartFavoriteReplay(favoriteIndex, startChapter);
 			drawReplayInfo(game, game.getFavoriteReplay(favoriteIndex), favoriteIndex, favoriteCount,
-				RectF{ ReplayPageX + 204.0, 392.0, 392.0, 144.0 });
+				RectF{ ReplayPageX + 204.0, 392.0, 392.0, 144.0 }, screenshotTextures);
 			drawReplaySelectArrow(-1, true, hasFavorite && selectedFavoriteReplay > 0, cameraX);
 			drawReplaySelectArrow(1, true, hasFavorite && static_cast<size_t>(selectedFavoriteReplay + 1) < favoriteCount, cameraX);
 			drawReplayActionButton(favoriteReplayButtonRect(), canPlayFavorite, canPlayFavorite ? U"Play" : U"No Favorite", cameraX);
@@ -569,7 +589,7 @@ namespace Iwanna {
 
 			drawLeftPageRecord(saveData);
 			drawLeftPageAchievements(saveData, selectedAchievement, cameraX);
-			drawReplayPage(data, selectedReplay, selectedFavoriteReplay, replayStartChapter, cameraX);
+			drawReplayPage(data, selectedReplay, selectedFavoriteReplay, replayStartChapter, cameraX, replayScreenshotTextures);
 
 			FontAsset(U"Title")(U"I wanna break the Devotion").drawAt(400, 150, Palette::White);
 

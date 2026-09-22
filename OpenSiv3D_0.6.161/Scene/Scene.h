@@ -52,6 +52,7 @@ namespace Iwanna {
 		double cameraMoveTimerSec = 0.0;
 		bool isCameraMoving = false;
 		bool showDifficultyMessage = false;
+		mutable HashTable<String, Texture> replayScreenshotTextures;
 
 		void updateCameraMove();
 		void requestCameraMove(int32 direction);

@@ -5,7 +5,7 @@
 namespace {
 	constexpr const char* ReplayFilePath = "replays.dat";
 	constexpr uint32 ReplayFileMagic = 0x52505749;
-	constexpr uint32 ReplayFileVersion = 2;
+	constexpr uint32 ReplayFileVersion = 3;
 	constexpr uint32 MaxStoredFrames = 60 * 60 * Global::FPS;
 
 	template <class Type>
@@ -18,7 +18,7 @@ namespace {
 		return static_cast<bool>(reader.read(reinterpret_cast<char*>(&value), sizeof(Type)));
 	}
 
-	bool readReplay(std::ifstream& reader, Iwanna::ReplayData& replay) {
+	bool readReplay(std::ifstream& reader, uint32 version, Iwanna::ReplayData& replay) {
 		int32 difficulty = 0;
 		uint32 dateSize = 0;
 		uint32 frameCount = 0;
@@ -28,10 +28,23 @@ namespace {
 
 		std::string recordedAt(dateSize, '\0');
 		if (dateSize != 0 && !reader.read(recordedAt.data(), dateSize)) return false;
-		if (!readValue(reader, frameCount) || MaxStoredFrames < frameCount) return false;
 
 		replay.difficulty = static_cast<Global::Difficulty>(Clamp(difficulty, 0, 2));
 		replay.recordedAt = Unicode::FromUTF8(recordedAt);
+		if (3 <= version) {
+			uint32 pathSize = 0;
+			if (!readValue(reader, pathSize) || 512 < pathSize) return false;
+			std::string screenshotPath(pathSize, '\0');
+			if (pathSize != 0 && !reader.read(screenshotPath.data(), pathSize)) return false;
+			replay.screenshotPath = Unicode::FromUTF8(screenshotPath);
+			const String screenCapturePath = U"Screenshot/" + replay.screenshotPath;
+			if (!replay.screenshotPath.isEmpty()
+				&& !FileSystem::Exists(replay.screenshotPath)
+				&& FileSystem::Exists(screenCapturePath)) {
+				replay.screenshotPath = screenCapturePath;
+			}
+		}
+		if (!readValue(reader, frameCount) || MaxStoredFrames < frameCount) return false;
 		replay.frames.reserve(frameCount);
 		replay.frameSteps.reserve(frameCount);
 		for (uint32 i = 0; i < frameCount; ++i) {
@@ -59,6 +72,9 @@ namespace {
 		const std::string recordedAt = Unicode::ToUTF8(replay.recordedAt);
 		writeValue(writer, static_cast<uint32>(recordedAt.size()));
 		writer.write(recordedAt.data(), recordedAt.size());
+		const std::string screenshotPath = Unicode::ToUTF8(replay.screenshotPath);
+		writeValue(writer, static_cast<uint32>(screenshotPath.size()));
+		writer.write(screenshotPath.data(), screenshotPath.size());
 		writeValue(writer, static_cast<uint32>(replay.frames.size()));
 		for (size_t i = 0; i < replay.frames.size(); ++i) {
 			const auto& frame = replay.frames[i];
@@ -95,9 +111,26 @@ namespace Iwanna {
 	void ReplayManager::finishRecording() {
 		if (!recording || !recordingReplay.isValid()) { cancelRecording(); return; }
 		replayHistory.insert(replayHistory.begin(), recordingReplay);
-		if (MaxReplayCount < replayHistory.size()) replayHistory.resize(MaxReplayCount);
+		String removedScreenshotPath;
+		if (MaxReplayCount < replayHistory.size()) {
+			removedScreenshotPath = replayHistory.back().screenshotPath;
+			replayHistory.resize(MaxReplayCount);
+		}
 		recording = false;
 		save();
+		removeScreenshotIfUnused(removedScreenshotPath);
+	}
+	String ReplayManager::finishRecordingWithScreenshot() {
+		if (!recording || !recordingReplay.isValid()) {
+			cancelRecording();
+			return {};
+		}
+
+		const String capturePath = U"replay_screenshots/replay_"
+			+ Format(recordingReplay.randomSeed) + U".png";
+		recordingReplay.screenshotPath = U"Screenshot/" + capturePath;
+		finishRecording();
+		return capturePath;
 	}
 	bool ReplayManager::isRecording() const { return recording; }
 
@@ -121,8 +154,22 @@ namespace Iwanna {
 	}
 	void ReplayManager::removeFavoriteReplay(size_t index) {
 		if (favoriteReplays.size() <= index) return;
+		const String screenshotPath = favoriteReplays[index].screenshotPath;
 		favoriteReplays.erase(favoriteReplays.begin() + index);
 		save();
+		removeScreenshotIfUnused(screenshotPath);
+	}
+
+	bool ReplayManager::isScreenshotReferenced(const String& path) const {
+		if (path.isEmpty()) return false;
+		const auto referencesPath = [&path](const ReplayData& replay) { return replay.screenshotPath == path; };
+		return replayHistory.any(referencesPath) || favoriteReplays.any(referencesPath);
+	}
+
+	void ReplayManager::removeScreenshotIfUnused(const String& path) const {
+		if (!path.isEmpty() && !isScreenshotReferenced(path) && FileSystem::Exists(path)) {
+			FileSystem::Remove(path);
+		}
 	}
 
 	void ReplayManager::beginPlayback(const ReplayData& replay) {
@@ -146,14 +193,14 @@ namespace Iwanna {
 		std::ifstream reader(ReplayFilePath, std::ios::binary);
 		uint32 magic = 0, version = 0, replayCount = 0;
 		if (!reader || !readValue(reader, magic) || !readValue(reader, version) || !readValue(reader, replayCount)
-			|| magic != ReplayFileMagic || (version != 1 && version != ReplayFileVersion) || MaxReplayCount < replayCount) return;
+			|| magic != ReplayFileMagic || (version < 1 || ReplayFileVersion < version) || MaxReplayCount < replayCount) return;
 		Array<ReplayData> loaded;
-		for (uint32 i = 0; i < replayCount; ++i) { ReplayData replay; if (!readReplay(reader, replay)) return; loaded << std::move(replay); }
+		for (uint32 i = 0; i < replayCount; ++i) { ReplayData replay; if (!readReplay(reader, version, replay)) return; loaded << std::move(replay); }
 		Array<ReplayData> favorites;
 		if (2 <= version) {
 			uint32 count = 0;
 			if (!readValue(reader, count) || MaxFavoriteReplayCount < count) return;
-			for (uint32 i = 0; i < count; ++i) { ReplayData replay; if (!readReplay(reader, replay)) return; favorites << std::move(replay); }
+			for (uint32 i = 0; i < count; ++i) { ReplayData replay; if (!readReplay(reader, version, replay)) return; favorites << std::move(replay); }
 		}
 		replayHistory = std::move(loaded);
 		favoriteReplays = std::move(favorites);

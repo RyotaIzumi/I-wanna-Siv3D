@@ -360,7 +360,10 @@ namespace Iwanna {
 			if (!wasPlayerDead) {
 				saveData.addDeath(avoidanceManager.getActiveChapter());
 				saveData.save();
-				replayManager.finishRecording();
+				const String screenshotPath = replayManager.finishRecordingWithScreenshot();
+				if (!screenshotPath.isEmpty()) {
+					ScreenCapture::SaveCurrentFrame(screenshotPath);
+				}
 			}
 		}
 		wasPlayerDead = isPlayerDead;

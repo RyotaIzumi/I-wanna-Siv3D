@@ -18,6 +18,8 @@ namespace Iwanna {
 
 		void load();
 		void save() const;
+		bool isScreenshotReferenced(const String& path) const;
+		void removeScreenshotIfUnused(const String& path) const;
 
 	public:
 		ReplayManager();
@@ -26,6 +28,7 @@ namespace Iwanna {
 		void cancelRecording();
 		void recordFrame(const ReplayInputFrame& input, int32 step);
 		void finishRecording();
+		String finishRecordingWithScreenshot();
 		bool isRecording() const;
 
 		size_t getReplayCount() const;

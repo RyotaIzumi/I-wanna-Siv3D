@@ -28,6 +28,7 @@ namespace Iwanna {
 		uint64 randomSeed = 0;
 		Global::Difficulty difficulty = Global::Difficulty::Unselected;
 		String recordedAt;
+		String screenshotPath;
 		Array<ReplayInputFrame> frames;
 		Array<int32> frameSteps;
 
