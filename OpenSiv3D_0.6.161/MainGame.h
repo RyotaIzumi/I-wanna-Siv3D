@@ -3,14 +3,11 @@
 #include "GameObject/StockNearGameObjects.h"
 #include "AvoidanceManager/AvoidanceManager.h"
 #include "SaveData.h"
-#include "Replay.h"
+#include "ReplayManager.h"
 
 namespace Iwanna {
 	class MainGame {
 	private:
-		static constexpr size_t MaxReplayCount = 5;
-		static constexpr size_t MaxFavoriteReplayCount = 20;
-
 		enum class PlayMode {
 			Normal,
 			Replay,
@@ -22,19 +19,13 @@ namespace Iwanna {
 
 		AvoidanceManager avoidanceManager;
 		SaveData saveData;
-		ReplayData recordingReplay;
-		ReplayData playbackReplay;
-		Array<ReplayData> replayHistory;
-		Array<ReplayData> favoriteReplays;
+		ReplayManager replayManager;
 		int32 lastSelectedChapter = 1;
-		int32 replayFrame = 0;
 		bool wasPlayerDead = false;
 		bool shouldUpdateHighestEndurance = true;
 		bool practiceLimitReached = false;
 		bool isTutorial = false;
 		bool canDebugChangeDifficulty = false;
-		bool isRecordingReplay = false;
-		bool replaySlowFrameSkip = false;
 		PlayMode playMode = PlayMode::Normal;
 		Optional<int32> practiceLimitStep;
 		double saveTimerSec = 0.0;
@@ -47,10 +38,6 @@ namespace Iwanna {
 		bool isReplayMode() const;
 		void togglePlayerMuteki();
 		void savePeriodically(double deltaTimeSec);
-		void beginReplayRecording(int32 chapter);
-		void finishReplayRecording();
-		void loadReplayHistory();
-		void saveReplayHistory() const;
 		void startReplayData(const ReplayData& replay, int32 startChapter);
 		void updateNormalGame();
 		void updateReplayGame();
