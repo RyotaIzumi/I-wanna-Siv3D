@@ -14,6 +14,68 @@ namespace Iwanna {
 		constexpr double ReplayPageX = -Global::windowWidth;
 		constexpr double RecordPageX = -Global::windowWidth * 2.0;
 		constexpr double RightPageX = Global::windowWidth;
+		constexpr StringView ReplayUILayoutPath = U"replay_ui.json";
+
+		struct ReplayUILayout {
+			Vec2 titlePos{ 8.0, -8.0 };
+			Vec2 recentLabelPos{ 350.0, 22.0 };
+			RectF recentInfo{ 150.0, 78.0, 500.0, 170.0 };
+			RectF recentScreenshot{ 510.0, 87.0, 130.0, 144.0 };
+			RectF recentPlay{ 310.0, 258.0, 180.0, 38.0 };
+			RectF addFavorite{ 608.0, 70.0, 112.0, 38.0 };
+			double dividerY = 300.0;
+			Vec2 favoriteLabelPos{ 350.0, 310.0 };
+			RectF favoriteInfo{ 150.0, 344.0, 500.0, 170.0 };
+			RectF favoriteScreenshot{ 510.0, 353.0, 130.0, 144.0 };
+			RectF favoritePlay{ 310.0, 548.0, 180.0, 42.0 };
+			RectF removeFavorite{ 608.0, 310.0, 140.0, 42.0 };
+			double selectArrowLeftX = 82.0;
+			double selectArrowRightX = 664.0;
+			double recentArrowY = 124.0;
+			double favoriteArrowY = 408.0;
+			Vec2 selectArrowSize{ 54.0, 54.0 };
+			Vec2 chapterLabelPos{ 30.0, 516.0 };
+			Vec2 chapterNumberPos{ 97.0, 570.0 };
+			double chapterArrowLeftX = 22.0;
+			double chapterArrowRightX = 132.0;
+			double chapterArrowY = 552.0;
+			Vec2 chapterArrowSize{ 42.0, 36.0 };
+		};
+
+		ReplayUILayout ReplayLayout;
+
+		void reloadReplayUILayout() {
+			const JSON json = JSON::Load(ReplayUILayoutPath);
+			if (!json) {
+				return;
+			}
+
+			ReplayUILayout next;
+			next.titlePos = { json[U"titleX"].get<double>(), json[U"titleY"].get<double>() };
+			next.recentLabelPos = { json[U"recentLabelX"].get<double>(), json[U"recentLabelY"].get<double>() };
+			next.recentInfo = { json[U"recentInfoX"].get<double>(), json[U"recentInfoY"].get<double>(), json[U"recentInfoWidth"].get<double>(), json[U"recentInfoHeight"].get<double>() };
+			next.recentScreenshot = { json[U"recentScreenshotX"].get<double>(), json[U"recentScreenshotY"].get<double>(), json[U"recentScreenshotWidth"].get<double>(), json[U"recentScreenshotHeight"].get<double>() };
+			next.recentPlay = { json[U"recentPlayX"].get<double>(), json[U"recentPlayY"].get<double>(), json[U"recentPlayWidth"].get<double>(), json[U"recentPlayHeight"].get<double>() };
+			next.addFavorite = { json[U"addFavoriteX"].get<double>(), json[U"addFavoriteY"].get<double>(), json[U"addFavoriteWidth"].get<double>(), json[U"addFavoriteHeight"].get<double>() };
+			next.dividerY = json[U"dividerY"].get<double>();
+			next.favoriteLabelPos = { json[U"favoriteLabelX"].get<double>(), json[U"favoriteLabelY"].get<double>() };
+			next.favoriteInfo = { json[U"favoriteInfoX"].get<double>(), json[U"favoriteInfoY"].get<double>(), json[U"favoriteInfoWidth"].get<double>(), json[U"favoriteInfoHeight"].get<double>() };
+			next.favoriteScreenshot = { json[U"favoriteScreenshotX"].get<double>(), json[U"favoriteScreenshotY"].get<double>(), json[U"favoriteScreenshotWidth"].get<double>(), json[U"favoriteScreenshotHeight"].get<double>() };
+			next.favoritePlay = { json[U"favoritePlayX"].get<double>(), json[U"favoritePlayY"].get<double>(), json[U"favoritePlayWidth"].get<double>(), json[U"favoritePlayHeight"].get<double>() };
+			next.removeFavorite = { json[U"removeFavoriteX"].get<double>(), json[U"removeFavoriteY"].get<double>(), json[U"removeFavoriteWidth"].get<double>(), json[U"removeFavoriteHeight"].get<double>() };
+			next.selectArrowLeftX = json[U"selectArrowLeftX"].get<double>();
+			next.selectArrowRightX = json[U"selectArrowRightX"].get<double>();
+			next.recentArrowY = json[U"recentArrowY"].get<double>();
+			next.favoriteArrowY = json[U"favoriteArrowY"].get<double>();
+			next.selectArrowSize = { json[U"selectArrowWidth"].get<double>(), json[U"selectArrowHeight"].get<double>() };
+			next.chapterLabelPos = { json[U"chapterLabelX"].get<double>(), json[U"chapterLabelY"].get<double>() };
+			next.chapterNumberPos = { json[U"chapterNumberX"].get<double>(), json[U"chapterNumberY"].get<double>() };
+			next.chapterArrowLeftX = json[U"chapterArrowLeftX"].get<double>();
+			next.chapterArrowRightX = json[U"chapterArrowRightX"].get<double>();
+			next.chapterArrowY = json[U"chapterArrowY"].get<double>();
+			next.chapterArrowSize = { json[U"chapterArrowWidth"].get<double>(), json[U"chapterArrowHeight"].get<double>() };
+			ReplayLayout = next;
+		}
 
 		struct AchievementViewData {
 			String title;
@@ -68,29 +130,30 @@ namespace Iwanna {
 		}
 
 		RectF recentReplayButtonRect() {
-			return RectF{ ReplayPageX + 310.0, 282.0, 180.0, 42.0 };
+			return ReplayLayout.recentPlay.movedBy(ReplayPageX, 0.0);
 		}
 
 		RectF addFavoriteButtonRect() {
-			return RectF{ ReplayPageX + 608.0, 92.0, 112.0, 38.0 };
+			return ReplayLayout.addFavorite.movedBy(ReplayPageX, 0.0);
 		}
 
 		RectF favoriteReplayButtonRect() {
-			return RectF{ ReplayPageX + 310.0, 548.0, 180.0, 42.0 };
+			return ReplayLayout.favoritePlay.movedBy(ReplayPageX, 0.0);
 		}
 
 		RectF removeFavoriteButtonRect() {
-			return RectF{ ReplayPageX + 608.0, 358.0, 140.0, 42.0 };
+			return ReplayLayout.removeFavorite.movedBy(ReplayPageX, 0.0);
 		}
 
 		RectF replaySelectArrowRect(int32 direction, bool favorite) {
-			const double x = (direction < 0) ? 126.0 : 620.0;
-			return RectF{ ReplayPageX + x, favorite ? 438.0 : 188.0, 54.0, 54.0 };
+			const double x = (direction < 0) ? ReplayLayout.selectArrowLeftX : ReplayLayout.selectArrowRightX;
+			const double y = favorite ? ReplayLayout.favoriteArrowY : ReplayLayout.recentArrowY;
+			return RectF{ ReplayPageX + x, y, ReplayLayout.selectArrowSize };
 		}
 
 		RectF replayChapterArrowRect(int32 direction) {
-			const double x = (direction < 0) ? 22.0 : 132.0;
-			return RectF{ ReplayPageX + x, 552.0, 42.0, 36.0 };
+			const double x = (direction < 0) ? ReplayLayout.chapterArrowLeftX : ReplayLayout.chapterArrowRightX;
+			return RectF{ ReplayPageX + x, ReplayLayout.chapterArrowY, ReplayLayout.chapterArrowSize };
 		}
 
 		RectF tutorialButtonRect() {
@@ -227,6 +290,7 @@ namespace Iwanna {
 			size_t replayIndex,
 			size_t replayCount,
 			const RectF& infoRect,
+			const RectF& screenshotRect,
 			HashTable<String, Texture>& screenshotTextures) {
 			infoRect.rounded(6.0).draw(ColorF{ 0.11, 0.12, 0.16 });
 			infoRect.rounded(6.0).drawFrame(1.5, ColorF{ 0.38, 0.43, 0.55 });
@@ -241,7 +305,6 @@ namespace Iwanna {
 				: static_cast<double>(replay->frameSteps.back()) / Global::FPS;
 			const String difficulty = (replay->difficulty == Global::Difficulty::Easy) ? U"Easy" : U"Medium";
 			const Vec2 textPos = infoRect.pos + Vec2{ 20.0, 12.0 };
-			const RectF screenshotRect{ infoRect.x + infoRect.w - 140.0, infoRect.y + 9.0, 130.0, infoRect.h - 26.0 };
 			screenshotRect.draw(ColorF{ 0.06, 0.07, 0.09 });
 			bool screenshotDrawn = false;
 			if (!replay->screenshotPath.isEmpty() && FileSystem::Exists(replay->screenshotPath)) {
@@ -283,8 +346,8 @@ namespace Iwanna {
 
 		void drawReplayChapterSelector(int32 chapter, double cameraX) {
 			const Vec2 pageOffset{ ReplayPageX, 0.0 };
-			FontAsset(U"Button")(U"Start Chapter").draw(pageOffset + Vec2{ 30.0, 516.0 }, ColorF{ 0.78, 0.82, 0.92 });
-			FontAsset(U"Button")(Format(chapter)).drawAt(pageOffset + Vec2{ 97.0, 570.0 }, Palette::White);
+			FontAsset(U"Button")(U"Start Chapter").draw(pageOffset + ReplayLayout.chapterLabelPos, ColorF{ 0.78, 0.82, 0.92 });
+			FontAsset(U"Button")(Format(chapter)).drawAt(pageOffset + ReplayLayout.chapterNumberPos, Palette::White);
 
 			for (const int32 direction : { -1, 1 }) {
 				const bool enabled = (direction < 0) ? (1 < chapter) : (chapter < 6);
@@ -307,8 +370,8 @@ namespace Iwanna {
 		void drawReplayPage(const MainGame& game, int32 selectedReplay, int32 selectedFavoriteReplay, int32 startChapter,
 			double cameraX, HashTable<String, Texture>& screenshotTextures) {
 			const Vec2 pageOffset{ ReplayPageX, 0.0 };
-			FontAsset(U"Big")(U"Replay").draw(pageOffset + Vec2{ 12.0, 12.0 }, Palette::White);
-			FontAsset(U"Button")(U"Recent").draw(pageOffset + Vec2{ 204.0, 98.0 }, ColorF{ 0.78, 0.82, 0.92 });
+			FontAsset(U"Big")(U"Replay").draw(pageOffset + ReplayLayout.titlePos, Palette::White);
+			FontAsset(U"Button")(U"《Recent》").draw(pageOffset + ReplayLayout.recentLabelPos, ColorF{ 0.78, 0.82, 0.92 });
 
 			const size_t replayCount = game.getReplayCount();
 			const bool hasReplay = (0 < replayCount);
@@ -317,7 +380,8 @@ namespace Iwanna {
 				: 0;
 			const bool canReplay = game.canStartReplay(replayIndex, startChapter);
 			drawReplayInfo(game, game.getReplay(replayIndex), replayIndex, replayCount,
-				RectF{ ReplayPageX + 204.0, 132.0, 392.0, 138.0 }, screenshotTextures);
+				ReplayLayout.recentInfo.movedBy(ReplayPageX, 0.0),
+				ReplayLayout.recentScreenshot.movedBy(ReplayPageX, 0.0), screenshotTextures);
 			drawReplaySelectArrow(-1, false, hasReplay && selectedReplay > 0, cameraX);
 			drawReplaySelectArrow(1, false, hasReplay && static_cast<size_t>(selectedReplay + 1) < replayCount, cameraX);
 			drawReplayActionButton(recentReplayButtonRect(), canReplay, canReplay ? U"Play" : U"No Replay", cameraX);
@@ -329,8 +393,8 @@ namespace Iwanna {
 				: (game.getFavoriteReplayCount() >= 20 ? U"Full" : U"Favorite");
 			drawReplayActionButton(addFavoriteButtonRect(), canAddFavorite, favoriteLabel, cameraX);
 
-			Line{ pageOffset + Vec2{ 72.0, 344.0 }, pageOffset + Vec2{ 728.0, 344.0 } }.draw(1.5, ColorF{ 0.38, 0.43, 0.55 });
-			FontAsset(U"Button")(U"Favorites").draw(pageOffset + Vec2{ 204.0, 354.0 }, ColorF{ 1.0, 0.82, 0.38 });
+			Line{ pageOffset + Vec2{ 72.0, ReplayLayout.dividerY }, pageOffset + Vec2{ 728.0, ReplayLayout.dividerY } }.draw(1.5, ColorF{ 0.38, 0.43, 0.55 });
+			FontAsset(U"Button")(U"《Favorites》").draw(pageOffset + ReplayLayout.favoriteLabelPos, ColorF{ 1.0, 0.82, 0.38 });
 
 			const size_t favoriteCount = game.getFavoriteReplayCount();
 			const bool hasFavorite = (0 < favoriteCount);
@@ -339,7 +403,8 @@ namespace Iwanna {
 				: 0;
 			const bool canPlayFavorite = game.canStartFavoriteReplay(favoriteIndex, startChapter);
 			drawReplayInfo(game, game.getFavoriteReplay(favoriteIndex), favoriteIndex, favoriteCount,
-				RectF{ ReplayPageX + 204.0, 392.0, 392.0, 144.0 }, screenshotTextures);
+				ReplayLayout.favoriteInfo.movedBy(ReplayPageX, 0.0),
+				ReplayLayout.favoriteScreenshot.movedBy(ReplayPageX, 0.0), screenshotTextures);
 			drawReplaySelectArrow(-1, true, hasFavorite && selectedFavoriteReplay > 0, cameraX);
 			drawReplaySelectArrow(1, true, hasFavorite && static_cast<size_t>(selectedFavoriteReplay + 1) < favoriteCount, cameraX);
 			drawReplayActionButton(favoriteReplayButtonRect(), canPlayFavorite, canPlayFavorite ? U"Play" : U"No Favorite", cameraX);
@@ -426,6 +491,7 @@ namespace Iwanna {
 	}
 
 	StartMenu::StartMenu(const InitData& data) : IScene(data) {
+		reloadReplayUILayout();
 		const auto& game = getData().game;
 		selectedChapter = Clamp(game.getLastSelectedChapter(), 1, game.getSaveData().highestChapter);
 	}
@@ -463,6 +529,13 @@ namespace Iwanna {
 	}
 
 	void StartMenu::update() {
+		static double replayUILayoutReloadTimer = 0.0;
+		replayUILayoutReloadTimer += Scene::DeltaTime();
+		if (0.25 <= replayUILayoutReloadTimer) {
+			replayUILayoutReloadTimer = 0.0;
+			reloadReplayUILayout();
+		}
+
 		auto& data = getData().game;
 		const int32 highestChapter = data.getSaveData().highestChapter;
 		selectedChapter = Clamp(selectedChapter, 1, highestChapter);
