@@ -1191,10 +1191,6 @@ namespace Iwanna {
 		Timeline timeline(previousStep, step);
 		const int32 localStep = step - Global::startStep_Chapter2;
 
-		if (chapter2MeasureWindows.isEmpty()) {
-			resetChapter2MeasureWindows();
-		}
-
 		if (chapter2MikuHandBarrageController) {
 			chapter2MikuHandBarrageController->update();
 		}
