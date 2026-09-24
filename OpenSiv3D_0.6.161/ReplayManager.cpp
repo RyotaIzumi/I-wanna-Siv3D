@@ -5,8 +5,17 @@
 namespace {
 	constexpr const char* ReplayFilePath = "replays.dat";
 	constexpr uint32 ReplayFileMagic = 0x52505749;
-	constexpr uint32 ReplayFileVersion = 3;
+	constexpr uint32 ReplayFileVersion = 4;
 	constexpr uint32 MaxStoredFrames = 60 * 60 * Global::FPS;
+
+	int32 getChapterFromStep(int32 step) {
+		if (step < Global::startStep_Chapter2) return 1;
+		if (step < Global::startStep_Chapter3) return 2;
+		if (step < Global::startStep_Chapter4) return 3;
+		if (step < Global::startStep_Chapter5) return 4;
+		if (step < Global::startStep_Chapter6) return 5;
+		return 6;
+	}
 
 	template <class Type>
 	void writeValue(std::ofstream& writer, const Type& value) {
@@ -22,7 +31,9 @@ namespace {
 		int32 difficulty = 0;
 		uint32 dateSize = 0;
 		uint32 frameCount = 0;
-		if (!readValue(reader, replay.chapter) || !readValue(reader, replay.startStep)
+		if (!readValue(reader, replay.chapter)) return false;
+		if (4 <= version && !readValue(reader, replay.highestReachedChapter)) return false;
+		if (!readValue(reader, replay.startStep)
 			|| !readValue(reader, replay.fps) || !readValue(reader, replay.randomSeed)
 			|| !readValue(reader, difficulty) || !readValue(reader, dateSize) || 64 < dateSize) return false;
 
@@ -60,11 +71,16 @@ namespace {
 			replay.frames << frame;
 			replay.frameSteps << step;
 		}
+		if (version < 4 && !replay.frameSteps.isEmpty()) {
+			replay.highestReachedChapter = getChapterFromStep(replay.frameSteps.back());
+		}
+		replay.highestReachedChapter = Clamp(replay.highestReachedChapter, replay.chapter, 6);
 		return replay.isValid();
 	}
 
 	void writeReplay(std::ofstream& writer, const Iwanna::ReplayData& replay) {
 		writeValue(writer, replay.chapter);
+		writeValue(writer, replay.highestReachedChapter);
 		writeValue(writer, replay.startStep);
 		writeValue(writer, replay.fps);
 		writeValue(writer, replay.randomSeed);
@@ -94,6 +110,7 @@ namespace Iwanna {
 		Reseed(seed);
 		recordingReplay = ReplayData{};
 		recordingReplay.chapter = chapter;
+		recordingReplay.highestReachedChapter = chapter;
 		recordingReplay.startStep = startStep;
 		recordingReplay.fps = Global::FPS;
 		recordingReplay.randomSeed = seed;
@@ -107,6 +124,9 @@ namespace Iwanna {
 		if (!recording) return;
 		recordingReplay.frames << input;
 		recordingReplay.frameSteps << step;
+		recordingReplay.highestReachedChapter = Max(
+			recordingReplay.highestReachedChapter,
+			getChapterFromStep(step));
 	}
 	void ReplayManager::finishRecording() {
 		if (!recording || !recordingReplay.isValid()) { cancelRecording(); return; }

@@ -23,6 +23,7 @@ namespace Iwanna {
 
 	struct ReplayData {
 		int32 chapter = 1;
+		int32 highestReachedChapter = 1;
 		int32 startStep = 0;
 		int32 fps = Global::FPS;
 		uint64 randomSeed = 0;

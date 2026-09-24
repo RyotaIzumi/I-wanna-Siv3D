@@ -323,7 +323,7 @@ namespace Iwanna {
 			}
 			screenshotRect.drawFrame(1.0, ColorF{ 0.32, 0.36, 0.46 });
 			FontAsset(U"Button")(replay->recordedAt).draw(textPos, ColorF{ 0.96 });
-			FontAsset(U"Button")(U"Chapter " + Format(replay->chapter) + U"  /  " + difficulty)
+			FontAsset(U"Button")(U"Chapter " + Format(replay->highestReachedChapter) + U"  /  " + difficulty)
 				.draw(textPos + Vec2{ 0.0, 33.0 }, ColorF{ 0.78, 0.82, 0.92 });
 			FontAsset(U"Button")(formatEnduranceTime(reachedSec) + U" / " + formatEnduranceTime(game.getEnduranceLengthSec()))
 				.draw(textPos + Vec2{ 0.0, 66.0 }, ColorF{ 0.78, 0.82, 0.92 });
