@@ -10,11 +10,6 @@ namespace Iwanna {
 
 		data.updateGame();
 
-		if (data.canStartLastReplay() && KeyEnter.down()) {
-			data.startLastReplay();
-			return;
-		}
-
 		if (Global::inputRestart.down()) {
 			data.returnToStartMenu();
 			changeScene(SceneType::START_MENU, 0.0s);

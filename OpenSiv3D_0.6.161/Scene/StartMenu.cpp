@@ -492,8 +492,16 @@ namespace Iwanna {
 
 	StartMenu::StartMenu(const InitData& data) : IScene(data) {
 		reloadReplayUILayout();
-		const auto& game = getData().game;
+		auto& game = getData().game;
 		selectedChapter = Clamp(game.getLastSelectedChapter(), 1, game.getSaveData().highestChapter);
+		if (game.takeReplayMenuState(selectedReplay, selectedFavoriteReplay, replayStartChapter)) {
+			selectedReplay = Clamp(selectedReplay, 0, Max(0, static_cast<int32>(game.getReplayCount()) - 1));
+			selectedFavoriteReplay = Clamp(selectedFavoriteReplay, 0, Max(0, static_cast<int32>(game.getFavoriteReplayCount()) - 1));
+			cameraPage = -1;
+			cameraX = -Global::windowWidth;
+			cameraStartX = cameraX;
+			cameraTargetX = cameraX;
+		}
 	}
 
 	void StartMenu::updateCameraMove() {
@@ -561,6 +569,7 @@ namespace Iwanna {
 
 		if (recentReplayButtonRect().movedBy(-cameraX, 0.0).leftClicked()
 			&& data.canStartReplay(selectedReplay, replayStartChapter)) {
+			data.rememberReplayMenuState(selectedReplay, selectedFavoriteReplay, replayStartChapter);
 			data.startReplay(selectedReplay, replayStartChapter);
 			changeScene(SceneType::IN_GAME, 0.0s);
 			return;
@@ -578,6 +587,7 @@ namespace Iwanna {
 		}
 		if (favoriteReplayButtonRect().movedBy(-cameraX, 0.0).leftClicked()
 			&& data.canStartFavoriteReplay(selectedFavoriteReplay, replayStartChapter)) {
+			data.rememberReplayMenuState(selectedReplay, selectedFavoriteReplay, replayStartChapter);
 			data.startFavoriteReplay(selectedFavoriteReplay, replayStartChapter);
 			changeScene(SceneType::IN_GAME, 0.0s);
 			return;

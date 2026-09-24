@@ -29,6 +29,10 @@ namespace Iwanna {
 		PlayMode playMode = PlayMode::Normal;
 		Optional<int32> practiceLimitStep;
 		double saveTimerSec = 0.0;
+		int32 replayMenuSelectedReplay = 0;
+		int32 replayMenuSelectedFavoriteReplay = 0;
+		int32 replayMenuStartChapter = 1;
+		bool returnToReplayMenuRequested = false;
 
 		Optional<int32> getPracticeLimitStep() const;
 		Optional<int32> getTrialLimitStep() const;
@@ -65,8 +69,8 @@ namespace Iwanna {
 		void removeFavoriteReplay(size_t index);
 		bool canStartFavoriteReplay(size_t index, int32 startChapter = 1) const;
 		void startFavoriteReplay(size_t index, int32 startChapter = 1);
-		bool canStartLastReplay() const;
-		void startLastReplay();
+		void rememberReplayMenuState(int32 selectedReplay, int32 selectedFavoriteReplay, int32 startChapter);
+		bool takeReplayMenuState(int32& selectedReplay, int32& selectedFavoriteReplay, int32& startChapter);
 		void returnToStartMenu();
 		void setDifficulty(Global::Difficulty difficulty);
 		void setBgmVolume(double volume);

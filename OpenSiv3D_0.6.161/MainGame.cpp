@@ -20,6 +20,7 @@ namespace Iwanna {
 		}
 
 		playMode = PlayMode::Normal;
+		returnToReplayMenuRequested = false;
 		isTutorial = false;
 		lastSelectedChapter = Clamp(chapter, 1, 6);
 		wasPlayerDead = false;
@@ -43,6 +44,7 @@ namespace Iwanna {
 
 	void MainGame::startTutorial() {
 		playMode = PlayMode::Normal;
+		returnToReplayMenuRequested = false;
 		isTutorial = true;
 		wasPlayerDead = false;
 		replayManager.cancelRecording();
@@ -147,6 +149,7 @@ namespace Iwanna {
 
 		stopBgm();
 		playMode = PlayMode::Replay;
+		returnToReplayMenuRequested = true;
 		isTutorial = false;
 		replayManager.cancelRecording();
 		wasPlayerDead = false;
@@ -168,32 +171,30 @@ namespace Iwanna {
 		audio.play();
 	}
 
-	bool MainGame::canStartLastReplay() const {
-		return playMode == PlayMode::Normal
-			&& !isTutorial
-			&& wasPlayerDead
-			&& replayManager.getReplayCount() != 0
-			&& replayManager.getReplay(0)->isValid();
+	void MainGame::rememberReplayMenuState(int32 selectedReplay, int32 selectedFavoriteReplay, int32 startChapter) {
+		replayMenuSelectedReplay = Max(selectedReplay, 0);
+		replayMenuSelectedFavoriteReplay = Max(selectedFavoriteReplay, 0);
+		replayMenuStartChapter = Clamp(startChapter, 1, 6);
 	}
 
-	void MainGame::startLastReplay() {
-		if (!canStartLastReplay()) {
-			return;
+	bool MainGame::takeReplayMenuState(int32& selectedReplay, int32& selectedFavoriteReplay, int32& startChapter) {
+		if (!returnToReplayMenuRequested) {
+			return false;
 		}
 
-		startReplay(0);
+		selectedReplay = replayMenuSelectedReplay;
+		selectedFavoriteReplay = replayMenuSelectedFavoriteReplay;
+		startChapter = replayMenuStartChapter;
+		returnToReplayMenuRequested = false;
+		return true;
 	}
 
 	void MainGame::returnToStartMenu() {
-		const bool shouldKeepLastReplaySelectable = isReplayMode() && replayManager.getReplayCount() != 0;
 		replayManager.finishRecording();
 		stopBgm();
 		playMode = PlayMode::Normal;
 		isTutorial = false;
 		replayManager.cancelRecording();
-		if (shouldKeepLastReplaySelectable) {
-			wasPlayerDead = true;
-		}
 	}
 
 	void MainGame::setDifficulty(Global::Difficulty difficulty) {
@@ -437,10 +438,6 @@ namespace Iwanna {
 			if (KeyDown.pressed()) {
 				FontAsset(U"Button")(U"0.5x").draw(Vec2{ 28.0, 114.0 }, ColorF{ 1.0, 0.82, 0.38 });
 			}
-		}
-		else if (canStartLastReplay()) {
-			FontAsset(U"Button")(U"[Enter] replay last play").drawAt(Vec2{ Global::windowWidth * 0.5, 62.0 }, ColorF{ 1.0, 0.82, 0.38 });
-			FontAsset(U"Button")(U"[R] back to main menu").drawAt(Vec2{ Global::windowWidth * 0.5, 92.0 }, ColorF{ 0.92 });
 		}
 	}
 
