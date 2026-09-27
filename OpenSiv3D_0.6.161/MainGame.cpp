@@ -1,7 +1,6 @@
 ﻿#include "MainGame.h"
 
 #include "Audio/AudioAsset.h"
-
 namespace Iwanna {
 	MainGame::MainGame() {
 		saveData.load();
@@ -11,6 +10,7 @@ namespace Iwanna {
 	}
 
 	MainGame::~MainGame() {
+		replayManager.finishRecording();
 		saveData.save();
 	}
 
@@ -19,6 +19,8 @@ namespace Iwanna {
 			return;
 		}
 
+		playMode = PlayMode::Normal;
+		returnToReplayMenuRequested = false;
 		isTutorial = false;
 		lastSelectedChapter = Clamp(chapter, 1, 6);
 		wasPlayerDead = false;
@@ -29,13 +31,23 @@ namespace Iwanna {
 		saveData.unlockAchievement(0);
 		saveData.updateHighestChapter(lastSelectedChapter);
 		saveData.save();
+		if (lastSelectedChapter == 1) {
+			replayManager.beginRecording(lastSelectedChapter, getChapterStartStep(lastSelectedChapter), Global::difficulty);
+		}
+		else {
+			replayManager.cancelRecording();
+			Reseed(RandomUint64());
+		}
 		avoidanceManager.setUpObjects(lastSelectedChapter);
 		playBgm(lastSelectedChapter);
 	}
 
 	void MainGame::startTutorial() {
+		playMode = PlayMode::Normal;
+		returnToReplayMenuRequested = false;
 		isTutorial = true;
 		wasPlayerDead = false;
+		replayManager.cancelRecording();
 		shouldUpdateHighestEndurance = false;
 		practiceLimitReached = false;
 		practiceLimitStep = none;
@@ -61,6 +73,128 @@ namespace Iwanna {
 
 	bool MainGame::canChangeDifficulty() const {
 		return !saveData.hasStartedAvoidance || canDebugChangeDifficulty;
+	}
+
+	size_t MainGame::getReplayCount() const {
+		return replayManager.getReplayCount();
+	}
+
+	const ReplayData* MainGame::getReplay(size_t index) const {
+		return replayManager.getReplay(index);
+	}
+
+	bool MainGame::canStartReplay(size_t index, int32 startChapter) const {
+		const ReplayData* replay = getReplay(index);
+		const int32 startStep = getChapterStartStep(startChapter);
+		return playMode == PlayMode::Normal
+			&& !isTutorial
+			&& replay
+			&& replay->isValid()
+			&& startChapter == Clamp(startChapter, 1, 6)
+			&& startStep <= replay->frameSteps.back();
+	}
+
+	void MainGame::startReplay(size_t index, int32 startChapter) {
+		if (!canStartReplay(index, startChapter)) {
+			return;
+		}
+
+		startReplayData(*replayManager.getReplay(index), startChapter);
+	}
+
+	size_t MainGame::getFavoriteReplayCount() const {
+		return replayManager.getFavoriteReplayCount();
+	}
+
+	const ReplayData* MainGame::getFavoriteReplay(size_t index) const {
+		return replayManager.getFavoriteReplay(index);
+	}
+
+	bool MainGame::isReplayFavorite(size_t index) const {
+		return replayManager.isReplayFavorite(index);
+	}
+
+	bool MainGame::canAddReplayToFavorites(size_t index) const {
+		return replayManager.canAddReplayToFavorites(index);
+	}
+
+	void MainGame::addReplayToFavorites(size_t index) {
+		replayManager.addReplayToFavorites(index);
+	}
+
+	void MainGame::removeFavoriteReplay(size_t index) {
+		replayManager.removeFavoriteReplay(index);
+	}
+
+	bool MainGame::canStartFavoriteReplay(size_t index, int32 startChapter) const {
+		const ReplayData* replay = getFavoriteReplay(index);
+		const int32 startStep = getChapterStartStep(startChapter);
+		return playMode == PlayMode::Normal
+			&& !isTutorial
+			&& replay
+			&& replay->isValid()
+			&& startChapter == Clamp(startChapter, 1, 6)
+			&& startStep <= replay->frameSteps.back();
+	}
+
+	void MainGame::startFavoriteReplay(size_t index, int32 startChapter) {
+		if (!canStartFavoriteReplay(index, startChapter)) {
+			return;
+		}
+
+		startReplayData(*replayManager.getFavoriteReplay(index), startChapter);
+	}
+
+	void MainGame::startReplayData(const ReplayData& replay, int32 startChapter) {
+
+		stopBgm();
+		playMode = PlayMode::Replay;
+		returnToReplayMenuRequested = true;
+		isTutorial = false;
+		replayManager.cancelRecording();
+		wasPlayerDead = false;
+		practiceLimitReached = false;
+		practiceLimitStep = none;
+		replayManager.beginPlayback(replay);
+		Global::difficulty = replay.difficulty;
+		avoidanceManager.setUpObjects(replay.chapter);
+		const int32 startStep = getChapterStartStep(startChapter);
+		while (replayManager.hasPlaybackFrame() && replayManager.getPlaybackStep() < startStep) {
+			avoidanceManager.setStep(replayManager.getPlaybackStep());
+			avoidanceManager.update(replayManager.getPlaybackInput());
+			replayManager.advancePlaybackFrame();
+		}
+		audio = AudioAsset{ U"sndHibana" };
+		audio.setVolume(saveData.bgmVolume);
+		audio.setSpeed(1.0);
+		audio.seekTime(SecondsF(static_cast<double>(startStep) / static_cast<double>(Global::FPS)));
+		audio.play();
+	}
+
+	void MainGame::rememberReplayMenuState(int32 selectedReplay, int32 selectedFavoriteReplay, int32 startChapter) {
+		replayMenuSelectedReplay = Max(selectedReplay, 0);
+		replayMenuSelectedFavoriteReplay = Max(selectedFavoriteReplay, 0);
+		replayMenuStartChapter = Clamp(startChapter, 1, 6);
+	}
+
+	bool MainGame::takeReplayMenuState(int32& selectedReplay, int32& selectedFavoriteReplay, int32& startChapter) {
+		if (!returnToReplayMenuRequested) {
+			return false;
+		}
+
+		selectedReplay = replayMenuSelectedReplay;
+		selectedFavoriteReplay = replayMenuSelectedFavoriteReplay;
+		startChapter = replayMenuStartChapter;
+		returnToReplayMenuRequested = false;
+		return true;
+	}
+
+	void MainGame::returnToStartMenu() {
+		replayManager.finishRecording();
+		stopBgm();
+		playMode = PlayMode::Normal;
+		isTutorial = false;
+		replayManager.cancelRecording();
 	}
 
 	void MainGame::setDifficulty(Global::Difficulty difficulty) {
@@ -123,8 +257,24 @@ namespace Iwanna {
 		return practiceLimit ? practiceLimit : trialLimit;
 	}
 
+	int32 MainGame::getChapterStartStep(int32 chapter) const {
+		switch (Clamp(chapter, 1, 6)) {
+		case 1: return Global::startStep_Chapter1;
+		case 2: return Global::startStep_Chapter2;
+		case 3: return Global::startStep_Chapter3;
+		case 4: return Global::startStep_Chapter4;
+		case 5: return Global::startStep_Chapter5;
+		case 6: return Global::startStep_Chapter6;
+		default: return Global::startStep_Chapter1;
+		}
+	}
+
 	bool MainGame::isPracticeMode() const {
 		return !isTutorial && 2 <= lastSelectedChapter;
+	}
+
+	bool MainGame::isReplayMode() const {
+		return playMode == PlayMode::Replay;
 	}
 
 	void MainGame::togglePlayerMuteki() {
@@ -134,6 +284,15 @@ namespace Iwanna {
 	}
 
 	void MainGame::updateGame() {
+		if (isReplayMode()) {
+			updateReplayGame();
+			return;
+		}
+
+		updateNormalGame();
+	}
+
+	void MainGame::updateNormalGame() {
 		if (isTutorial) {
 			avoidanceManager.updateTutorial();
 			return;
@@ -164,8 +323,13 @@ namespace Iwanna {
 			newStep = *practiceLimitStep;
 		}
 
+		const ReplayInputFrame inputFrame = ReplayInputFrame::FromCurrentInput();
+		if (wasAliveAtFrameStart) {
+			replayManager.recordFrame(inputFrame, newStep);
+		}
+
 		avoidanceManager.setStep(newStep);
-		avoidanceManager.update();
+		avoidanceManager.update(inputFrame);
 		const int32 previousHighestChapter = saveData.highestChapter;
 		const int32 activeChapter = avoidanceManager.getActiveChapter();
 		bool shouldSave = false;
@@ -183,6 +347,7 @@ namespace Iwanna {
 		if (shouldUpdateHighestEndurance
 			&& getEnduranceLengthSec() <= enduranceSec) {
 			shouldSave |= saveData.unlockAchievement(6);
+			replayManager.finishRecording();
 		}
 		if (previousHighestChapter != saveData.highestChapter || shouldSave) {
 			saveData.save();
@@ -196,9 +361,37 @@ namespace Iwanna {
 			if (!wasPlayerDead) {
 				saveData.addDeath(avoidanceManager.getActiveChapter());
 				saveData.save();
+				const String screenshotPath = replayManager.finishRecordingWithScreenshot();
+				if (!screenshotPath.isEmpty()) {
+					ScreenCapture::SaveCurrentFrame(screenshotPath);
+				}
 			}
 		}
 		wasPlayerDead = isPlayerDead;
+	}
+
+	void MainGame::updateReplayGame() {
+		if (!replayManager.hasPlaybackFrame()) {
+			pauseBgm();
+			wasPlayerDead = true;
+			return;
+		}
+
+		const bool isSlowPlayback = KeyDown.pressed();
+		audio.setSpeed(isSlowPlayback ? 0.5 : 1.0);
+		if (!replayManager.shouldAdvancePlayback(isSlowPlayback)) {
+			return;
+		}
+
+		avoidanceManager.setStep(replayManager.getPlaybackStep());
+		avoidanceManager.update(replayManager.getPlaybackInput());
+		replayManager.advancePlaybackFrame();
+
+		if (avoidanceManager.getPlayer()->getIsDead()
+			|| !replayManager.hasPlaybackFrame()) {
+			pauseBgm();
+			wasPlayerDead = true;
+		}
 	}
 
 	void MainGame::debugGame() {
@@ -237,6 +430,14 @@ namespace Iwanna {
 			FontAsset(U"Button")(U"[shift] jump,double jump").draw(textPos + Vec2{ 0.0, lineHeight }, textColor);
 			FontAsset(U"Button")(U"[Z] shot").draw(textPos + Vec2{ 0.0, lineHeight * 2.0 }, textColor);
 			FontAsset(U"Button")(U"[R] back to main menu").draw(textPos + Vec2{ 0.0, lineHeight * 3.0 }, textColor);
+		}
+		if (isReplayMode()) {
+			FontAsset(U"Button")(U"Replay").draw(Vec2{ 28.0, 24.0 }, ColorF{ 1.0, 0.82, 0.38 });
+			FontAsset(U"Button")(U"[R] back to main menu").draw(Vec2{ 28.0, 54.0 }, ColorF{ 0.92 });
+			FontAsset(U"Button")(U"[Down] hold for 0.5x").draw(Vec2{ 28.0, 84.0 }, ColorF{ 0.92 });
+			if (KeyDown.pressed()) {
+				FontAsset(U"Button")(U"0.5x").draw(Vec2{ 28.0, 114.0 }, ColorF{ 1.0, 0.82, 0.38 });
+			}
 		}
 	}
 

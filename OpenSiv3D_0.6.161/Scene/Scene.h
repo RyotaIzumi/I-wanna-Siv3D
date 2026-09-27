@@ -42,6 +42,9 @@ namespace Iwanna {
 	private:
 		int32 selectedChapter = 1;
 		int32 selectedAchievement = 0;
+		int32 selectedReplay = 0;
+		int32 selectedFavoriteReplay = 0;
+		int32 replayStartChapter = 1;
 		int32 cameraPage = 0;
 		double cameraX = 0.0;
 		double cameraStartX = 0.0;
@@ -49,6 +52,7 @@ namespace Iwanna {
 		double cameraMoveTimerSec = 0.0;
 		bool isCameraMoving = false;
 		bool showDifficultyMessage = false;
+		mutable HashTable<String, Texture> replayScreenshotTextures;
 
 		void updateCameraMove();
 		void requestCameraMove(int32 direction);

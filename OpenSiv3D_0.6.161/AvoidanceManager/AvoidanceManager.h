@@ -8,6 +8,7 @@
 #include "../GameObject/Blood.h"
 #include "../GameObject/Miku.h"
 #include "../Global.h"
+#include "../Replay.h"
 #include "EasingMove.h"
 #include "Timeline.h"
 
@@ -140,7 +141,9 @@ namespace Iwanna {
 		void setUpObjects(int32 chapter);
 		void setUpTutorialObjects();
 		void update();
+		void update(const ReplayInputFrame& input);
 		void updateTutorial();
+		void updateTutorial(const ReplayInputFrame& input);
 		void debug();
 		void draw() const;
 		void setStep(int32 newStep);

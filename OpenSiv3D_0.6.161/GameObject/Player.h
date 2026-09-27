@@ -4,6 +4,7 @@
 #include "../Sprite/SpriteSystem.h"
 #include "../Global.h"
 #include "GameObject.h"
+#include "../Replay.h"
 
 namespace Iwanna {
 	class Player : public GameObject {
@@ -39,6 +40,7 @@ namespace Iwanna {
 		Player();
 
 		void update() override;
+		void update(const ReplayInputFrame& input);
 		void updateLate();
 		void draw() const override;
 
