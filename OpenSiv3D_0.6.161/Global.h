@@ -54,14 +54,19 @@ namespace Global {
 	constexpr int32 windowHeight = 608;
 
 	// 各チャプター開始ステップ
+	constexpr int32 ChapterCount = 11;
 	constexpr int32 startStep_Chapter1 = 0;
 	constexpr int32 startStep_Chapter2 = 840;
 	constexpr int32 startStep_Chapter3 = 1320;
 	constexpr int32 startStep_Chapter4 = 1820;
 	constexpr int32 startStep_Chapter5 = 2260;
 	constexpr int32 startStep_Chapter6 = 2760;
-	constexpr int32 startStep_Chapter10 = 5840;
+	constexpr int32 startStep_Chapter7 = 3260;
+	constexpr int32 startStep_Chapter8 = 4275;
+	constexpr int32 startStep_Chapter9 = 4870;
+	constexpr int32 startStep_Chapter10 = 5820;
+	constexpr int32 startStep_Chapter11 = 6300;
 
 	// 体験版でクリア可能な最終チャプター
-	constexpr int32 trialClearableChapter = 4;
+	constexpr int32 trialClearableChapter = 11;
 }

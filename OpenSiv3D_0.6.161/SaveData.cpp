@@ -127,7 +127,7 @@ namespace Iwanna {
 			playTimeSec = std::max(0.0, value);
 		}
 		if (readNumber(json, "highestChapter", value)) {
-			highestChapter = std::clamp(static_cast<int32>(value), 1, 6);
+			highestChapter = std::clamp(static_cast<int32>(value), 1, SaveData::ChapterCount);
 		}
 		if (readNumber(json, "highestEnduranceSec", value)) {
 			highestEnduranceSec = std::max(0.0, roundToMillis(value));
@@ -189,7 +189,7 @@ namespace Iwanna {
 	}
 
 	void SaveData::updateHighestChapter(int32 chapter) {
-		highestChapter = Max(highestChapter, Clamp(chapter, 1, 6));
+		highestChapter = Max(highestChapter, Clamp(chapter, 1, ChapterCount));
 	}
 
 	void SaveData::updateHighestEnduranceSec(double seconds) {

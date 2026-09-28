@@ -5,7 +5,7 @@ namespace Iwanna {
 		constexpr Vec2 ChapterSelectOffset = { 110.0, 30.0 };
 		constexpr int32 ChapterButtonsPerRow = 5;
 		constexpr double ChapterButtonBaseX = 190.0;
-		constexpr double ChapterButtonBaseY = 330.0;
+		constexpr double ChapterButtonBaseY = 280.0;
 		constexpr double ChapterButtonSpacingX = 84.0;
 		constexpr double ChapterButtonSpacingY = 56.0;
 		constexpr int32 CameraMinPage = -2;
@@ -350,7 +350,7 @@ namespace Iwanna {
 			FontAsset(U"Button")(Format(chapter)).drawAt(pageOffset + ReplayLayout.chapterNumberPos, Palette::White);
 
 			for (const int32 direction : { -1, 1 }) {
-				const bool enabled = (direction < 0) ? (1 < chapter) : (chapter < 6);
+				const bool enabled = (direction < 0) ? (1 < chapter) : (chapter < SaveData::ChapterCount);
 				const RectF button = replayChapterArrowRect(direction);
 				const bool hovered = enabled && button.movedBy(-cameraX, 0.0).mouseOver();
 				button.rounded(5.0).draw(enabled
@@ -610,7 +610,7 @@ namespace Iwanna {
 		if (replayChapterArrowRect(-1).movedBy(-cameraX, 0.0).leftClicked() && 1 < replayStartChapter) {
 			--replayStartChapter;
 		}
-		if (replayChapterArrowRect(1).movedBy(-cameraX, 0.0).leftClicked() && replayStartChapter < 6) {
+		if (replayChapterArrowRect(1).movedBy(-cameraX, 0.0).leftClicked() && replayStartChapter < SaveData::ChapterCount) {
 			++replayStartChapter;
 		}
 
@@ -623,7 +623,7 @@ namespace Iwanna {
 			}
 		}
 
-		for (int32 chapter = 1; chapter <= 6; ++chapter) {
+		for (int32 chapter = 1; chapter <= SaveData::ChapterCount; ++chapter) {
 			const RectF button = chapterButtonRect(chapter).movedBy(-cameraX, 0.0);
 			const bool unlocked = (chapter <= highestChapter);
 
@@ -676,7 +676,7 @@ namespace Iwanna {
 
 			FontAsset(U"Title")(U"I wanna break the Devotion").drawAt(400, 150, Palette::White);
 
-			for (int32 chapter = 1; chapter <= 6; ++chapter) {
+			for (int32 chapter = 1; chapter <= SaveData::ChapterCount; ++chapter) {
 				const RectF button = chapterButtonRect(chapter);
 				const bool unlocked = (chapter <= highestChapter);
 				const bool selected = (chapter == selectedChapter);

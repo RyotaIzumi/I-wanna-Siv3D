@@ -96,7 +96,12 @@ namespace Iwanna {
 		if (targetStep < Global::startStep_Chapter4) return 3;
 		if (targetStep < Global::startStep_Chapter5) return 4;
 		if (targetStep < Global::startStep_Chapter6) return 5;
-		return 6;
+		if (targetStep < Global::startStep_Chapter7) return 6;
+		if (targetStep < Global::startStep_Chapter8) return 7;
+		if (targetStep < Global::startStep_Chapter9) return 8;
+		if (targetStep < Global::startStep_Chapter10) return 9;
+		if (targetStep < Global::startStep_Chapter11) return 10;
+		return 11;
 	}
 
 	ChapterSettings AvoidanceManager::createChapterSettings(int32 chapter) const {

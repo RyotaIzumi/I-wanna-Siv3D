@@ -5,7 +5,7 @@
 
 namespace Iwanna {
 	struct SaveData {
-		static constexpr int32 ChapterCount = 6;
+		static constexpr int32 ChapterCount = Global::ChapterCount;
 		static constexpr int32 AchievementCount = 7;
 
 		int32 deathCount = 0;

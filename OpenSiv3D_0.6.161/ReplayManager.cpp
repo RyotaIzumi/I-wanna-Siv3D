@@ -14,7 +14,12 @@ namespace {
 		if (step < Global::startStep_Chapter4) return 3;
 		if (step < Global::startStep_Chapter5) return 4;
 		if (step < Global::startStep_Chapter6) return 5;
-		return 6;
+		if (step < Global::startStep_Chapter7) return 6;
+		if (step < Global::startStep_Chapter8) return 7;
+		if (step < Global::startStep_Chapter9) return 8;
+		if (step < Global::startStep_Chapter10) return 9;
+		if (step < Global::startStep_Chapter11) return 10;
+		return 11;
 	}
 
 	template <class Type>
@@ -74,7 +79,7 @@ namespace {
 		if (version < 4 && !replay.frameSteps.isEmpty()) {
 			replay.highestReachedChapter = getChapterFromStep(replay.frameSteps.back());
 		}
-		replay.highestReachedChapter = Clamp(replay.highestReachedChapter, replay.chapter, 6);
+		replay.highestReachedChapter = Clamp(replay.highestReachedChapter, replay.chapter, Global::ChapterCount);
 		return replay.isValid();
 	}
 
