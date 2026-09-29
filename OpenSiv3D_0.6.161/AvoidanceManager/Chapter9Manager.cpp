@@ -9,6 +9,14 @@ namespace Iwanna {
 		constexpr double Chapter9PlatformHeight = Chapter9PlatformSize;
 		constexpr double Chapter9PlatformTop = (Chapter9PlatformHeight * 0.5);
 
+		// カメラのX座標は±1.5を往復する。周期は片道ではなく1往復の秒数。
+		constexpr double Chapter9CameraAmplitude = 1.5;
+		constexpr double Chapter9CameraPeriodSeconds = 10.0;
+		static_assert(Chapter9CameraPeriodSeconds > 0.0, "Camera period must be positive");
+
+		constexpr double Chapter9PlayerShadowRadius = 0.38;
+		constexpr double Chapter9PlayerShadowOpacity = 0.55;
+
 		// Hamilton Pathの各頂点に対応する足場座標。
 		const Array<Vec3>& GetChapter9Platforms() {
 			static const Array<Vec3> platforms{
@@ -17,6 +25,52 @@ namespace Iwanna {
 				Vec3{ 6.0, 0.0, 0.0 }, Vec3{ 4.0, 0.0, -3.0 }, Vec3{ 7.0, 0.0, -5.0 },
 			};
 			return platforms;
+		}
+
+		// 真下の位置を示す影。足場の端で切り取り、空中には描かない。
+		void DrawChapter9PlayerShadow(const Vec3& playerPos) {
+			if (playerPos.y < Chapter9PlatformTop) return;
+
+			static const Texture shadowTexture{ [] {
+				Image image{ 64, 64, Color{ 0, 0, 0, 0 } };
+				for (int32 y = 0; y < 64; ++y) {
+					for (int32 x = 0; x < 64; ++x) {
+						const double distance = Vec2{ (x + 0.5 - 32.0) / 32.0, (y + 0.5 - 32.0) / 32.0 }.length();
+						image[y][x] = Color{ 0, 0, 0, static_cast<uint8>(255.0 * Clamp((1.0 - distance) / 0.3, 0.0, 1.0)) };
+					}
+				}
+				return image;
+			}() };
+			static DynamicMesh shadowMesh{ 4, 2 };
+			const ScopedRenderStates3D states{
+				BlendState::Default2D, RasterizerState::SolidCullNone,
+				DepthStencilState::DepthTest, SamplerState::ClampLinear
+			};
+			const double radius = Chapter9PlayerShadowRadius;
+			const double halfSize = Chapter9PlatformSize * 0.5;
+			for (const Vec3& platform : GetChapter9Platforms()) {
+				const double left = Max(playerPos.x - radius, platform.x - halfSize);
+				const double right = Min(playerPos.x + radius, platform.x + halfSize);
+				const double front = Max(playerPos.z - radius, platform.z - halfSize);
+				const double back = Min(playerPos.z + radius, platform.z + halfSize);
+				if (right <= left || back <= front) continue;
+
+				const auto vertex = [&](double x, double z) -> Vertex3D {
+					return {
+						Float3{ static_cast<float>(x), static_cast<float>(Chapter9PlatformTop + 0.015), static_cast<float>(z) },
+						Float3{ 0.0f, 1.0f, 0.0f },
+						Float2{ static_cast<float>((x - playerPos.x + radius) / (2.0 * radius)),
+							static_cast<float>((z - playerPos.z + radius) / (2.0 * radius)) }
+					};
+				};
+				shadowMesh.fill(MeshData{
+					Array<Vertex3D>{ vertex(left, front), vertex(right, front), vertex(right, back), vertex(left, back) },
+					Array<TriangleIndex32>{ { 0, 1, 2 }, { 0, 2, 3 } }
+				});
+				shadowMesh.draw(shadowTexture, ColorF{ 1.0, Chapter9PlayerShadowOpacity });
+				// 次の足場用に頂点を書き換える前に描画を確定する。
+				Graphics3D::Flush();
+			}
 		}
 
 		// 足場間の移動を許可するHamilton Pathの辺。
@@ -188,14 +242,18 @@ namespace Iwanna {
 		};
 		renderTexture.clear(backgroundColor);
 
+		// STEP基準で位相を進め、開始時は左端（速度0）、中央で速度最大になる。
+		const double cameraTimeSeconds = step / static_cast<double>(Global::FPS);
+		const double cameraX = Chapter9CameraAmplitude * Math::Sin(
+			Math::TwoPi * cameraTimeSeconds / Chapter9CameraPeriodSeconds - Math::HalfPi);
 		const BasicCamera3D camera{
 			renderTexture.size(), 35_deg,
-			Vec3{ -1.5, 18.0, -20.0 }, Vec3{ 0.0, 0.0, -1.0 }
+			Vec3{ cameraX, 18.0, -20.0 }, Vec3{ 0.0, 0.0, -1.0 }
 		};
 		int32 visitedCount = 0;
 		{
 			const ScopedRenderTarget3D target{ renderTexture };
-			// Hamilton Path全体を見渡せるように固定カメラと照明を設定する。
+			// Hamilton Path全体を見渡せるようにカメラと照明を設定する。
 			Graphics3D::SetCameraTransform(camera);
 			Graphics3D::SetGlobalAmbientColor(ColorF{ 0.72 });
 			Graphics3D::SetSunDirection(Vec3{ 0.4, 1.0, -0.3 }.normalized());
@@ -221,6 +279,8 @@ namespace Iwanna {
 					platformPos + Vec3{ 0.0, Chapter9PlatformTop, 0.0 }, TextureAsset(U"sprSpike"));
 			}
 		}
+
+		DrawChapter9PlayerShadow(chapter9PlayerPos);
 
 		// 既存の2Dプレイヤースプライトを、Z方向の厚みが0の両面表示として描画する。
 		const bool isMoving = (Abs(chapter9PlayerVelocity.x) + Abs(chapter9PlayerVelocity.z)) > 0.001;
