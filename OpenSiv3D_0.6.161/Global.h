@@ -23,6 +23,8 @@ namespace Global {
 	//操作入力用変数
 	inline Input inputLeft = KeyLeft;
 	inline Input inputRight = KeyRight;
+	inline Input inputUp = KeyUp;
+	inline Input inputDown = KeyDown;
 	inline Input inputJump = KeyShift;
 	inline Input inputShoot = KeyZ;
 	inline Input inputStart = KeyShift;

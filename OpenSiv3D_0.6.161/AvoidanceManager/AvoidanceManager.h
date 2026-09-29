@@ -91,6 +91,17 @@ namespace Iwanna {
 		int32 step = 0;
 		int32 activeChapter = 0;
 
+		// Chapter 9: Hamilton Path prototype
+		Array<bool> chapter9VisitedNodes;
+		Array<int32> chapter9PlatformStates;
+		Vec3 chapter9PlayerPos{ 0, 0, 0 };
+		Vec3 chapter9PlayerVelocity{ 0, 0, 0 };
+		int32 chapter9CurrentNode = 0;
+		int32 chapter9GroundedPlatform = -1;
+		bool chapter9CanDoubleJump = true;
+		Global::Direction chapter9PlayerDirection = Global::Direction::RIGHT;
+		bool chapter9Completed = false;
+
 		// スクリーンシェイク関連
 		bool screenShakeActive = false;
 		Stopwatch screenShakeStopwatch;
@@ -135,6 +146,8 @@ namespace Iwanna {
 		void drawChapter4SightForeground() const;
 		void drawChapter4SightInnerMask() const;
 		void drawChapter4OpeningFlash() const;
+		void resetChapter9HamiltonPath();
+		void drawChapter9HamiltonPath() const;
 	public:
 		AvoidanceManager();
 
@@ -175,6 +188,7 @@ namespace Iwanna {
 		void chapter4();
 		void chapter5();
 		void chapter6();
+		void chapter9(const ReplayInputFrame& input);
 
 		//cherry生成パターン
 		void createChapter2CherryRods(const Chapter2CherryRodSettings& settings = Chapter2CherryRodSettings{});

@@ -30,6 +30,9 @@ namespace Iwanna {
 		registerTexture(U"sprFloor", BlockPath + U"sprFloor.png");
 		registerTexture(U"sprWall", BlockPath + U"sprWall.png");
 
+		//針テクスチャ登録
+		registerTexture(U"sprSpike", U"Texture/Spike/sprSpike.png");
+
 		//mikuテクスチャ登録
 		static const FilePath MikuPath = U"Texture/Miku/";
 		registerTexture(U"sprMiku", MikuPath + U"sprMiku.png");

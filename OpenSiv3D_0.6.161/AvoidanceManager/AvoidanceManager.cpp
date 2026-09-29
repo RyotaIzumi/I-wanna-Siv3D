@@ -36,6 +36,10 @@ namespace Iwanna {
 		if (shouldStartChapterTransitionFade) {
 			requestChapterTransitionFade(chapterTransitionFadeDurationStep);
 		}
+
+		if (chapter == 9) {
+			resetChapter9HamiltonPath();
+		}
 	}
 
 	void AvoidanceManager::setUpTutorialObjects() {
@@ -163,6 +167,12 @@ namespace Iwanna {
 		case 6:
 			settings.isInfiniteJumpMode = true;
 			break;
+		case 9:
+			settings.playerPos = Vec2{ 400, 300 };
+			settings.mikuPos = Vec2{ 1800, 352 };
+			settings.backgroundColor = ColorF{ 0.035, 0.055, 0.09 };
+			settings.isInfiniteJumpMode = false;
+			break;
 		default:
 			break;
 		}
@@ -223,6 +233,10 @@ namespace Iwanna {
 		const int32 chapter = getChapterFromStep(step);
 		if (chapter != activeChapter) {
 			setUpObjects(chapter);
+		}
+		if (chapter == 9) {
+			chapter9(input);
+			return;
 		}
 
 		//チャプターごとの更新処理
@@ -372,6 +386,11 @@ namespace Iwanna {
 	}
 
 	void AvoidanceManager::draw() const {
+		if (activeChapter == 9) {
+			drawChapter9HamiltonPath();
+			return;
+		}
+
 		const double screenShakeY = getScreenShakeOffset();
 		const double cameraScale = getChapter4CameraScale();
 		const Vec2 cameraCenter = getChapter4CameraCenter();
@@ -388,7 +407,6 @@ namespace Iwanna {
 
 			//背景描画
 			Rect(-16, -16, 832, 640).draw(backgroundColor);
-
 			rebuildDrawListIfNeeded();
 			const RectF cherryVisibleArea{ -32.0, -32.0,
 				Global::windowWidth + 64.0, Global::windowHeight + 64.0 };

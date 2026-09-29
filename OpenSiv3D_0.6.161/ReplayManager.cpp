@@ -73,6 +73,8 @@ namespace {
 			frame.jumpDown = (bits & 0x04) != 0;
 			frame.jumpUp = (bits & 0x08) != 0;
 			frame.shootDown = (bits & 0x10) != 0;
+			frame.upPressed = (bits & 0x20) != 0;
+			frame.downPressed = (bits & 0x40) != 0;
 			replay.frames << frame;
 			replay.frameSteps << step;
 		}
@@ -100,7 +102,8 @@ namespace {
 		for (size_t i = 0; i < replay.frames.size(); ++i) {
 			const auto& frame = replay.frames[i];
 			const uint8 bits = (frame.leftPressed ? 0x01 : 0) | (frame.rightPressed ? 0x02 : 0)
-				| (frame.jumpDown ? 0x04 : 0) | (frame.jumpUp ? 0x08 : 0) | (frame.shootDown ? 0x10 : 0);
+				| (frame.jumpDown ? 0x04 : 0) | (frame.jumpUp ? 0x08 : 0) | (frame.shootDown ? 0x10 : 0)
+				| (frame.upPressed ? 0x20 : 0) | (frame.downPressed ? 0x40 : 0);
 			writeValue(writer, bits);
 			writeValue(writer, replay.frameSteps[i]);
 		}
