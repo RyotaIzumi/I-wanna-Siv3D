@@ -92,6 +92,8 @@ namespace Iwanna {
 		int32 activeChapter = 0;
 
 		// Chapter 9: Hamilton Path prototype
+		Array<Vec3> chapter9Platforms;
+		Array<std::pair<int32, int32>> chapter9Edges;
 		Array<bool> chapter9VisitedNodes;
 		Array<int32> chapter9PlatformStates;
 		Vec3 chapter9PlayerPos{ 0, 0, 0 };
@@ -146,7 +148,7 @@ namespace Iwanna {
 		void drawChapter4SightForeground() const;
 		void drawChapter4SightInnerMask() const;
 		void drawChapter4OpeningFlash() const;
-		void resetChapter9HamiltonPath();
+		void resetChapter9HamiltonPath(bool regenerateLayout = false);
 		void drawChapter9HamiltonPath() const;
 	public:
 		AvoidanceManager();

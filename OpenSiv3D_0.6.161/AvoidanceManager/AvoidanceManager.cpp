@@ -38,7 +38,7 @@ namespace Iwanna {
 		}
 
 		if (chapter == 9) {
-			resetChapter9HamiltonPath();
+			resetChapter9HamiltonPath(true);
 		}
 	}
 
