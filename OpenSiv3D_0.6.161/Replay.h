@@ -6,6 +6,8 @@ namespace Iwanna {
 	struct ReplayInputFrame {
 		bool leftPressed = false;
 		bool rightPressed = false;
+		bool upPressed = false;
+		bool downPressed = false;
 		bool jumpDown = false;
 		bool jumpUp = false;
 		bool shootDown = false;
@@ -14,6 +16,8 @@ namespace Iwanna {
 			ReplayInputFrame frame;
 			frame.leftPressed = Global::inputLeft.pressed();
 			frame.rightPressed = Global::inputRight.pressed();
+			frame.upPressed = Global::inputUp.pressed();
+			frame.downPressed = Global::inputDown.pressed();
 			frame.jumpDown = Global::inputJump.down();
 			frame.jumpUp = Global::inputJump.up();
 			frame.shootDown = Global::inputShoot.down();

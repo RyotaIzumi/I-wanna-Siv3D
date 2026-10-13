@@ -22,7 +22,7 @@ namespace Iwanna {
 		playMode = PlayMode::Normal;
 		returnToReplayMenuRequested = false;
 		isTutorial = false;
-		lastSelectedChapter = Clamp(chapter, 1, 6);
+		lastSelectedChapter = Clamp(chapter, 1, Global::ChapterCount);
 		wasPlayerDead = false;
 		shouldUpdateHighestEndurance = (lastSelectedChapter == 1);
 		practiceLimitReached = false;
@@ -90,7 +90,7 @@ namespace Iwanna {
 			&& !isTutorial
 			&& replay
 			&& replay->isValid()
-			&& startChapter == Clamp(startChapter, 1, 6)
+			&& startChapter == Clamp(startChapter, 1, Global::ChapterCount)
 			&& startStep <= replay->frameSteps.back();
 	}
 
@@ -133,7 +133,7 @@ namespace Iwanna {
 			&& !isTutorial
 			&& replay
 			&& replay->isValid()
-			&& startChapter == Clamp(startChapter, 1, 6)
+			&& startChapter == Clamp(startChapter, 1, Global::ChapterCount)
 			&& startStep <= replay->frameSteps.back();
 	}
 
@@ -174,7 +174,7 @@ namespace Iwanna {
 	void MainGame::rememberReplayMenuState(int32 selectedReplay, int32 selectedFavoriteReplay, int32 startChapter) {
 		replayMenuSelectedReplay = Max(selectedReplay, 0);
 		replayMenuSelectedFavoriteReplay = Max(selectedFavoriteReplay, 0);
-		replayMenuStartChapter = Clamp(startChapter, 1, 6);
+		replayMenuStartChapter = Clamp(startChapter, 1, Global::ChapterCount);
 	}
 
 	bool MainGame::takeReplayMenuState(int32& selectedReplay, int32& selectedFavoriteReplay, int32& startChapter) {
@@ -225,23 +225,33 @@ namespace Iwanna {
 			return none;
 		}
 
-		switch (Clamp(saveData.highestChapter + 1, 1, 7)) {
+		switch (Clamp(saveData.highestChapter + 1, 1, Global::ChapterCount + 1)) {
 		case 2: return Global::startStep_Chapter2 - 1;
 		case 3: return Global::startStep_Chapter3 - 1;
 		case 4: return Global::startStep_Chapter4 - 1;
 		case 5: return Global::startStep_Chapter5 - 1;
 		case 6: return Global::startStep_Chapter6 - 1;
+		case 7: return Global::startStep_Chapter7 - 1;
+		case 8: return Global::startStep_Chapter8 - 1;
+		case 9: return Global::startStep_Chapter9 - 1;
+		case 10: return Global::startStep_Chapter10 - 1;
+		case 11: return Global::startStep_Chapter11 - 1;
 		default: return none;
 		}
 	}
 
 	Optional<int32> MainGame::getTrialLimitStep() const {
-		switch (Clamp(Global::trialClearableChapter + 2, 1, 7)) {
+		switch (Clamp(Global::trialClearableChapter + 2, 1, Global::ChapterCount + 1)) {
 		case 2: return Global::startStep_Chapter2 - 1;
 		case 3: return Global::startStep_Chapter3 - 1;
 		case 4: return Global::startStep_Chapter4 - 1;
 		case 5: return Global::startStep_Chapter5 - 1;
 		case 6: return Global::startStep_Chapter6 - 1;
+		case 7: return Global::startStep_Chapter7 - 1;
+		case 8: return Global::startStep_Chapter8 - 1;
+		case 9: return Global::startStep_Chapter9 - 1;
+		case 10: return Global::startStep_Chapter10 - 1;
+		case 11: return Global::startStep_Chapter11 - 1;
 		default: return none;
 		}
 	}
@@ -258,13 +268,18 @@ namespace Iwanna {
 	}
 
 	int32 MainGame::getChapterStartStep(int32 chapter) const {
-		switch (Clamp(chapter, 1, 6)) {
+		switch (Clamp(chapter, 1, Global::ChapterCount)) {
 		case 1: return Global::startStep_Chapter1;
 		case 2: return Global::startStep_Chapter2;
 		case 3: return Global::startStep_Chapter3;
 		case 4: return Global::startStep_Chapter4;
 		case 5: return Global::startStep_Chapter5;
 		case 6: return Global::startStep_Chapter6;
+		case 7: return Global::startStep_Chapter7;
+		case 8: return Global::startStep_Chapter8;
+		case 9: return Global::startStep_Chapter9;
+		case 10: return Global::startStep_Chapter10;
+		case 11: return Global::startStep_Chapter11;
 		default: return Global::startStep_Chapter1;
 		}
 	}
@@ -465,6 +480,11 @@ namespace Iwanna {
 		case 4:startStep = Global::startStep_Chapter4; break;
 		case 5:startStep = Global::startStep_Chapter5; break;
 		case 6:startStep = Global::startStep_Chapter6; break;
+		case 7:startStep = Global::startStep_Chapter7; break;
+		case 8:startStep = Global::startStep_Chapter8; break;
+		case 9:startStep = Global::startStep_Chapter9; break;
+		case 10:startStep = Global::startStep_Chapter10; break;
+		case 11:startStep = Global::startStep_Chapter11; break;
 		}
 
 		startTime = SecondsF(static_cast<double>(startStep) / static_cast<double>(Global::FPS));

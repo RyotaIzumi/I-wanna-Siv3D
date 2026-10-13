@@ -14,7 +14,12 @@ namespace {
 		if (step < Global::startStep_Chapter4) return 3;
 		if (step < Global::startStep_Chapter5) return 4;
 		if (step < Global::startStep_Chapter6) return 5;
-		return 6;
+		if (step < Global::startStep_Chapter7) return 6;
+		if (step < Global::startStep_Chapter8) return 7;
+		if (step < Global::startStep_Chapter9) return 8;
+		if (step < Global::startStep_Chapter10) return 9;
+		if (step < Global::startStep_Chapter11) return 10;
+		return 11;
 	}
 
 	template <class Type>
@@ -68,13 +73,15 @@ namespace {
 			frame.jumpDown = (bits & 0x04) != 0;
 			frame.jumpUp = (bits & 0x08) != 0;
 			frame.shootDown = (bits & 0x10) != 0;
+			frame.upPressed = (bits & 0x20) != 0;
+			frame.downPressed = (bits & 0x40) != 0;
 			replay.frames << frame;
 			replay.frameSteps << step;
 		}
 		if (version < 4 && !replay.frameSteps.isEmpty()) {
 			replay.highestReachedChapter = getChapterFromStep(replay.frameSteps.back());
 		}
-		replay.highestReachedChapter = Clamp(replay.highestReachedChapter, replay.chapter, 6);
+		replay.highestReachedChapter = Clamp(replay.highestReachedChapter, replay.chapter, Global::ChapterCount);
 		return replay.isValid();
 	}
 
@@ -95,7 +102,8 @@ namespace {
 		for (size_t i = 0; i < replay.frames.size(); ++i) {
 			const auto& frame = replay.frames[i];
 			const uint8 bits = (frame.leftPressed ? 0x01 : 0) | (frame.rightPressed ? 0x02 : 0)
-				| (frame.jumpDown ? 0x04 : 0) | (frame.jumpUp ? 0x08 : 0) | (frame.shootDown ? 0x10 : 0);
+				| (frame.jumpDown ? 0x04 : 0) | (frame.jumpUp ? 0x08 : 0) | (frame.shootDown ? 0x10 : 0)
+				| (frame.upPressed ? 0x20 : 0) | (frame.downPressed ? 0x40 : 0);
 			writeValue(writer, bits);
 			writeValue(writer, replay.frameSteps[i]);
 		}
