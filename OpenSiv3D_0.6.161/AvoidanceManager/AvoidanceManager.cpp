@@ -14,6 +14,8 @@ namespace Iwanna {
 		isTraversalStage = false;
 		isTraversalCleared = false;
 		disposablePlatformCount = 0;
+		traversalGraphVertices.clear();
+		traversalGraphEdges.clear();
 		isSatStage = false;
 		isSatCleared = false;
 		satAssignment.clear();
@@ -320,26 +322,187 @@ namespace Iwanna {
 	void AvoidanceManager::createDisposableTraversalStage() {
 		isTraversalStage = true;
 		gameObjects.blocks.clear();
+		gameObjects.cherries.clear();
+		traversalGraphVertices.clear();
+		traversalGraphEdges.clear();
+		traversalStaticCherryPositions.clear();
+		traversalGuardCenterIndex = -1;
 
-		gameObjects.blocks << std::make_shared<Block>(U"sprFloor", Vec2{ 2, 16 });
-		gameObjects.player->pos = Vec2{ 80, 492 };
-
-		// Each coordinate is one graph vertex. Reachable jumps act as graph edges.
-		const Array<Point> vertices = {
-			{ 5, 14 }, { 9, 12 }, { 13, 14 }, { 17, 12 }, { 21, 14 },
-			{ 20, 10 }, { 16, 7 }, { 12, 9 }, { 8, 7 }, { 4, 9 },
-			{ 3, 5 }, { 7, 3 }, { 11, 5 }, { 15, 3 }, { 19, 5 }
+		// Keep the start and goal outside the staggered candidate rows shown in the reference.
+		const Array<Point> candidates = {
+			{ 2, 17 }, { 10, 17 }, { 18, 17 },
+			{ 6, 14 }, { 14, 14 }, { 22, 14 },
+			{ 2, 11 }, { 10, 11 }, { 18, 11 },
+			{ 6, 8 }, { 14, 8 }, { 22, 8 },
+			{ 10, 5 }, { 18, 5 },
+			{ 22, 2 }
 		};
-		for (const auto& vertex : vertices) {
-			auto platform = std::make_shared<Block>(U"sprFloor", Vec2{ vertex.x, vertex.y });
+		constexpr int32 startCandidate = 0;
+		const int32 goalCandidate = static_cast<int32>(candidates.size()) - 1;
+
+		const auto isHamiltonEdge = [&candidates](int32 from, int32 to) {
+			const Point delta = candidates[to] - candidates[from];
+			if (delta.x == 0 && delta.y != 0) return false;
+			if (Abs(delta.x) > 5) return false;
+			if (delta.y < 0) return Abs(delta.y) <= 3;
+			return delta.y <= 6;
+		};
+
+		Array<Array<int32>> neighbors(candidates.size());
+		for (int32 from = 0; from < static_cast<int32>(candidates.size()); ++from) {
+			for (int32 to = 0; to < static_cast<int32>(candidates.size()); ++to) {
+				if (from != to && isHamiltonEdge(from, to)) neighbors[from] << to;
+			}
+		}
+
+		const auto isPotentialCandidateRoute = [&candidates](const Array<int32>& path, int32 from, int32 to) {
+			const Point delta = candidates[path[to]] - candidates[path[from]];
+			if (delta.y < 0) {
+				return Abs(delta.x) <= 5 && Abs(delta.y) <= 3;
+			}
+			return Abs(delta.x) <= Max(5, 2 + delta.y * 2) && delta.y <= 15;
+		};
+		const auto canBecomeBranch = [&](const Array<int32>& path, int32 from, int32 to) {
+			const Point delta = candidates[path[to]] - candidates[path[from]];
+			return isPotentialCandidateRoute(path, from, to)
+				&& delta.y <= 6
+				&& !(delta.x == 0 && delta.y != 0);
+		};
+		const auto countBranchableSkips = [&](const Array<int32>& path) {
+			int32 count = 0;
+			for (int32 from = 0; from < static_cast<int32>(path.size()); ++from) {
+				for (int32 to = from + 2; to < static_cast<int32>(path.size()); ++to) {
+					if (canBecomeBranch(path, from, to)) ++count;
+				}
+			}
+			return count;
+		};
+
+		Array<int32> selectedPath;
+		const int32 targetPlatformCount = 10;
+		const int32 targetPathSize = targetPlatformCount + 2;
+		std::function<bool(int32)> findPath = [&](int32 current) {
+			if (current == goalCandidate) return static_cast<int32>(selectedPath.size()) == targetPathSize;
+			if (static_cast<int32>(selectedPath.size()) >= targetPathSize) return false;
+
+			Array<int32> choices = neighbors[current];
+			for (int32 i = static_cast<int32>(choices.size()) - 1; i > 0; --i) {
+				std::swap(choices[i], choices[Random<int32>(0, i)]);
+			}
+			for (const int32 next : choices) {
+				if (selectedPath.contains(next)) continue;
+				if (next == goalCandidate
+					&& static_cast<int32>(selectedPath.size()) != targetPathSize - 1) continue;
+				selectedPath << next;
+				if (findPath(next)) return true;
+				selectedPath.pop_back();
+			}
+			return false;
+		};
+
+		bool foundPath = false;
+		for (int32 attempt = 0; attempt < 120 && !foundPath; ++attempt) {
+			selectedPath.clear();
+			selectedPath << startCandidate;
+			if (findPath(startCandidate) && countBranchableSkips(selectedPath) >= 2) {
+				foundPath = true;
+			}
+		}
+		if (!foundPath) {
+			// This fixed fallback is also a Hamilton path on the same candidate lattice.
+			selectedPath = { 0, 3, 1, 4, 7, 9, 12, 10, 8, 11, 13, 14 };
+		}
+
+		const Point startVertex = candidates[selectedPath.front()];
+		const Point goalVertex = candidates[selectedPath.back()];
+		gameObjects.blocks << std::make_shared<Block>(U"sprFloor", startVertex);
+		gameObjects.player->pos = Vec2{ startVertex.x * 32 + 16, startVertex.y * 32 - 20 };
+
+		for (int32 i = 1; i < static_cast<int32>(selectedPath.size()) - 1; ++i) {
+			auto platform = std::make_shared<Block>(U"sprFloor", candidates[selectedPath[i]]);
 			platform->makeDisposable();
 			gameObjects.blocks << platform;
 		}
-		disposablePlatformCount = static_cast<int32>(vertices.size());
+		disposablePlatformCount = static_cast<int32>(selectedPath.size()) - 2;
 
-		auto goal = std::make_shared<Block>(U"sprFloor", Vec2{ 22, 2 });
+		auto goal = std::make_shared<Block>(U"sprFloor", goalVertex);
 		goal->makeGoal();
 		gameObjects.blocks << goal;
+
+		const auto centerOf = [](const Point& vertex) {
+			return Vec2{ vertex * 32 } + Vec2{ 16, 16 };
+		};
+		for (const int32 candidate : selectedPath) {
+			traversalGraphVertices << centerOf(candidates[candidate]);
+		}
+		for (int32 i = 0; i + 1 < static_cast<int32>(selectedPath.size()); ++i) {
+			traversalGraphEdges << std::pair<int32, int32>{ i, i + 1 };
+		}
+
+		const auto isPotentialRoute = [&](int32 from, int32 to) {
+			return isPotentialCandidateRoute(selectedPath, from, to);
+		};
+
+		Array<std::pair<int32, int32>> branchCandidates;
+		for (int32 from = 0; from < static_cast<int32>(selectedPath.size()); ++from) {
+			for (int32 to = from + 2; to < static_cast<int32>(selectedPath.size()); ++to) {
+				if (canBecomeBranch(selectedPath, from, to)) {
+					branchCandidates << std::pair<int32, int32>{ from, to };
+				}
+			}
+		}
+		for (int32 i = static_cast<int32>(branchCandidates.size()) - 1; i > 0; --i) {
+			std::swap(branchCandidates[i], branchCandidates[Random<int32>(0, i)]);
+		}
+		const int32 branchCount = Min(Random<int32>(1, 2),
+			Max(0, static_cast<int32>(branchCandidates.size()) - 1));
+		for (int32 i = 0; i < branchCount; ++i) {
+			traversalGraphEdges << branchCandidates[i];
+		}
+
+		const auto graphEdgeExists = [&](int32 from, int32 to) {
+			return traversalGraphEdges.contains(std::pair<int32, int32>{ from, to })
+				|| traversalGraphEdges.contains(std::pair<int32, int32>{ to, from });
+		};
+		const auto appendStaticCherryPosition = [&](const Vec2& position) {
+			if (traversalStaticCherryPositions.any([&](const Vec2& existing) {
+				return existing.distanceFrom(position) < 14.0;
+			})) {
+				return;
+			}
+			traversalStaticCherryPositions << position;
+		};
+		const auto appendStaticSegment = [&](const Vec2& start, const Vec2& end, double interval) {
+			const double length = start.distanceFrom(end);
+			const int32 divisions = Max(1, static_cast<int32>(Ceil(length / interval)));
+			for (int32 i = 0; i <= divisions; ++i) {
+				appendStaticCherryPosition(start.lerp(end, static_cast<double>(i) / divisions));
+			}
+		};
+
+		for (int32 from = 0; from < static_cast<int32>(traversalGraphVertices.size()); ++from) {
+			for (int32 to = from + 1; to < static_cast<int32>(traversalGraphVertices.size()); ++to) {
+				if (graphEdgeExists(from, to)) continue;
+
+				const Vec2 route = traversalGraphVertices[to] - traversalGraphVertices[from];
+				if (route.lengthSq() == 0.0) continue;
+				if (Abs(route.x) > 164.0 || Abs(route.y) > 124.0) continue;
+				if (!isPotentialRoute(from, to) && !isPotentialRoute(to, from)) continue;
+
+				const Vec2 middle = (traversalGraphVertices[from] + traversalGraphVertices[to]) * 0.5;
+				const Vec2 direction = route.normalized();
+				const Vec2 normal = Vec2{ -direction.y, direction.x };
+				appendStaticSegment(middle - normal * 60.0,
+					middle + normal * 60.0,
+					20.0);
+			}
+		}
+
+		for (const Vec2& position : traversalStaticCherryPositions) {
+			auto cherry = std::make_shared<Cherry>();
+			cherry->pos = position;
+			createCherry(cherry);
+		}
 	}
 
 	void AvoidanceManager::updateDisposableTraversalStage() {
@@ -350,6 +513,75 @@ namespace Iwanna {
 			|| gameObjects.player->pos.x > Global::stageWidth + 32) {
 			gameObjects.player->playerDead();
 			return;
+		}
+
+		const auto appendCherryPosition = [](Array<Vec2>& positions, const Vec2& position) {
+			if (positions.any([&](const Vec2& existing) {
+				return existing.distanceFrom(position) < 14.0;
+			})) {
+				return;
+			}
+			positions << position;
+		};
+
+		const auto appendSegment = [&](Array<Vec2>& positions, const Vec2& start, const Vec2& end, double interval) {
+			const double length = start.distanceFrom(end);
+			const int32 divisions = Max(1, static_cast<int32>(Ceil(length / interval)));
+			for (int32 i = 0; i <= divisions; ++i) {
+				appendCherryPosition(positions, start.lerp(end, static_cast<double>(i) / divisions));
+			}
+		};
+
+		const auto rebuildTraversalGuard = [&](int32 centerIndex) {
+			gameObjects.cherries.clear();
+
+			Array<Vec2> guardPositions;
+			for (const Vec2& position : traversalStaticCherryPositions) {
+				appendCherryPosition(guardPositions, position);
+			}
+
+			const Vec2 center = traversalGraphVertices[centerIndex];
+			constexpr double halfSize = 172.0;
+			constexpr double interval = 18.0;
+
+			appendSegment(guardPositions,
+				center + Vec2{ -halfSize, -halfSize },
+				center + Vec2{ halfSize, -halfSize }, interval);
+			appendSegment(guardPositions,
+				center + Vec2{ halfSize, -halfSize },
+				center + Vec2{ halfSize, halfSize }, interval);
+			appendSegment(guardPositions,
+				center + Vec2{ halfSize, halfSize },
+				center + Vec2{ -halfSize, halfSize }, interval);
+			appendSegment(guardPositions,
+				center + Vec2{ -halfSize, halfSize },
+				center + Vec2{ -halfSize, -halfSize }, interval);
+
+			for (const Vec2& position : guardPositions) {
+				auto cherry = std::make_shared<Cherry>();
+				cherry->pos = position;
+				createCherry(cherry);
+			}
+		};
+
+		if (gameObjects.player->getOnGround()) {
+			const Vec2 playerFeet = gameObjects.player->hitBox->bottom();
+			for (int32 i = 0; i < static_cast<int32>(gameObjects.blocks.size())
+				&& i < static_cast<int32>(traversalGraphVertices.size()); ++i) {
+				const auto& block = gameObjects.blocks[i];
+				if (!block->getHasCollide()) continue;
+				const auto* rect = block->hitBox->getRect();
+				if (rect == nullptr) continue;
+				const bool onThisBlock = (rect->x - 8.0 <= playerFeet.x
+					&& playerFeet.x <= rect->x + rect->w + 8.0
+					&& Abs(playerFeet.y - rect->y) <= 4.0);
+				if (!onThisBlock) continue;
+				if (traversalGuardCenterIndex != i) {
+					traversalGuardCenterIndex = i;
+					rebuildTraversalGuard(i);
+				}
+				break;
+			}
 		}
 
 		const int32 visited = static_cast<int32>(gameObjects.blocks.count_if([](const auto& block) {

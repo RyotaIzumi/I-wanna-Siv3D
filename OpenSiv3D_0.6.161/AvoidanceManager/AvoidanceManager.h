@@ -37,6 +37,10 @@ namespace Iwanna {
 		bool isTraversalStage = false;
 		bool isTraversalCleared = false;
 		int32 disposablePlatformCount = 0;
+		Array<Vec2> traversalGraphVertices;
+		Array<std::pair<int32, int32>> traversalGraphEdges;
+		Array<Vec2> traversalStaticCherryPositions;
+		int32 traversalGuardCenterIndex = -1;
 		int32 currentChapter = 0;
 		bool isSatStage = false;
 		bool isSatCleared = false;
