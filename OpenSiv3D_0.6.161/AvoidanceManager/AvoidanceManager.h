@@ -11,6 +11,7 @@
 #include "../Replay.h"
 #include "EasingMove.h"
 #include "Timeline.h"
+#include "Chapter5/Chapter5Script.h"
 
 namespace Iwanna {
 
@@ -90,6 +91,7 @@ namespace Iwanna {
 		int32 previousStep = -1;
 		int32 step = 0;
 		int32 activeChapter = 0;
+		Chapter5Script chapter5Script;
 
 		// Chapter 9: Hamilton Path prototype
 		Array<Vec3> chapter9Platforms;

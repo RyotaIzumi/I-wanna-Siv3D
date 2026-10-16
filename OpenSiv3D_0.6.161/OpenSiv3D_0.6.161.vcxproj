@@ -124,6 +124,9 @@
     <ClCompile Include="AvoidanceManager\Chapter2Manager.cpp" />
     <ClCompile Include="AvoidanceManager\Chapter4Manager.cpp" />
     <ClCompile Include="AvoidanceManager\Chapter5Manager.cpp" />
+    <ClCompile Include="AvoidanceManager\Chapter5\Chapter5Script.cpp" />
+    <ClCompile Include="AvoidanceManager\Chapter5\Chapter5Patterns.cpp" />
+    <ClCompile Include="GameObject\Cherries\Chapter5\Chapter5CherryBehaviors.cpp" />
     <ClCompile Include="AvoidanceManager\Chapter6Manager.cpp" />
 	<ClCompile Include="AvoidanceManager\Chapter9Manager.cpp" />
     <ClCompile Include="AvoidanceManager\CherryPatternManagers\GeneralPurposePatterns.cpp" />
@@ -371,6 +374,9 @@
     <ClInclude Include="AvoidanceManager\AvoidanceManager.h" />
     <ClInclude Include="AvoidanceManager\EasingMove.h" />
     <ClInclude Include="AvoidanceManager\Timeline.h" />
+    <ClInclude Include="AvoidanceManager\Chapter5\Chapter5Script.h" />
+    <ClInclude Include="AvoidanceManager\Chapter5\Chapter5Patterns.h" />
+    <ClInclude Include="GameObject\Cherries\Chapter5\Chapter5CherryBehaviors.h" />
     <ClInclude Include="CommonData.h" />
     <ClInclude Include="GameObject\Block.h" />
     <ClInclude Include="GameObject\Blood.h" />
