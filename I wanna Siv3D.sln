@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36221.1 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenSiv3D_0.6.161", "OpenSiv3D_0.6.161\OpenSiv3D_0.6.161.vcxproj", "{677F451E-6BEE-47EE-BF49-B1386ADCAB2D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SweetBattle", "SweetBattle\SweetBattle.vcxproj", "{B086EB2D-8BB3-4B6B-A56D-2288FC69DC39}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -15,6 +17,10 @@ Global
 		{677F451E-6BEE-47EE-BF49-B1386ADCAB2D}.Debug|x64.Build.0 = Debug|x64
 		{677F451E-6BEE-47EE-BF49-B1386ADCAB2D}.Release|x64.ActiveCfg = Release|x64
 		{677F451E-6BEE-47EE-BF49-B1386ADCAB2D}.Release|x64.Build.0 = Release|x64
+		{B086EB2D-8BB3-4B6B-A56D-2288FC69DC39}.Debug|x64.ActiveCfg = Debug|x64
+		{B086EB2D-8BB3-4B6B-A56D-2288FC69DC39}.Debug|x64.Build.0 = Debug|x64
+		{B086EB2D-8BB3-4B6B-A56D-2288FC69DC39}.Release|x64.ActiveCfg = Release|x64
+		{B086EB2D-8BB3-4B6B-A56D-2288FC69DC39}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
